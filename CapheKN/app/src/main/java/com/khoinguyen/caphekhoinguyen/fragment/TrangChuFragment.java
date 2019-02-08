@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.khoinguyen.caphekhoinguyen.R;
 
@@ -24,7 +25,47 @@ public class TrangChuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_trang_chu, container, false);
+        View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
+        RelativeLayout layoutBanHang = view.findViewById(R.id.layout_ban_hang);
+        layoutBanHang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                banHang();
+            }
+        });
+
+        RelativeLayout layoutSanPham = view.findViewById(R.id.layout_san_pham);
+        layoutSanPham.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sanPham();
+            }
+        });
+
+        RelativeLayout layoutCongNo = view.findViewById(R.id.layout_cong_no);
+        layoutCongNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                congNo();
+            }
+        });
+
+        RelativeLayout layoutPhuHo = view.findViewById(R.id.layout_phu_ho);
+        layoutPhuHo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                phuHo();
+            }
+        });
+
+        RelativeLayout layoutBaoCao = view.findViewById(R.id.layout_bao_cao);
+        layoutBaoCao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                baoCao();
+            }
+        });
+        return view;
     }
 
     public void banHang() {

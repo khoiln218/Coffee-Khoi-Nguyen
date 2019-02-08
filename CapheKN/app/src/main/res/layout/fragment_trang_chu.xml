@@ -11,12 +11,12 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/layout_ban_hang"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_ban_hang"
-            android:onClick="banHang">
+            android:background="@drawable/bg_menu_ban_hang">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -42,12 +42,12 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/layout_san_pham"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_sp_dv"
-            android:onClick="sanPham">
+            android:background="@drawable/bg_menu_sp_dv">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -80,12 +80,12 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/layout_cong_no"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_top_cong_no"
-            android:onClick="congNo">
+            android:background="@drawable/bg_menu_top_cong_no">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -111,12 +111,12 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/layout_phu_ho"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_top_phu_ho"
-            android:onClick="phuHo">
+            android:background="@drawable/bg_menu_top_phu_ho">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -149,12 +149,12 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/layout_bao_cao"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_bao_cao"
-            android:onClick="baoCao">
+            android:background="@drawable/bg_menu_bao_cao">
 
             <LinearLayout
                 android:layout_width="wrap_content"
