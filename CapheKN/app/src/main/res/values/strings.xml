@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Caphe Khoi Nguyen</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="title_trang_chu">TRANG CHỦ</string>
+    <string name="title_ban_hang">BÁN HÀNG</string>
+    <string name="title_sp_dv">SẢN PHẨM</string>
+    <string name="title_top_phu_ho">PHÚ HỘ</string>
+    <string name="title_top_cong_no">CÔNG NỢ</string>
+    <string name="title_bao_cao">BÁO CÁO</string>
+
+    <string name="menu_trang_chu">Trang chủ</string>
+    <string name="menu_ban_hang">Bán hàng</string>
+    <string name="menu_sp_dv">Sản phẩm</string>
+    <string name="menu_top_phu_ho">Phú hộ</string>
+    <string name="menu_top_cong_no">Công nợ</string>
+    <string name="menu_bao_cao">Báo cáo</string>
+
+    <string name="status_dang_xu_ly">Đang xử lý</string>
+    <string name="status_hoan_thanh">Hoàn thành</string>
+    <string name="status_da_huy">Đã hủy</string>
+
+</resources>
