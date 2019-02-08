@@ -1,27 +1,30 @@
 package com.khoinguyen.caphekhoinguyen.model;
 
 public class KhachHang {
-    private int maKH;
+    private int id;
     private String tenKH;
     private String sDT;
 
-    public KhachHang(int maKH, String tenKH, String sDT) {
-        this.maKH = maKH;
+    public KhachHang() {
+    }
+
+    public KhachHang(int id, String tenKH, String sDT) {
+        this.id = id;
         this.tenKH = tenKH;
         this.sDT = sDT;
     }
 
-    public KhachHang(int maKH, String tenKH) {
-        this.maKH = maKH;
+    public KhachHang(int id, String tenKH) {
+        this.id = id;
         this.tenKH = tenKH;
     }
 
-    public int getMaKH() {
-        return maKH;
+    public int getId() {
+        return id;
     }
 
-    public void setMaKH(int maKH) {
-        this.maKH = maKH;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTenKH() {
@@ -32,11 +35,11 @@ public class KhachHang {
         this.tenKH = tenKH;
     }
 
-    public String getsDT() {
+    public String getSDT() {
         return sDT;
     }
 
-    public void setsDT(String sDT) {
+    public void setSDT(String sDT) {
         this.sDT = sDT;
     }
 }

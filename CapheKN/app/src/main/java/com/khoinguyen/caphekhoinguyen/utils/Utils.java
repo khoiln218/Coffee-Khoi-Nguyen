@@ -110,9 +110,7 @@ public final class Utils {
      * @param pattern   the pattern of output format, example "M/d/yyyy h:m:s aa", "dd/MM/yyyy HH:mm:ss"
      * @return
      */
-    public static String convTimestamp(Timestamp timestamp, String pattern) {
-        if (timestamp == null)
-            return "";
+    public static String convTimestamp(long timestamp, String pattern) {
 
         if (TextUtils.isEmpty(pattern)) {
             pattern = "dd/MM/yyyy hh:mm:ss";
@@ -125,7 +123,7 @@ public final class Utils {
         sdf.setTimeZone(tz);
 
         /* print your timestamp and double check it's the date you expect */
-        String localTime = sdf.format(new Date(timestamp.getTime()));
+        String localTime = sdf.format(new Date(timestamp));
         return localTime;
     }
 
@@ -135,11 +133,11 @@ public final class Utils {
      * @param timestamp timestamp in milliseconds
      * @return
      */
-    public static String convTimestamp(Timestamp timestamp) {
-        return convTimestamp(timestamp, "dd/MM/yyyy");
+    public static String convTimestamp(long timestamp) {
+        return convTimestamp(timestamp, "");
     }
 
-    public static Timestamp getTimeStamp(String inputString, String pattern) {
+    public static long getTimeStamp(String inputString, String pattern) {
         if (TextUtils.isEmpty(pattern)) {
             pattern = "dd/MM/yyyy hh:mm:ss";
         }
@@ -150,10 +148,10 @@ public final class Utils {
         } catch (ParseException e) {
             LogUtils.writeException(e);
         }
-        return new Timestamp(resultDate != null ? resultDate.getTime() : System.currentTimeMillis());
+        return resultDate != null ? resultDate.getTime() : System.currentTimeMillis();
     }
 
-    public static Timestamp getTimeStamp(String inputString) {
+    public static long getTimeStamp(String inputString) {
         return getTimeStamp(inputString, "");
     }
 }

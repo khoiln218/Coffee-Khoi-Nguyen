@@ -15,6 +15,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,10 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
     private final List<DonHang> mValues;
     private List<DonHang> mValuesFilter;
-    private final BanHangFragment.OnOrderInteractionListener mListener;
     private Context mContext;
 
-    public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnOrderInteractionListener listener) {
+    public DonHangAdapter(Context context, List<DonHang> items) {
         mValues = items;
-        mListener = listener;
         mContext = context;
 
         setData();
@@ -55,7 +54,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValuesFilter.get(position);
         Resources resources = holder.mView.getResources();
-        holder.mTvOrderId.setText(holder.mItem.getThoiGianTao() + "");
+        holder.mTvOrderId.setText(Utils.convTimestamp(holder.mItem.getThoiGianTao()));
 
         boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), resources.getString(R.string.status_dang_xu_ly));
         holder.mIvStatus.setImageResource(isTracking ? R.drawable.orderlist_07 : R.drawable.orderlist_08);
@@ -63,27 +62,18 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
             }
         });
 
         holder.btnLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onOrderItemSelected(holder.mItem, v.getId());
-                }
             }
         });
 
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onOrderItemSelected(holder.mItem, v.getId());
-                }
             }
         });
     }

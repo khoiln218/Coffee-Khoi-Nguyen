@@ -1,22 +1,26 @@
 package com.khoinguyen.caphekhoinguyen.model;
 
 public class SanPham {
-    int maSP;
+    int id;
     String tenSP;
     double donGia;
 
-    public SanPham(int maSP, String tenSP, double donGia) {
-        this.maSP = maSP;
+    public SanPham() {
+
+    }
+
+    public SanPham(int id, String tenSP, double donGia) {
+        this.id = id;
         this.tenSP = tenSP;
         this.donGia = donGia;
     }
 
-    public int getMaSP() {
-        return maSP;
+    public int getId() {
+        return id;
     }
 
-    public void setMaSP(int maSP) {
-        this.maSP = maSP;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTenSP() {

@@ -18,13 +18,12 @@ import android.widget.TextView;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.CongNoFragment;
-import com.khoinguyen.caphekhoinguyen.fragment.HomeFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.PhuHoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.SanPhamFragment;
-import com.khoinguyen.caphekhoinguyen.model.DonHang;
+import com.khoinguyen.caphekhoinguyen.fragment.TrangChuFragment;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BanHangFragment.OnOrderInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TrangChuFragment.OnTrangChuInteractionListener {
 
     private TextView toolbarTitle;
     private DrawerLayout mDrawer;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void openHome() {
-        HomeFragment fragment = new HomeFragment();
+        TrangChuFragment fragment = new TrangChuFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment,
                         getString(R.string.title_trang_chu)).commit();
@@ -193,12 +192,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onOrderItemSelected(DonHang item, int btnActionId) {
-
+    public void onBanHangClick() {
+        openBanHang();
     }
 
     @Override
-    public void onListFragmentInteraction(DonHang item) {
+    public void onSanPhamClick() {
+        openSanPham();
+    }
 
+    @Override
+    public void onBaoCaoClick() {
+        openBaoCao();
+    }
+
+    @Override
+    public void onCongNoClick() {
+        openCongNo();
+    }
+
+    @Override
+    public void onPhuHoClick() {
+        openPhuHo();
     }
 }

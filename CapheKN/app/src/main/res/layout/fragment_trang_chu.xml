@@ -15,7 +15,8 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_ban_hang">
+            android:background="@drawable/bg_menu_ban_hang"
+            android:onClick="banHang">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -45,7 +46,8 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_sp_dv">
+            android:background="@drawable/bg_menu_sp_dv"
+            android:onClick="sanPham">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -82,7 +84,8 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_top_cong_no">
+            android:background="@drawable/bg_menu_top_cong_no"
+            android:onClick="congNo">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -112,7 +115,8 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_top_phu_ho">
+            android:background="@drawable/bg_menu_top_phu_ho"
+            android:onClick="phuHo">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -149,7 +153,8 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_menu_bao_cao">
+            android:background="@drawable/bg_menu_bao_cao"
+            android:onClick="baoCao">
 
             <LinearLayout
                 android:layout_width="wrap_content"

@@ -26,8 +26,6 @@ import java.util.Random;
  * A simple {@link Fragment} subclass.
  */
 public class BanHangFragment extends Fragment {
-
-    private OnOrderInteractionListener mListener;
     private List<DonHang> mDonHangs;
     private RecyclerView mRecyclerView;
     private DonHangAdapter mAdapter;
@@ -56,18 +54,11 @@ public class BanHangFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnOrderInteractionListener) {
-            mListener = (OnOrderInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnOrderInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -82,27 +73,20 @@ public class BanHangFragment extends Fragment {
 
     private void getOrderList() {
         mDonHangs = getDonHangs();
-        mAdapter = new DonHangAdapter(getActivity(), mDonHangs, mListener);
+        mAdapter = new DonHangAdapter(getActivity(), mDonHangs);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private List<DonHang> getDonHangs() {
-        KhachHang kh1 = new KhachHang(1, "Nam");
-        SanPham sp1 = new SanPham(1, "Bò húc", 20000);
+        KhachHang kh = new KhachHang(1, "Nam");
+        SanPham sp = new SanPham(1, "Bò húc", 20000);
         List<DonHang> donHangs = new ArrayList<>();
-        for (int i = 0 ; i < 20 ; i++)
-            donHangs.add(0, new DonHang(System.currentTimeMillis() + new Random().nextInt(), getString(R.string.status_dang_xu_ly), kh1, sp1));
+        for (int i = 0; i < 20; i++)
+            donHangs.add(0, new DonHang(i, System.currentTimeMillis() + new Random().nextInt(), getString(R.string.status_dang_xu_ly), kh, sp));
         return donHangs;
     }
 
     private void banHang() {
         LogUtils.d("BanHangFragment", "Click ban hang");
     }
-
-    public interface OnOrderInteractionListener {
-        void onOrderItemSelected(DonHang item, int btnActionId);
-
-        void onListFragmentInteraction(DonHang item);
-    }
-
 }
