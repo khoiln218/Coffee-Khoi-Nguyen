@@ -1,26 +1,30 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
+import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
-import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
-import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +35,7 @@ public class BanHangFragment extends Fragment {
     private List<DonHang> mDonHangs;
     private RecyclerView mRecyclerView;
     private DonHangAdapter mAdapter;
+    private DBController dbController;
 
     public BanHangFragment() {
         // Required empty public constructor
@@ -49,11 +54,88 @@ public class BanHangFragment extends Fragment {
                 banHang();
             }
         });
+
+        dbController = new DBController(getActivity());
         return view;
     }
 
     private void banHang() {
-        LogUtils.d(TAG, "Click ban hang");
+        final DonHang donHang = new DonHang();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Bán hàng");
+        builder.setCancelable(false);
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View view = inflater.inflate(R.layout.dialog_them_don_hang, null);
+
+        final List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
+        List<String> dsKhachHang = new ArrayList<>();
+        for (KhachHang kh : khachHangs) {
+            dsKhachHang.add(kh.getTenKH());
+        }
+        ArrayAdapter<String> adapterKH = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, dsKhachHang);
+        AutoCompleteTextView etKhachHang = (AutoCompleteTextView) view.findViewById(R.id.etKhachHang);
+        etKhachHang.setThreshold(1);
+        etKhachHang.setAdapter(adapterKH);
+        etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String tenKH = parent.getItemAtPosition(position).toString();
+                for (KhachHang kh : khachHangs) {
+                    if (TextUtils.equals(kh.getTenKH(), tenKH)) {
+                        donHang.setKhachHang(kh);
+                        break;
+                    }
+                }
+            }
+        });
+
+        final List<SanPham> sanPhams = dbController.layDanhSachSanPham();
+        List<String> dsSanPham = new ArrayList<>();
+        for (SanPham sp : sanPhams) {
+            dsSanPham.add(sp.getTenSP());
+        }
+        ArrayAdapter<String> adapterSP = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, dsSanPham);
+        AutoCompleteTextView etSanPham = (AutoCompleteTextView) view.findViewById(R.id.etSanPham);
+        etSanPham.setThreshold(1);
+        etSanPham.setAdapter(adapterSP);
+        etSanPham.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String tenSP = parent.getItemAtPosition(position).toString();
+                for (SanPham sp : sanPhams) {
+                    if (TextUtils.equals(sp.getTenSP(), tenSP)) {
+                        donHang.setSanPham(sp);
+                        break;
+                    }
+                }
+            }
+        });
+
+        builder.setView(view);
+
+        builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                donHang.setThoiGianTao(System.currentTimeMillis());
+                donHang.setTrangThai(getString(R.string.status_dang_xu_ly));
+                dbController.themDonHang(donHang);
+                mDonHangs.add(donHang);
+                mAdapter.setData();
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -62,25 +144,13 @@ public class BanHangFragment extends Fragment {
         if (null != mAdapter) {
             mRecyclerView.setAdapter(mAdapter);
         } else {
-            getOrderList();
+            getDonHangs();
         }
     }
 
-    private void getOrderList() {
-        mDonHangs = getDonHangs();
+    private void getDonHangs() {
+        mDonHangs = dbController.layDanhSachDonHang();
         mAdapter = new DonHangAdapter(getActivity(), mDonHangs);
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-    private List<DonHang> getDonHangs() {
-        KhachHang kh;
-        SanPham sp;
-        List<DonHang> donHangs = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            sp = new SanPham(i, Utils.randomName(10), 10000 + new Random().nextInt(5000));
-            kh = new KhachHang(i, Utils.randomName(10));
-            donHangs.add(new DonHang(i, System.currentTimeMillis(), getString(R.string.status_dang_xu_ly), kh, sp));
-        }
-        return donHangs;
     }
 }

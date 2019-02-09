@@ -25,13 +25,13 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private Context mContext;
 
     public DonHangAdapter(Context context, List<DonHang> items) {
-        mValues = items;
         mContext = context;
+        mValues = items;
 
         setData();
     }
 
-    private void setData() {
+    public void setData() {
         mValuesFilter = new ArrayList<>();
         for (DonHang order : mValues) {
             if (!TextUtils.equals(order.getTrangThai(), mContext.getString(R.string.status_da_huy))) {
@@ -57,7 +57,11 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         } else {
             holder.mTvKhachHang.setText("Khách vãng lai");
         }
-        holder.mTvSanPham.setText(holder.mItem.getSanPham().getTenSP());
+        if (holder.mItem.getSanPham() != null) {
+            holder.mTvSanPham.setText(holder.mItem.getSanPham().getTenSP());
+        } else {
+            holder.mTvSanPham.setText("null");
+        }
 
         boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), mContext.getString(R.string.status_dang_xu_ly));
         holder.mIvTrangThai.setImageResource(isTracking ? R.drawable.orderlist_07 : R.drawable.orderlist_08);

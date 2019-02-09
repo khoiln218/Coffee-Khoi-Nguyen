@@ -34,8 +34,8 @@ public class DonHangHandler {
         values = new ContentValues();
         values.put(DBConstant.DON_HANG_THOI_GIAN_TAO, donHang.getThoiGianTao());
         values.put(DBConstant.DON_HANG_TRANG_THAI, donHang.getTrangThai());
-        values.put(DBConstant.DON_HANG_MA_KHACH_HANG, donHang != null ? donHang.getKhachHang().getId() : null);
-        values.put(DBConstant.DON_HANG_MA_SAN_PHAM, donHang != null ? donHang.getSanPham().getId() : null);
+        values.put(DBConstant.DON_HANG_MA_KHACH_HANG, donHang.getKhachHang() != null ? donHang.getKhachHang().getId() : null);
+        values.put(DBConstant.DON_HANG_MA_SAN_PHAM, donHang.getSanPham() != null ? donHang.getSanPham().getId() : null);
 
         db.insert(DBConstant.TABLE_NAME_DON_HANG, null, values);
         values = null;
@@ -48,8 +48,8 @@ public class DonHangHandler {
         values = new ContentValues();
         values.put(DBConstant.DON_HANG_THOI_GIAN_TAO, donHang.getThoiGianTao());
         values.put(DBConstant.DON_HANG_TRANG_THAI, donHang.getTrangThai());
-        values.put(DBConstant.DON_HANG_MA_KHACH_HANG, donHang != null ? donHang.getKhachHang().getId() : null);
-        values.put(DBConstant.DON_HANG_MA_SAN_PHAM, donHang != null ? donHang.getSanPham().getId() : null);
+        values.put(DBConstant.DON_HANG_MA_KHACH_HANG, donHang.getKhachHang() != null ? donHang.getKhachHang().getId() : null);
+        values.put(DBConstant.DON_HANG_MA_SAN_PHAM, donHang.getSanPham() != null ? donHang.getSanPham().getId() : null);
 
         long rowUpdate = db.update(DBConstant.TABLE_NAME_DON_HANG, values, DBConstant.DON_HANG_ID + "=?", new String[]{String.valueOf(donHang.getId())});
         values = null;
