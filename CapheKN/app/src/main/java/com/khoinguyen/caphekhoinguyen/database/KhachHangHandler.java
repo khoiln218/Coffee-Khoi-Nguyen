@@ -81,10 +81,10 @@ public class KhachHangHandler {
         return khachHangs;
     }
 
-    public void deleteKhachHang(KhachHang khachHang) {
+    public void deleteKhachHang(int id) {
         db = dbHelper.getWritableDatabase();
         db.delete(DBConstant.TABLE_NAME_KHACH_HANG, DBConstant.KHACH_HANG_ID + " = ?",
-                new String[]{String.valueOf(khachHang.getId())});
+                new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -96,6 +96,10 @@ public class KhachHangHandler {
         cursor.close();
         db.close();
         return rowCount;
+    }
+
+    public List<KhachHang> getKhachHangByName(String ten) {
+        return new ArrayList<>();
     }
 }
 

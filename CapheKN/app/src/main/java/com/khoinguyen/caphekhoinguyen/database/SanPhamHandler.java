@@ -82,10 +82,10 @@ public class SanPhamHandler {
         return sanPhams;
     }
 
-    public void deleteSanPham(SanPham sanPham) {
+    public void deleteSanPham(int id) {
         db = dbHelper.getWritableDatabase();
         db.delete(DBConstant.TABLE_NAME_SAN_PHAM, DBConstant.SAN_PHAM_ID + " = ?",
-                new String[]{String.valueOf(sanPham.getId())});
+                new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -97,5 +97,9 @@ public class SanPhamHandler {
         cursor.close();
         db.close();
         return rowCount;
+    }
+
+    public List<SanPham> getSanPhamByName(String ten) {
+        return new ArrayList<>();
     }
 }

@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        LogUtils.d(TAG, "DBHelper: init");
+        LogUtils.d(TAG, "init");
     }
 
     @Override

@@ -130,10 +130,10 @@ public class DonHangHandler {
     /*
    Delete a don hang by ID
     */
-    public void deleteDonHang(DonHang donHang) {
+    public void deleteDonHang(int id) {
         db = dbHelper.getWritableDatabase();
         db.delete(DBConstant.TABLE_NAME_DON_HANG, DBConstant.DON_HANG_ID + " = ?",
-                new String[]{String.valueOf(donHang.getId())});
+                new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -148,5 +148,13 @@ public class DonHangHandler {
         cursor.close();
         db.close();
         return rowCount;
+    }
+
+    public List<DonHang> getDonHangByTime(long time) {
+        return new ArrayList<>();
+    }
+
+    public List<DonHang> getDonHangByKhachHang(int idKhachHang) {
+        return new ArrayList<>();
     }
 }

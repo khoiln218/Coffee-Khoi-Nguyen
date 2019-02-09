@@ -1,24 +1,24 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.SanPhamAdapter;
+import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
-import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
-import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +29,7 @@ public class SanPhamFragment extends Fragment {
     private List<SanPham> mSanPhams;
     private RecyclerView mRecyclerView;
     private SanPhamAdapter mAdapter;
+    private DBController dbController;
 
     public SanPhamFragment() {
         // Required empty public constructor
@@ -47,11 +48,46 @@ public class SanPhamFragment extends Fragment {
                 themSanPham();
             }
         });
+
+        dbController = new DBController(getActivity());
         return view;
     }
 
     private void themSanPham() {
-        LogUtils.d(TAG, "Click them san pham");
+        final SanPham sanPham = new SanPham();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Thêm sản phẩm");
+        builder.setCancelable(false);
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View view = inflater.inflate(R.layout.dialog_them_san_pham, null);
+
+        final EditText etTenSanPham = (EditText) view.findViewById(R.id.etTenSanPham);
+        final EditText etDonGia = (EditText) view.findViewById(R.id.etDonGia);
+
+        builder.setView(view);
+
+        builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sanPham.setTenSP(etTenSanPham.getText().toString());
+                sanPham.setDonGia(Double.valueOf(etDonGia.getText().toString().trim()));
+                dbController.themSanPham(sanPham);
+                mSanPhams.add(sanPham);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -60,20 +96,13 @@ public class SanPhamFragment extends Fragment {
         if (null != mAdapter) {
             mRecyclerView.setAdapter(mAdapter);
         } else {
-            getSanPhamList();
+            getSanPhams();
         }
     }
 
-    private void getSanPhamList() {
-        mSanPhams = getSanPhams();
+    private void getSanPhams() {
+        mSanPhams = dbController.layDanhSachSanPham();
         mAdapter = new SanPhamAdapter(getActivity(), mSanPhams);
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-    private List<SanPham> getSanPhams() {
-        List<SanPham> sanPhams = new ArrayList<>();
-        for (int i = 0; i < 20; i++)
-            sanPhams.add(new SanPham(i, Utils.randomName(10), 5000 + new Random().nextInt(15000)));
-        return sanPhams;
     }
 }
