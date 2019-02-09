@@ -1,7 +1,6 @@
 package com.khoinguyen.caphekhoinguyen.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,9 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
-import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
-import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.ArrayList;
@@ -53,7 +50,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValuesFilter.get(position);
-        Resources resources = holder.mView.getResources();
         String thoiGian = String.format(Locale.US, "%d. ", (position + 1)) + Utils.convTimestamp(holder.mItem.getThoiGianTao());
         holder.mTvThoiGianTao.setText(thoiGian);
         if (holder.mItem.getKhachHang() != null) {
@@ -63,7 +59,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         }
         holder.mTvSanPham.setText(holder.mItem.getSanPham().getTenSP());
 
-        boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), resources.getString(R.string.status_dang_xu_ly));
+        boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), mContext.getString(R.string.status_dang_xu_ly));
         holder.mIvTrangThai.setImageResource(isTracking ? R.drawable.orderlist_07 : R.drawable.orderlist_08);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {

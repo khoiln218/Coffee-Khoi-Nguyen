@@ -1,7 +1,6 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,6 +16,7 @@ import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,8 @@ import java.util.Random;
  * A simple {@link Fragment} subclass.
  */
 public class BanHangFragment extends Fragment {
+    private static final String TAG = "BanHangFragment";
+
     private List<DonHang> mDonHangs;
     private RecyclerView mRecyclerView;
     private DonHangAdapter mAdapter;
@@ -33,7 +35,6 @@ public class BanHangFragment extends Fragment {
     public BanHangFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,14 +52,8 @@ public class BanHangFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    private void banHang() {
+        LogUtils.d(TAG, "Click ban hang");
     }
 
     @Override
@@ -78,15 +73,14 @@ public class BanHangFragment extends Fragment {
     }
 
     private List<DonHang> getDonHangs() {
-        KhachHang kh = new KhachHang(1, "Nam");
-        SanPham sp = new SanPham(1, "Bò húc", 20000);
+        KhachHang kh;
+        SanPham sp;
         List<DonHang> donHangs = new ArrayList<>();
-        for (int i = 0; i < 20; i++)
-            donHangs.add(0, new DonHang(i, System.currentTimeMillis() + new Random().nextInt(), getString(R.string.status_dang_xu_ly), kh, sp));
+        for (int i = 0; i < 20; i++) {
+            sp = new SanPham(i, Utils.randomName(10), 10000 + new Random().nextInt(5000));
+            kh = new KhachHang(i, Utils.randomName(10));
+            donHangs.add(new DonHang(i, System.currentTimeMillis(), getString(R.string.status_dang_xu_ly), kh, sp));
+        }
         return donHangs;
-    }
-
-    private void banHang() {
-        LogUtils.d("BanHangFragment", "Click ban hang");
     }
 }

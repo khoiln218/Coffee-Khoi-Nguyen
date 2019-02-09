@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_khach_hang:
                 openKhachHang();
+                break;
             case R.id.nav_bao_cao:
                 openBaoCao();
                 break;
