@@ -46,7 +46,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.order_item, parent, false);
+                .inflate(R.layout.don_hang_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -54,10 +54,17 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValuesFilter.get(position);
         Resources resources = holder.mView.getResources();
-        holder.mTvOrderId.setText(Utils.convTimestamp(holder.mItem.getThoiGianTao()));
+        String thoiGian = String.format(Locale.US, "%d. ", (position + 1)) + Utils.convTimestamp(holder.mItem.getThoiGianTao());
+        holder.mTvThoiGianTao.setText(thoiGian);
+        if (holder.mItem.getKhachHang() != null) {
+            holder.mTvKhachHang.setText(holder.mItem.getKhachHang().getTenKH());
+        } else {
+            holder.mTvKhachHang.setText("Khách vãng lai");
+        }
+        holder.mTvSanPham.setText(holder.mItem.getSanPham().getTenSP());
 
         boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), resources.getString(R.string.status_dang_xu_ly));
-        holder.mIvStatus.setImageResource(isTracking ? R.drawable.orderlist_07 : R.drawable.orderlist_08);
+        holder.mIvTrangThai.setImageResource(isTracking ? R.drawable.orderlist_07 : R.drawable.orderlist_08);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,13 +72,13 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             }
         });
 
-        holder.btnLocation.setOnClickListener(new View.OnClickListener() {
+        holder.btnThanhToan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
 
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
+        holder.btnChinhSua.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
@@ -85,18 +92,23 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        final TextView mTvOrderId;
-        final ImageView mIvStatus;
-        final ImageButton btnLocation, btnEdit;
+        final TextView mTvThoiGianTao;
+        final ImageView mIvTrangThai;
+        final TextView mTvKhachHang;
+        final TextView mTvSanPham;
+        final ImageButton btnThanhToan;
+        final ImageButton btnChinhSua;
         DonHang mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mTvOrderId = (TextView) view.findViewById(R.id.tvMaDonHang);
-            mIvStatus = (ImageView) view.findViewById(R.id.status);
-            btnLocation = (ImageButton) view.findViewById(R.id.btnLocation);
-            btnEdit = (ImageButton) view.findViewById(R.id.btnEdit);
+            mTvThoiGianTao = (TextView) view.findViewById(R.id.tvThoiGianTao);
+            mIvTrangThai = (ImageView) view.findViewById(R.id.trangThai);
+            mTvKhachHang = (TextView) view.findViewById(R.id.tvKhachHang);
+            mTvSanPham = (TextView) view.findViewById(R.id.tvSanPham);
+            btnThanhToan = (ImageButton) view.findViewById(R.id.btnThanhToan);
+            btnChinhSua = (ImageButton) view.findViewById(R.id.btnChinhSua);
         }
     }
 }

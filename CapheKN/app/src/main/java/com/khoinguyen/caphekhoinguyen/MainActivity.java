@@ -3,6 +3,7 @@ package com.khoinguyen.caphekhoinguyen;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.CongNoFragment;
+import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.PhuHoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.SanPhamFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.TrangChuFragment;
@@ -25,6 +27,7 @@ import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TrangChuFragment.OnTrangChuInteractionListener {
 
+    private static final String TAG = "MainActivity";
     private TextView toolbarTitle;
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mToggle;
@@ -66,12 +69,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                android.support.v4.app.Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                 if (fr != null) {
                     int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
-                    LogUtils.i("OnBackStackChanged", "backStackEntryCount=" + backStackEntryCount);
-                    LogUtils.i("OnBackStackChanged", "fragment=" + fr.getClass().getSimpleName());
-                    LogUtils.i("OnBackStackChanged", "fragment Tag =" + fr.getTag());
+                    LogUtils.d(TAG, "backStackEntryCount: " + backStackEntryCount);
                     toolbarTitle.setText(fr.getTag());
                     setNavIcon();
                 }
@@ -91,14 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
         mDrawer.setDrawerLockMode(lockMode);
         mToggle.setDrawerIndicatorEnabled(enabled);
-    }
-
-    private void openHome() {
-        TrangChuFragment fragment = new TrangChuFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment,
-                        getString(R.string.title_trang_chu)).commit();
-        toolbarTitle.setText(R.string.title_trang_chu);
     }
 
     @Override
@@ -126,9 +119,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.nav_trang_chu:
-                openHome();
-                break;
             case R.id.nav_ban_hang:
                 openBanHang();
                 break;
@@ -141,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_top_cong_no:
                 openCongNo();
                 break;
+            case R.id.nav_khach_hang:
+                openKhachHang();
             case R.id.nav_bao_cao:
                 openBaoCao();
                 break;
@@ -151,43 +143,65 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void openHome() {
+        TrangChuFragment fragment = new TrangChuFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_trang_chu))
+                .commit();
+        toolbarTitle.setText(R.string.title_trang_chu);
+    }
+
     private void openBaoCao() {
         BaoCaoFragment fragment = new BaoCaoFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment,
-                        getString(R.string.title_bao_cao)).commit();
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_bao_cao))
+                .addToBackStack(null)
+                .commit();
         toolbarTitle.setText(R.string.title_bao_cao);
+    }
+
+    private void openKhachHang() {
+        KhachHangFragment fragment = new KhachHangFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_khach_hang))
+                .addToBackStack(null)
+                .commit();
+        toolbarTitle.setText(R.string.title_khach_hang);
     }
 
     private void openCongNo() {
         CongNoFragment fragment = new CongNoFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment,
-                        getString(R.string.title_top_cong_no)).commit();
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_top_cong_no))
+                .addToBackStack(null)
+                .commit();
         toolbarTitle.setText(R.string.title_top_cong_no);
     }
 
     private void openPhuHo() {
         PhuHoFragment fragment = new PhuHoFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment,
-                        getString(R.string.title_top_phu_ho)).commit();
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_top_phu_ho))
+                .addToBackStack(null)
+                .commit();
         toolbarTitle.setText(R.string.title_top_phu_ho);
     }
 
     private void openSanPham() {
         SanPhamFragment fragment = new SanPhamFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment,
-                        getString(R.string.title_sp_dv)).commit();
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_sp_dv))
+                .addToBackStack(null)
+                .commit();
         toolbarTitle.setText(R.string.title_sp_dv);
     }
 
     private void openBanHang() {
         BanHangFragment fragment = new BanHangFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment,
-                        getString(R.string.title_ban_hang)).commit();
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_ban_hang))
+                .addToBackStack(null)
+                .commit();
         toolbarTitle.setText(R.string.title_ban_hang);
     }
 
@@ -214,5 +228,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onPhuHoClick() {
         openPhuHo();
+    }
+
+    @Override
+    public void onKhachHangClick() {
+        openKhachHang();
     }
 }

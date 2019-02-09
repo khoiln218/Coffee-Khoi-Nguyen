@@ -3,10 +3,6 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_trang_chu"
-            android:checked="true"
-            android:title="@string/menu_trang_chu" />
-        <item
             android:id="@+id/nav_ban_hang"
             android:title="@string/menu_ban_hang" />
         <item
@@ -18,6 +14,9 @@
         <item
             android:id="@+id/nav_top_cong_no"
             android:title="@string/menu_top_cong_no" />
+        <item
+            android:id="@+id/nav_khach_hang"
+            android:title="@string/menu_khach_hang" />
         <item
             android:id="@+id/nav_bao_cao"
             android:title="@string/menu_bao_cao" />

@@ -58,6 +58,14 @@ public class TrangChuFragment extends Fragment {
             }
         });
 
+        RelativeLayout layoutKhachHang = view.findViewById(R.id.layout_khach_hang);
+        layoutKhachHang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                khachHang();
+            }
+        });
+
         RelativeLayout layoutBaoCao = view.findViewById(R.id.layout_bao_cao);
         layoutBaoCao.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +94,11 @@ public class TrangChuFragment extends Fragment {
     public void phuHo() {
         if (mListener != null)
             mListener.onPhuHoClick();
+    }
+
+    private void khachHang() {
+        if (mListener != null)
+            mListener.onKhachHangClick();
     }
 
     public void baoCao() {
@@ -121,5 +134,7 @@ public class TrangChuFragment extends Fragment {
         void onCongNoClick();
 
         void onPhuHoClick();
+
+        void onKhachHangClick();
     }
 }

@@ -25,9 +25,9 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:src="@drawable/ban_hang" />
+                    android:src="@drawable/menu_banhang" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -56,9 +56,9 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:src="@drawable/san_pham" />
+                    android:src="@drawable/menu_sanpham" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -94,9 +94,9 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:src="@drawable/cong_no" />
+                    android:src="@drawable/menu_congno" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -125,9 +125,9 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:src="@drawable/phu_ho" />
+                    android:src="@drawable/menu_phuho" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -149,6 +149,37 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/layout_khach_hang"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_menu_khach_hang">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:src="@drawable/menu_khachhang" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="@string/menu_khach_hang"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/layout_bao_cao"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -163,9 +194,9 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:src="@drawable/bao_cao" />
+                    android:src="@drawable/menu_baocao" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -176,14 +207,6 @@
                     android:textColor="@android:color/white"
                     android:textSize="20sp" />
             </LinearLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:layout_weight="1">
 
         </RelativeLayout>
     </LinearLayout>
