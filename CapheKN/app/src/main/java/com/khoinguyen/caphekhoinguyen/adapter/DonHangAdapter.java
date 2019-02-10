@@ -147,6 +147,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
     private void capNhat(final DonHang dh) {
         final DonHang donHang = new DonHang();
+        donHang.setId(dh.getId());
         donHang.setThoiGianTao(dh.getThoiGianTao());
         donHang.setTrangThai(dh.getTrangThai());
         donHang.setKhachHang(dh.getKhachHang());
@@ -163,7 +164,8 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         AutoCompleteTextView etKhachHang = (AutoCompleteTextView) view.findViewById(R.id.etKhachHang);
         etKhachHang.setThreshold(1);
         etKhachHang.setAdapter(adapterKH);
-        etKhachHang.setText(donHang.getKhachHang().getTenKH());
+        if (donHang.getKhachHang() != null)
+            etKhachHang.setText(donHang.getKhachHang().getTenKH());
         etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -193,17 +195,20 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 String[] tenSPs = etSanPham.getText().toString().split(",");
                 for (String tenSP : tenSPs) {
                     for (SanPham sanPham : sanPhams) {
-                        if (TextUtils.equals(tenSP, sanPham.getTenSP())) {
+                        if (TextUtils.equals(tenSP.trim(), sanPham.getTenSP())) {
                             donHang.addSanPham(sanPham);
                             break;
                         }
                     }
                 }
-                dbController.capNhatDonHang(donHang);
-                mValues.set(mValues.indexOf(dh), donHang);
-                setData();
-                dbController.capNhatDonHang(dh);
-                notifyDataSetChanged();
+                if (donHang.getSanPhams() != null) {
+                    dbController.capNhatDonHang(donHang);
+                    mValues.set(mValues.indexOf(dh), donHang);
+                    setData();
+                    notifyDataSetChanged();
+                } else {
+                    Utils.showToast(mContext, "Cập nhật đơn hàng thất bại");
+                }
             }
         });
 

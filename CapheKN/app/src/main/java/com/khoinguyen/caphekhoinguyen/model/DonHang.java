@@ -2,6 +2,7 @@ package com.khoinguyen.caphekhoinguyen.model;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -73,15 +74,23 @@ public class DonHang {
     }
 
     public String convertSanPhamsToJsonString() {
+        List<Integer> dsSanPhams = new ArrayList<>();
+        for (SanPham sanPham : sanPhams) {
+            dsSanPhams.add(sanPham.getId());
+        }
         Gson gson = new Gson();
-        return gson.toJson(this.sanPhams);
+        return gson.toJson(dsSanPhams);
     }
 
-    public void setSanPhamsFromJsonString(String jsonString) {
-        Type type = new TypeToken<ArrayList<SanPham>>() {
+    public void setSanPhamsFromJsonString(String jsonString, SanPhamHandler sanPhamHandler) {
+        Type type = new TypeToken<ArrayList<Integer>>() {
         }.getType();
         Gson gson = new Gson();
 
-        this.sanPhams = gson.fromJson(jsonString, type);
+        List<Integer> dsSanPhams = gson.fromJson(jsonString, type);
+        sanPhams = new ArrayList<>();
+        for (Integer id : dsSanPhams) {
+            sanPhams.add(sanPhamHandler.getSanPhamById(id));
+        }
     }
 }

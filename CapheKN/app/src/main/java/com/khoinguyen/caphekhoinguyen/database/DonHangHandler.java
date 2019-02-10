@@ -19,10 +19,12 @@ public class DonHangHandler {
     private ContentValues values;
 
     private KhachHangHandler khachHangHandler;
+    private SanPhamHandler sanPhamHandler;
 
     public DonHangHandler(Context context) {
         this.dbHelper = new DBHelper(context);
         khachHangHandler = new KhachHangHandler(context);
+        sanPhamHandler = new SanPhamHandler(context);
     }
 
     public void insertDonHang(DonHang donHang) {
@@ -79,7 +81,7 @@ public class DonHangHandler {
 
         String sanPhams = cursor.getString(4);
         if (!TextUtils.isEmpty(sanPhams)) {
-            donHang.setSanPhamsFromJsonString(sanPhams);
+            donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
         }
         cursor.close();
         db.close();
@@ -112,7 +114,7 @@ public class DonHangHandler {
 
                 String sanPhams = cursor.getString(4);
                 if (!TextUtils.isEmpty(sanPhams)) {
-                    donHang.setSanPhamsFromJsonString(sanPhams);
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
                 }
                 donHangs.add(donHang);
             } while (cursor.moveToNext());

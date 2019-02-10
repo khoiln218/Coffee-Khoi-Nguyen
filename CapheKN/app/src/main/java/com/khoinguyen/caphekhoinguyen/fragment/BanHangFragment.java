@@ -24,6 +24,7 @@ import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.List;
 
@@ -100,16 +101,20 @@ public class BanHangFragment extends Fragment {
                 String[] tenSPs = etSanPham.getText().toString().split(",");
                 for (String tenSP : tenSPs) {
                     for (SanPham sanPham : sanPhams) {
-                        if (TextUtils.equals(tenSP, sanPham.getTenSP())) {
+                        if (TextUtils.equals(tenSP.trim(), sanPham.getTenSP())) {
                             donHang.addSanPham(sanPham);
                             break;
                         }
                     }
                 }
-                dbController.themDonHang(donHang);
-                mDonHangs.add(donHang);
-                mAdapter.setData();
-                mAdapter.notifyDataSetChanged();
+                if (donHang.getSanPhams() != null) {
+                    dbController.themDonHang(donHang);
+                    mDonHangs.add(donHang);
+                    mAdapter.setData();
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Utils.showToast(getActivity(), "Thêm đơn hàng thất bại");
+                }
             }
         });
 
