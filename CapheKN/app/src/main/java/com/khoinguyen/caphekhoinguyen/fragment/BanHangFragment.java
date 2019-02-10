@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,17 +85,10 @@ public class BanHangFragment extends Fragment {
 
         final List<SanPham> sanPhams = dbController.layDanhSachSanPham();
         SanPhamArrayAdapter adapterSP = new SanPhamArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, sanPhams);
-        MultiAutoCompleteTextView etSanPham = (MultiAutoCompleteTextView) view.findViewById(R.id.etSanPham);
+        final MultiAutoCompleteTextView etSanPham = (MultiAutoCompleteTextView) view.findViewById(R.id.etSanPham);
         etSanPham.setThreshold(1);
         etSanPham.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         etSanPham.setAdapter(adapterSP);
-        etSanPham.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SanPham sanPham = (SanPham) parent.getItemAtPosition(position);
-                donHang.addSanPham(sanPham);
-            }
-        });
 
         builder.setView(view);
 
@@ -103,6 +97,15 @@ public class BanHangFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 donHang.setThoiGianTao(System.currentTimeMillis());
                 donHang.setTrangThai(getString(R.string.status_dang_xu_ly));
+                String[] tenSPs = etSanPham.getText().toString().split(",");
+                for (String tenSP : tenSPs) {
+                    for (SanPham sanPham : sanPhams) {
+                        if (TextUtils.equals(tenSP, sanPham.getTenSP())) {
+                            donHang.addSanPham(sanPham);
+                            break;
+                        }
+                    }
+                }
                 dbController.themDonHang(donHang);
                 mDonHangs.add(donHang);
                 mAdapter.setData();

@@ -74,18 +74,20 @@
 
             <ImageButton
                 android:id="@+id/btnThanhToan"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/transparent_button_background"
+                android:padding="10dp"
                 android:src="@drawable/orderlist_10" />
 
             <ImageButton
                 android:id="@+id/btnChinhSua"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/transparent_button_background"
+                android:padding="10dp"
                 android:src="@drawable/orderlist_11" />
 
         </LinearLayout>
