@@ -7,7 +7,7 @@ public class DBConstant {
     public static final String DON_HANG_THOI_GIAN_TAO = "thoi_gian_tao";
     public static final String DON_HANG_TRANG_THAI = "trang_thai";
     public static final String DON_HANG_MA_KHACH_HANG = "ma_khach_hang";
-    public static final String DON_HANG_MA_SAN_PHAM = "ma_san_pham";
+    public static final String DON_HANG_SAN_PHAM = "ma_san_pham";
 
     public static final String TABLE_NAME_SAN_PHAM = "sanpham";
     public static final String SAN_PHAM_ID = "id";
@@ -24,7 +24,7 @@ public class DBConstant {
             DON_HANG_THOI_GIAN_TAO + " INTEGER, " +
             DON_HANG_TRANG_THAI + " TEXT, " +
             DON_HANG_MA_KHACH_HANG + " TEXT," +
-            DON_HANG_MA_SAN_PHAM + " TEXT)";
+            DON_HANG_SAN_PHAM + " TEXT)";
 
     public static final String SQL_DROP_DON_HANG = "DROP TABLE IF EXISTS " + TABLE_NAME_DON_HANG;
 

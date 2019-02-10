@@ -37,6 +37,14 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
                     android:src="@drawable/orderlist_08" />
+
+                <TextView
+                    android:id="@+id/tvTongTien"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="50.000VND"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <TextView

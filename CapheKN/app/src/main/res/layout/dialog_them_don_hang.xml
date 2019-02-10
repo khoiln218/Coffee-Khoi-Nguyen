@@ -40,7 +40,7 @@
             android:text="Sản phẩm"
             android:textSize="18sp" />
 
-        <AutoCompleteTextView
+        <MultiAutoCompleteTextView
             android:id="@+id/etSanPham"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

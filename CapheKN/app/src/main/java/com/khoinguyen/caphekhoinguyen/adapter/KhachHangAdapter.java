@@ -36,7 +36,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mTvTen.setText(String.format(Locale.US, "%d.", (position + 1)) + holder.mItem.getTenKH());
-        holder.mTvTongTien.setText("50.000VND");
+        holder.mTvTongTien.setText("0VND");
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
-import com.khoinguyen.caphekhoinguyen.model.SanPham;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,10 @@ public class DonHangHandler {
     private DBHelper dbHelper;
     private ContentValues values;
 
-    private SanPhamHandler sanPhamHandler;
     private KhachHangHandler khachHangHandler;
 
     public DonHangHandler(Context context) {
         this.dbHelper = new DBHelper(context);
-        sanPhamHandler = new SanPhamHandler(context);
         khachHangHandler = new KhachHangHandler(context);
     }
 
@@ -35,7 +32,7 @@ public class DonHangHandler {
         values.put(DBConstant.DON_HANG_THOI_GIAN_TAO, donHang.getThoiGianTao());
         values.put(DBConstant.DON_HANG_TRANG_THAI, donHang.getTrangThai());
         values.put(DBConstant.DON_HANG_MA_KHACH_HANG, donHang.getKhachHang() != null ? donHang.getKhachHang().getId() : null);
-        values.put(DBConstant.DON_HANG_MA_SAN_PHAM, donHang.getSanPham() != null ? donHang.getSanPham().getId() : null);
+        values.put(DBConstant.DON_HANG_SAN_PHAM, donHang.convertSanPhamsToJsonString());
 
         db.insert(DBConstant.TABLE_NAME_DON_HANG, null, values);
         values = null;
@@ -49,7 +46,7 @@ public class DonHangHandler {
         values.put(DBConstant.DON_HANG_THOI_GIAN_TAO, donHang.getThoiGianTao());
         values.put(DBConstant.DON_HANG_TRANG_THAI, donHang.getTrangThai());
         values.put(DBConstant.DON_HANG_MA_KHACH_HANG, donHang.getKhachHang() != null ? donHang.getKhachHang().getId() : null);
-        values.put(DBConstant.DON_HANG_MA_SAN_PHAM, donHang.getSanPham() != null ? donHang.getSanPham().getId() : null);
+        values.put(DBConstant.DON_HANG_SAN_PHAM, donHang.convertSanPhamsToJsonString());
 
         long rowUpdate = db.update(DBConstant.TABLE_NAME_DON_HANG, values, DBConstant.DON_HANG_ID + "=?", new String[]{String.valueOf(donHang.getId())});
         values = null;
@@ -64,7 +61,7 @@ public class DonHangHandler {
     public DonHang getDonHangById(int id) {
         db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DBConstant.TABLE_NAME_DON_HANG, new String[]{DBConstant.DON_HANG_ID,
-                        DBConstant.DON_HANG_THOI_GIAN_TAO, DBConstant.DON_HANG_TRANG_THAI, DBConstant.DON_HANG_MA_KHACH_HANG, DBConstant.DON_HANG_MA_SAN_PHAM}, DBConstant.DON_HANG_ID + "=?",
+                        DBConstant.DON_HANG_THOI_GIAN_TAO, DBConstant.DON_HANG_TRANG_THAI, DBConstant.DON_HANG_MA_KHACH_HANG, DBConstant.DON_HANG_SAN_PHAM}, DBConstant.DON_HANG_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
@@ -80,10 +77,9 @@ public class DonHangHandler {
             donHang.setKhachHang(khachHang);
         }
 
-        String maSP = cursor.getString(4);
-        if (!TextUtils.isEmpty(maSP)) {
-            SanPham sanPham = sanPhamHandler.getSanPhamById(Integer.valueOf(maSP));
-            donHang.setSanPham(sanPham);
+        String sanPhams = cursor.getString(4);
+        if (!TextUtils.isEmpty(sanPhams)) {
+            donHang.setSanPhamsFromJsonString(sanPhams);
         }
         cursor.close();
         db.close();
@@ -114,10 +110,9 @@ public class DonHangHandler {
                     donHang.setKhachHang(khachHang);
                 }
 
-                String maSP = cursor.getString(4);
-                if (!TextUtils.isEmpty(maSP)) {
-                    SanPham sanPham = sanPhamHandler.getSanPhamById(Integer.valueOf(maSP));
-                    donHang.setSanPham(sanPham);
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams);
                 }
                 donHangs.add(donHang);
             } while (cursor.moveToNext());

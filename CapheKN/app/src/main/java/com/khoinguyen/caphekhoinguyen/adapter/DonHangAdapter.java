@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
+import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -50,17 +52,20 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValuesFilter.get(position);
-        String thoiGian = String.format(Locale.US, "%d. ", (position + 1)) + Utils.convTimestamp(holder.mItem.getThoiGianTao());
+        String thoiGian = String.format(Locale.US, "%d.", (position + 1)) + Utils.convTimestamp(holder.mItem.getThoiGianTao());
         holder.mTvThoiGianTao.setText(thoiGian);
         if (holder.mItem.getKhachHang() != null) {
             holder.mTvKhachHang.setText(holder.mItem.getKhachHang().getTenKH());
         } else {
             holder.mTvKhachHang.setText("Khách vãng lai");
         }
-        if (holder.mItem.getSanPham() != null) {
-            holder.mTvSanPham.setText(holder.mItem.getSanPham().getTenSP());
+        List<SanPham> sanPhams = holder.mItem.getSanPhams();
+        if (sanPhams != null) {
+            holder.mTvSanPham.setText(getSanPhamList(sanPhams));
+            String formattedPrice = new DecimalFormat("##,##0VNĐ").format(getTongTien(sanPhams));
+            holder.mTvTongTien.setText(formattedPrice);
         } else {
-            holder.mTvSanPham.setText("null");
+            holder.mTvSanPham.setText("---");
         }
 
         boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), mContext.getString(R.string.status_dang_xu_ly));
@@ -85,6 +90,22 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         });
     }
 
+    private double getTongTien(List<SanPham> sanPhams) {
+        double tongTien = 0;
+        for (SanPham sanPham : sanPhams) {
+            tongTien += sanPham.getDonGia();
+        }
+        return tongTien;
+    }
+
+    private String getSanPhamList(List<SanPham> sanPhams) {
+        String sanPhamString = sanPhams.get(0).getTenSP();
+        for (int i = 1; i < sanPhams.size(); i++) {
+            sanPhamString += ", " + sanPhams.get(i).getTenSP();
+        }
+        return sanPhamString;
+    }
+
     @Override
     public int getItemCount() {
         return mValuesFilter.size();
@@ -96,6 +117,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         final ImageView mIvTrangThai;
         final TextView mTvKhachHang;
         final TextView mTvSanPham;
+        final TextView mTvTongTien;
         final ImageButton btnThanhToan;
         final ImageButton btnChinhSua;
         DonHang mItem;
@@ -107,6 +129,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             mIvTrangThai = (ImageView) view.findViewById(R.id.trangThai);
             mTvKhachHang = (TextView) view.findViewById(R.id.tvKhachHang);
             mTvSanPham = (TextView) view.findViewById(R.id.tvSanPham);
+            mTvTongTien = (TextView) view.findViewById(R.id.tvTongTien);
             btnThanhToan = (ImageButton) view.findViewById(R.id.btnThanhToan);
             btnChinhSua = (ImageButton) view.findViewById(R.id.btnChinhSua);
         }

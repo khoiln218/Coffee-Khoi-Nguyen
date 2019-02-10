@@ -8,22 +8,22 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.MultiAutoCompleteTextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
+import com.khoinguyen.caphekhoinguyen.adapter.KhachHangArrayAdapter;
+import com.khoinguyen.caphekhoinguyen.adapter.SanPhamArrayAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,46 +70,29 @@ public class BanHangFragment extends Fragment {
         View view = inflater.inflate(R.layout.dialog_them_don_hang, null);
 
         final List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
-        List<String> dsKhachHang = new ArrayList<>();
-        for (KhachHang kh : khachHangs) {
-            dsKhachHang.add(kh.getTenKH());
-        }
-        ArrayAdapter<String> adapterKH = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, dsKhachHang);
+        KhachHangArrayAdapter adapterKH = new KhachHangArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, khachHangs);
         AutoCompleteTextView etKhachHang = (AutoCompleteTextView) view.findViewById(R.id.etKhachHang);
         etKhachHang.setThreshold(1);
         etKhachHang.setAdapter(adapterKH);
         etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String tenKH = parent.getItemAtPosition(position).toString();
-                for (KhachHang kh : khachHangs) {
-                    if (TextUtils.equals(kh.getTenKH(), tenKH)) {
-                        donHang.setKhachHang(kh);
-                        break;
-                    }
-                }
+                KhachHang khachHang = (KhachHang) parent.getItemAtPosition(position);
+                donHang.setKhachHang(khachHang);
             }
         });
 
         final List<SanPham> sanPhams = dbController.layDanhSachSanPham();
-        List<String> dsSanPham = new ArrayList<>();
-        for (SanPham sp : sanPhams) {
-            dsSanPham.add(sp.getTenSP());
-        }
-        ArrayAdapter<String> adapterSP = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, dsSanPham);
-        AutoCompleteTextView etSanPham = (AutoCompleteTextView) view.findViewById(R.id.etSanPham);
+        SanPhamArrayAdapter adapterSP = new SanPhamArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, sanPhams);
+        MultiAutoCompleteTextView etSanPham = (MultiAutoCompleteTextView) view.findViewById(R.id.etSanPham);
         etSanPham.setThreshold(1);
+        etSanPham.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         etSanPham.setAdapter(adapterSP);
         etSanPham.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String tenSP = parent.getItemAtPosition(position).toString();
-                for (SanPham sp : sanPhams) {
-                    if (TextUtils.equals(sp.getTenSP(), tenSP)) {
-                        donHang.setSanPham(sp);
-                        break;
-                    }
-                }
+                SanPham sanPham = (SanPham) parent.getItemAtPosition(position);
+                donHang.addSanPham(sanPham);
             }
         });
 
