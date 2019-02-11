@@ -109,7 +109,7 @@ public class BanHangFragment extends Fragment {
                 }
                 if (donHang.getSanPhams() != null) {
                     dbController.themDonHang(donHang);
-                    mDonHangs.add(donHang);
+                    mDonHangs.add(0, donHang);
                     mAdapter.setData();
                     mAdapter.notifyDataSetChanged();
                 } else {

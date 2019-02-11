@@ -34,8 +34,8 @@ public class DBController {
         return mDonHangHandler.getDonHangByTime(time);
     }
 
-    public List<DonHang> layDonHangTheoKhachHang(int idKhachHang) {
-        return mDonHangHandler.getDonHangByKhachHang(idKhachHang);
+    public List<DonHang> layDonHangDangXuLyTheoKhachHang(int idKhachHang) {
+        return mDonHangHandler.getDonHangDangXuLyByKhachHang(idKhachHang);
     }
 
     public void themDonHang(DonHang donHang) {

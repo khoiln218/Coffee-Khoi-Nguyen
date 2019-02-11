@@ -55,7 +55,7 @@ public class SanPhamHandler {
         SanPham sanPham = new SanPham();
         sanPham.setId(cursor.getInt(0));
         sanPham.setTenSP(cursor.getString(1));
-        sanPham.setDonGia(Double.valueOf(cursor.getString(2)));
+        sanPham.setDonGia(Long.valueOf(cursor.getString(2)));
         cursor.close();
         db.close();
         return sanPham;
@@ -73,7 +73,7 @@ public class SanPhamHandler {
                 SanPham sanPham = new SanPham();
                 sanPham.setId(cursor.getInt(0));
                 sanPham.setTenSP(cursor.getString(1));
-                sanPham.setDonGia(Double.valueOf(cursor.getString(2)));
+                sanPham.setDonGia(Long.valueOf(cursor.getString(2)));
                 sanPhams.add(sanPham);
             } while (cursor.moveToNext());
         }

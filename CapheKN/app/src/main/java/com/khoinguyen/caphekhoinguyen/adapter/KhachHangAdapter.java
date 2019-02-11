@@ -44,7 +44,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mTvTen.setText(String.format(Locale.US, "%d.", (position + 1)) + holder.mItem.getTenKH());
-        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien(holder.mItem.getId()));
+        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(getTongTien(holder.mItem.getId()));
         holder.mTvTongTien.setText(formattedPrice);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -55,9 +55,9 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         });
     }
 
-    private double tongTien(int id) {
-        List<DonHang> donHangs = dbController.layDonHangTheoKhachHang(id);
-        double tongTien = 0;
+    private long getTongTien(int id) {
+        List<DonHang> donHangs = dbController.layDonHangDangXuLyTheoKhachHang(id);
+        long tongTien = 0;
         for (DonHang donHang : donHangs) {
             for (SanPham sanPham : donHang.getSanPhams()) {
                 tongTien += sanPham.getDonGia();

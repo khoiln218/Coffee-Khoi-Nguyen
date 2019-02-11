@@ -72,7 +72,7 @@ public class SanPhamFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sanPham.setTenSP(etTenSanPham.getText().toString());
-                sanPham.setDonGia(Double.valueOf(etDonGia.getText().toString().trim()));
+                sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
                 dbController.themSanPham(sanPham);
                 mSanPhams.add(sanPham);
                 mAdapter.notifyDataSetChanged();

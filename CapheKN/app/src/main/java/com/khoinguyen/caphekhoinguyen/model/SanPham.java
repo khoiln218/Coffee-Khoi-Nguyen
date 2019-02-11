@@ -3,13 +3,13 @@ package com.khoinguyen.caphekhoinguyen.model;
 public class SanPham {
     int id;
     String tenSP;
-    double donGia;
+    long donGia;
 
     public SanPham() {
 
     }
 
-    public SanPham(int id, String tenSP, double donGia) {
+    public SanPham(int id, String tenSP, long donGia) {
         this.id = id;
         this.tenSP = tenSP;
         this.donGia = donGia;
@@ -31,11 +31,11 @@ public class SanPham {
         this.tenSP = tenSP;
     }
 
-    public double getDonGia() {
+    public long getDonGia() {
         return donGia;
     }
 
-    public void setDonGia(double donGia) {
+    public void setDonGia(long donGia) {
         this.donGia = donGia;
     }
 }

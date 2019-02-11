@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 
@@ -17,12 +18,14 @@ public class DonHangHandler {
     private SQLiteDatabase db;
     private DBHelper dbHelper;
     private ContentValues values;
+    private Context context;
 
     private KhachHangHandler khachHangHandler;
     private SanPhamHandler sanPhamHandler;
 
     public DonHangHandler(Context context) {
         this.dbHelper = new DBHelper(context);
+        this.context = context;
         khachHangHandler = new KhachHangHandler(context);
         sanPhamHandler = new SanPhamHandler(context);
     }
@@ -152,10 +155,11 @@ public class DonHangHandler {
         return new ArrayList<>();
     }
 
-    public List<DonHang> getDonHangByKhachHang(int idKhachHang) {
+    public List<DonHang> getDonHangDangXuLyByKhachHang(int idKhachHang) {
         List<DonHang> donHangs = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
                 + " WHERE " + DBConstant.DON_HANG_MA_KHACH_HANG + " = " + String.valueOf(idKhachHang)
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_dang_xu_ly) + "'"
                 + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
 
         db = dbHelper.getWritableDatabase();

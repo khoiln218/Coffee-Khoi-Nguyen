@@ -105,7 +105,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
     private void chinhSua(final DonHang donHang, View view) {
         PopupMenu popup = new PopupMenu(mContext, view);
-        popup.inflate(R.menu.menu_option);
+        popup.inflate(R.menu.menu_don_hang);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -245,8 +245,8 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         dialog.show();
     }
 
-    private double getTongTien(List<SanPham> sanPhams) {
-        double tongTien = 0;
+    private long getTongTien(List<SanPham> sanPhams) {
+        long tongTien = 0;
         for (SanPham sanPham : sanPhams) {
             tongTien += sanPham.getDonGia();
         }
