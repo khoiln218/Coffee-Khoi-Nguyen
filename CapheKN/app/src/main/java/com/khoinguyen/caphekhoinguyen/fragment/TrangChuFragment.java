@@ -123,7 +123,6 @@ public class TrangChuFragment extends Fragment {
         mListener = null;
     }
 
-
     public interface OnTrangChuInteractionListener {
         void onBanHangClick();
 

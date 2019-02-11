@@ -9,19 +9,27 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
+import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
+import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
-import com.khoinguyen.caphekhoinguyen.utils.Utils;
+import com.khoinguyen.caphekhoinguyen.model.SanPham;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
 
 public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.ViewHolder> {
     private final List<KhachHang> mValues;
     private Context mContext;
+    private DBController dbController;
+    private KhachHangFragment.OnKhachHangInteractionListener mListener;
 
-    public KhachHangAdapter(Context context, List<KhachHang> items) {
+    public KhachHangAdapter(Context context, List<KhachHang> items, KhachHangFragment.OnKhachHangInteractionListener listener) {
         mContext = context;
         mValues = items;
+        mListener = listener;
+        dbController = new DBController(context);
     }
 
     @NonNull
@@ -36,14 +44,26 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mTvTen.setText(String.format(Locale.US, "%d.", (position + 1)) + holder.mItem.getTenKH());
-        holder.mTvTongTien.setText("0VND");
+        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien(holder.mItem.getId()));
+        holder.mTvTongTien.setText(formattedPrice);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.showToast(mContext, "Click name: " + holder.mItem.getTenKH());
+                mListener.onKhachHangInteraction(holder.mItem.getId());
             }
         });
+    }
+
+    private double tongTien(int id) {
+        List<DonHang> donHangs = dbController.layDonHangTheoKhachHang(id);
+        double tongTien = 0;
+        for (DonHang donHang : donHangs) {
+            for (SanPham sanPham : donHang.getSanPhams()) {
+                tongTien += sanPham.getDonGia();
+            }
+        }
+        return tongTien;
     }
 
     @Override

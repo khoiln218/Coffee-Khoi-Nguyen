@@ -1,6 +1,7 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,8 @@ import java.util.List;
  */
 public class KhachHangFragment extends Fragment {
     private static final String TAG = "KhachHangFragment";
+
+    private OnKhachHangInteractionListener mListener;
 
     private List<KhachHang> mKhachHangs;
     private RecyclerView mRecyclerView;
@@ -102,7 +105,28 @@ public class KhachHangFragment extends Fragment {
 
     private void getKhachHangs() {
         mKhachHangs = dbController.layDanhSachKhachHang();
-        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs);
+        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, mListener);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof TrangChuFragment.OnTrangChuInteractionListener) {
+            mListener = (OnKhachHangInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnOrderInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnKhachHangInteractionListener {
+        void onKhachHangInteraction(int idKhachHang);
     }
 }

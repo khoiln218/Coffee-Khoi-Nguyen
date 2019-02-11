@@ -94,7 +94,8 @@ public class DonHangHandler {
 
     public List<DonHang> getAllDonHang() {
         List<DonHang> donHangs = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG;
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
 
         db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -152,6 +153,36 @@ public class DonHangHandler {
     }
 
     public List<DonHang> getDonHangByKhachHang(int idKhachHang) {
-        return new ArrayList<>();
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_MA_KHACH_HANG + " = " + String.valueOf(idKhachHang)
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
     }
 }

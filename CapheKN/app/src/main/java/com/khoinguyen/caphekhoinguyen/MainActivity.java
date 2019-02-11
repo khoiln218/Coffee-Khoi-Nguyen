@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -19,13 +18,14 @@ import android.widget.TextView;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.CongNoFragment;
+import com.khoinguyen.caphekhoinguyen.fragment.LichSuGiaoDichFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.PhuHoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.SanPhamFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.TrangChuFragment;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TrangChuFragment.OnTrangChuInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TrangChuFragment.OnTrangChuInteractionListener, KhachHangFragment.OnKhachHangInteractionListener {
 
     private static final String TAG = "MainActivity";
     private TextView toolbarTitle;
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToggle.setDrawerIndicatorEnabled(enabled);
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return super.onOptionsItemSelected(item);
     }
+    */
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -234,5 +236,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onKhachHangClick() {
         openKhachHang();
+    }
+
+    @Override
+    public void onKhachHangInteraction(int idKhachHang) {
+        LichSuGiaoDichFragment fragment = new LichSuGiaoDichFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("idKhachHang", idKhachHang);
+        fragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment, getString(R.string.title_lich_su_giao_dich))
+                .addToBackStack(null)
+                .commit();
+        toolbarTitle.setText(R.string.title_lich_su_giao_dich);
     }
 }

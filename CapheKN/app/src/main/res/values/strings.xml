@@ -12,6 +12,7 @@
     <string name="title_top_cong_no">CÔNG NỢ</string>
     <string name="title_khach_hang">KHÁCH HÀNG</string>
     <string name="title_bao_cao">BÁO CÁO</string>
+    <string name="title_lich_su_giao_dich">LỊCH SỬ GIAO DỊCH</string>
 
     <string name="menu_trang_chu">Trang chủ</string>
     <string name="menu_ban_hang">Bán hàng</string>
@@ -20,12 +21,10 @@
     <string name="menu_top_cong_no">Công nợ</string>
     <string name="menu_khach_hang">Khách hàng</string>
     <string name="menu_bao_cao">Báo cáo</string>
+    <string name="menu_lich_su_giao_dich">Lịch sử giao dịch</string>
 
     <string name="status_dang_xu_ly">Đang xử lý</string>
     <string name="status_hoan_thanh">Hoàn thành</string>
     <string name="status_da_huy">Đã hủy</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
