@@ -98,8 +98,4 @@ public class SanPhamHandler {
         db.close();
         return rowCount;
     }
-
-    public List<SanPham> getSanPhamByName(String ten) {
-        return new ArrayList<>();
-    }
 }

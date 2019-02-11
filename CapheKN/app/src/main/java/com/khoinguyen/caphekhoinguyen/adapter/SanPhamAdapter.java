@@ -92,11 +92,12 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
         final EditText etDonGia = (EditText) view.findViewById(R.id.etDonGia);
 
         etTenSanPham.setText(sanPham.getTenSP());
+        etTenSanPham.requestFocus();
         etDonGia.setText(String.valueOf(sanPham.getDonGia()));
 
         builder.setView(view);
 
-        builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sanPham.setTenSP(etTenSanPham.getText().toString());

@@ -5,8 +5,8 @@
         android:id="@+id/option_chinh_sua"
         android:title="Chỉnh sửa" />
 
-    <!--<item-->
-    <!--android:id="@+id/option_huy"-->
-    <!--android:title="Xóa sản phẩm" />-->
+    <item
+        android:id="@+id/option_lich_su"
+        android:title="Lịch sử giao dịch" />
 
 </menu>

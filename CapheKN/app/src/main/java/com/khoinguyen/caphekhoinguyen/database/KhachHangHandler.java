@@ -97,9 +97,5 @@ public class KhachHangHandler {
         db.close();
         return rowCount;
     }
-
-    public List<KhachHang> getKhachHangByName(String ten) {
-        return new ArrayList<>();
-    }
 }
 
