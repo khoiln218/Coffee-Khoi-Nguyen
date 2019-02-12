@@ -3,8 +3,11 @@ package com.khoinguyen.caphekhoinguyen.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,22 +37,23 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private List<DonHang> mValues;
     private List<DonHang> mValuesFilter;
     private Context mContext;
-    private boolean mIsSua;
+    private boolean mIsLichSuGiaoDich;
     private DBController dbController;
+    private SparseBooleanArray itemStateArray = new SparseBooleanArray();
 
     public DonHangAdapter(Context context, List<DonHang> items) {
         mContext = context;
         mValues = items;
-        mIsSua = false;
+        mIsLichSuGiaoDich = false;
         dbController = new DBController(context);
 
         setData();
     }
 
-    public DonHangAdapter(Context context, List<DonHang> items, boolean isSua) {
+    public DonHangAdapter(Context context, List<DonHang> items, boolean isLichSuGiaoDich) {
         mContext = context;
         mValues = items;
-        mIsSua = isSua;
+        mIsLichSuGiaoDich = isLichSuGiaoDich;
         dbController = new DBController(context);
 
         setData();
@@ -92,10 +96,18 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
         boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), mContext.getString(R.string.status_dang_xu_ly));
         holder.mIvTrangThai.setImageResource(isTracking ? R.drawable.orderlist_07 : R.drawable.orderlist_08);
+        holder.mView.setBackgroundColor(itemStateArray.get(position, false) ? ContextCompat.getColor(mContext, R.color.colorAccent) : Color.WHITE);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!itemStateArray.get(position, false)) {
+                    itemStateArray.put(position, true);
+                    holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                } else {
+                    itemStateArray.delete(position);
+                    holder.mView.setBackgroundColor(Color.WHITE);
+                }
             }
         });
 
@@ -121,7 +133,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.option_cap_nhat:
+                    case R.id.option_chinh_sua:
                         capNhat(donHang);
                         break;
                     case R.id.option_huy:
@@ -144,11 +156,14 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         mValues.set(mValues.indexOf(donHang), dh);
                         setData();
                         dbController.capNhatDonHang(dh);
+                        itemStateArray.clear();
                         notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        itemStateArray.clear();
+                        notifyDataSetChanged();
                         dialog.cancel();
                     }
                 });
@@ -164,7 +179,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         donHang.setKhachHang(dh.getKhachHang());
 
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(mContext);
-        builder.setTitle("Bán hàng");
+        builder.setTitle("Chỉnh sửa đơn hàng");
         builder.setCancelable(false);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -202,7 +217,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
         builder.setView(view);
 
-        builder.setPositiveButton(mIsSua ? "Sửa" : "Thêm", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String[] tenSPs = etSanPham.getText().toString().split(",");
@@ -216,22 +231,24 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 }
                 if (donHang.getSanPhams() != null) {
                     dbController.capNhatDonHang(donHang);
-                    if (mIsSua && donHang.getKhachHang().getId() != dh.getKhachHang().getId()) {
+                    if (mIsLichSuGiaoDich && donHang.getKhachHang().getId() != dh.getKhachHang().getId()) {
                         mValues.remove(dh);
                     } else
                         mValues.set(mValues.indexOf(dh), donHang);
                     setData();
-
-                    notifyDataSetChanged();
                 } else {
-                    Utils.showToast(mContext, "Cập nhật đơn hàng thất bại");
+                    Utils.showToast(mContext, "Chỉnh sửa đơn hàng thất bại");
                 }
+                itemStateArray.clear();
+                notifyDataSetChanged();
             }
         });
 
         builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                itemStateArray.clear();
+                notifyDataSetChanged();
                 dialog.cancel();
             }
         });
@@ -250,11 +267,14 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         mValues.set(mValues.indexOf(donHang), dh);
                         setData();
                         dbController.capNhatDonHang(dh);
+                        itemStateArray.clear();
                         notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        itemStateArray.clear();
+                        notifyDataSetChanged();
                         dialog.cancel();
                     }
                 });
@@ -281,6 +301,57 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mValuesFilter.size();
+    }
+
+    public void thanhToanList() {
+        if (itemStateArray.size() > 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien());
+            builder.setTitle("Thanh toán đơn hàng?")
+                    .setMessage("Thành tiền " + formattedPrice)
+                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            for (int i = 0; i < getItemCount(); i++) {
+                                if (itemStateArray.get(i, false)) {
+                                    DonHang dh = mValuesFilter.get(i);
+                                    DonHang donHang = new DonHang();
+                                    donHang.setId(dh.getId());
+                                    donHang.setThoiGianTao(dh.getThoiGianTao());
+                                    donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
+                                    donHang.setKhachHang(dh.getKhachHang());
+                                    donHang.setSanPhams(dh.getSanPhams());
+                                    mValues.set(mValues.indexOf(dh), donHang);
+                                    dbController.capNhatDonHang(donHang);
+                                }
+                            }
+                            itemStateArray.clear();
+                            setData();
+                            notifyDataSetChanged();
+                        }
+                    })
+                    .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            itemStateArray.clear();
+                            notifyDataSetChanged();
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } else {
+            Utils.showToast(mContext, "Vui lòng chọn đơn hàng cần thanh toán ");
+        }
+    }
+
+    private long tongTien() {
+        long tong = 0;
+        for (int i = 0; i < getItemCount(); i++) {
+            if (itemStateArray.get(i, false)) {
+                DonHang dh = mValuesFilter.get(i);
+                tong += getTongTien(dh.getSanPhams());
+            }
+        }
+        return tong;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

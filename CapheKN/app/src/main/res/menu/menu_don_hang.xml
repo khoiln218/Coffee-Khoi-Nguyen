@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/option_cap_nhat"
-        android:title="Cập nhật" />
+        android:id="@+id/option_chinh_sua"
+        android:title="Chỉnh sửa" />
 
     <item
         android:id="@+id/option_huy"
