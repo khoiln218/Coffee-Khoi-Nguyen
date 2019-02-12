@@ -1,6 +1,7 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
@@ -34,10 +36,13 @@ import java.util.List;
 public class BanHangFragment extends Fragment {
     private static final String TAG = "BanHangFragment";
 
+    private OnBanHangInteractionListener mListener;
+
     private List<DonHang> mDonHangs;
     private RecyclerView mRecyclerView;
     private DonHangAdapter mAdapter;
     private DBController dbController;
+    private AlertDialog alertDialog;
 
     public BanHangFragment() {
         // Required empty public constructor
@@ -91,6 +96,26 @@ public class BanHangFragment extends Fragment {
         etSanPham.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         etSanPham.setAdapter(adapterSP);
 
+        final Button btnThemKhachHang = (Button) view.findViewById(R.id.btnThemKhachHang);
+        btnThemKhachHang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null)
+                    mListener.onThemKhachHangClick();
+                alertDialog.cancel();
+            }
+        });
+
+        final Button btnThemSanPham = (Button) view.findViewById(R.id.btnThemSanPham);
+        btnThemSanPham.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null)
+                    mListener.onThemSanPhamClick();
+                alertDialog.cancel();
+            }
+        });
+
         builder.setView(view);
 
         builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
@@ -125,7 +150,7 @@ public class BanHangFragment extends Fragment {
             }
         });
 
-        AlertDialog alertDialog = builder.create();
+        alertDialog = builder.create();
         alertDialog.show();
     }
 
@@ -143,5 +168,28 @@ public class BanHangFragment extends Fragment {
         mDonHangs = dbController.layDanhSachDonHang();
         mAdapter = new DonHangAdapter(getActivity(), mDonHangs);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof TrangChuFragment.OnTrangChuInteractionListener) {
+            mListener = (OnBanHangInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnOrderInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnBanHangInteractionListener {
+        void onThemKhachHangClick();
+
+        void onThemSanPhamClick();
     }
 }

@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_span="2"
             android:hint="Tên khách hàng"
+            android:inputType="textCapWords"
             android:textAlignment="center" />
     </TableRow>
 
@@ -41,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_span="2"
             android:hint="Số điện thoại"
+            android:inputType="phone"
             android:textAlignment="center" />
     </TableRow>
 

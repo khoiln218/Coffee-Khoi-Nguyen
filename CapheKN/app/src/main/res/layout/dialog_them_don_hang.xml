@@ -29,6 +29,13 @@
 
             <requestFocus />
         </AutoCompleteTextView>
+
+        <Button
+            android:id="@+id/btnThemKhachHang"
+            android:layout_width="30dp"
+            android:padding="0dp"
+            android:layout_height="wrap_content"
+            android:text="+" />
     </TableRow>
 
     <TableRow
@@ -51,6 +58,13 @@
             android:imeOptions="actionSearch"
             android:inputType="textAutoComplete|textAutoCorrect"
             android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/btnThemSanPham"
+            android:layout_width="30dp"
+            android:padding="0dp"
+            android:layout_height="wrap_content"
+            android:text="+" />
     </TableRow>
 
 </TableLayout>

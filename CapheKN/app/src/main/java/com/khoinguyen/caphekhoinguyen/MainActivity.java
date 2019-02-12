@@ -18,14 +18,15 @@ import android.widget.TextView;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.CongNoFragment;
-import com.khoinguyen.caphekhoinguyen.fragment.LichSuGiaoDichFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
+import com.khoinguyen.caphekhoinguyen.fragment.LichSuGiaoDichFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.PhuHoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.SanPhamFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.TrangChuFragment;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TrangChuFragment.OnTrangChuInteractionListener, KhachHangFragment.OnKhachHangInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        TrangChuFragment.OnTrangChuInteractionListener, KhachHangFragment.OnKhachHangInteractionListener, BanHangFragment.OnBanHangInteractionListener {
 
     private static final String TAG = "MainActivity";
     private TextView toolbarTitle;
@@ -249,5 +250,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .addToBackStack(null)
                 .commit();
         toolbarTitle.setText(R.string.title_lich_su_giao_dich);
+    }
+
+    @Override
+    public void onThemKhachHangClick() {
+        openKhachHang();
+    }
+
+    @Override
+    public void onThemSanPhamClick() {
+        openSanPham();
     }
 }

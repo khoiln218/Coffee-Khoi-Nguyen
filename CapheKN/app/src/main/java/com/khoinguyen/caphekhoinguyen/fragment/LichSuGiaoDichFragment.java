@@ -55,7 +55,7 @@ public class LichSuGiaoDichFragment extends Fragment {
 
     private void getDonHangs() {
         mDonHangs = dbController.layDonHangDangXuLyTheoKhachHang(idKhachHang);
-        mAdapter = new DonHangAdapter(getActivity(), mDonHangs);
+        mAdapter = new DonHangAdapter(getActivity(), mDonHangs, true);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

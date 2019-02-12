@@ -31,14 +31,25 @@ import java.util.Locale;
 
 public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHolder> {
 
-    private final List<DonHang> mValues;
+    private List<DonHang> mValues;
     private List<DonHang> mValuesFilter;
     private Context mContext;
+    private boolean mIsSua;
     private DBController dbController;
 
     public DonHangAdapter(Context context, List<DonHang> items) {
         mContext = context;
         mValues = items;
+        mIsSua = false;
+        dbController = new DBController(context);
+
+        setData();
+    }
+
+    public DonHangAdapter(Context context, List<DonHang> items, boolean isSua) {
+        mContext = context;
+        mValues = items;
+        mIsSua = isSua;
         dbController = new DBController(context);
 
         setData();
@@ -166,6 +177,8 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         etKhachHang.setAdapter(adapterKH);
         if (donHang.getKhachHang() != null)
             etKhachHang.setText(donHang.getKhachHang().getTenKH());
+        else
+            etKhachHang.setEnabled(false);
         etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -189,7 +202,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
         builder.setView(view);
 
-        builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(mIsSua ? "Sửa" : "Thêm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String[] tenSPs = etSanPham.getText().toString().split(",");
@@ -203,8 +216,12 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 }
                 if (donHang.getSanPhams() != null) {
                     dbController.capNhatDonHang(donHang);
-                    mValues.set(mValues.indexOf(dh), donHang);
+                    if (mIsSua && donHang.getKhachHang().getId() != dh.getKhachHang().getId()) {
+                        mValues.remove(dh);
+                    } else
+                        mValues.set(mValues.indexOf(dh), donHang);
                     setData();
+
                     notifyDataSetChanged();
                 } else {
                     Utils.showToast(mContext, "Cập nhật đơn hàng thất bại");

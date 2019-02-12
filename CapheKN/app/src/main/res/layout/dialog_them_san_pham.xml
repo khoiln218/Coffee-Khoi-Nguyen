@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_span="2"
             android:hint="Tên sản phẩm"
+            android:inputType="textCapSentences"
             android:textAlignment="center" />
     </TableRow>
 
@@ -41,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_span="2"
             android:hint="Đơn giá"
+            android:inputType="number"
             android:textAlignment="center" />
     </TableRow>
 

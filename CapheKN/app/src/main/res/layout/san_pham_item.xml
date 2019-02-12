@@ -1,22 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="10dp">
+    android:layout_margin="5dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="6dp">
 
-    <TextView
-        android:id="@+id/tvTen"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="Bò húc" />
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="10dp">
 
-    <TextView
-        android:id="@+id/tvDonGia"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:padding="5dp"
-        android:text="15.000VND" />
+        <TextView
+            android:id="@+id/tvTen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Bò húc"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tvDonGia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="5dp"
+            android:text="15.000VND" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
