@@ -49,6 +49,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mTvTen.setText(String.format(Locale.US, "%d.", (position + 1)) + holder.mItem.getTenKH());
+        holder.mTvSoDienThoai.setText(holder.mItem.getSDT());
         String formattedPrice = new DecimalFormat("##,##0VNĐ").format(getTongTien(holder.mItem.getId()));
         holder.mTvTongTien.setText(formattedPrice);
 
@@ -147,6 +148,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         final TextView mTvTen;
+        final TextView mTvSoDienThoai;
         final TextView mTvTongTien;
         KhachHang mItem;
 
@@ -154,6 +156,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
             super(view);
             mView = view;
             mTvTen = (TextView) view.findViewById(R.id.tvTen);
+            mTvSoDienThoai = (TextView) view.findViewById(R.id.tvSoDienThoai);
             mTvTongTien = (TextView) view.findViewById(R.id.tvTongTien);
         }
     }
