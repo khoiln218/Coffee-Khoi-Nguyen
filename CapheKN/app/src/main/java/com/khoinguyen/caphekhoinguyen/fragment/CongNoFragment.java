@@ -16,8 +16,11 @@ import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -63,7 +66,13 @@ public class CongNoFragment extends Fragment {
             if (getTongTien(khachHang.getId()) > 0)
                 mKhachHangs.add(khachHang);
         }
-        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, mListener);
+        Collections.sort(mKhachHangs, new Comparator<KhachHang>() {
+            @Override
+            public int compare(KhachHang left, KhachHang right) {
+                return (int) (getTongTien(right.getId()) - getTongTien(left.getId()));
+            }
+        });
+        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_DANG_XY_LY, false, mListener);
         mRecyclerView.setAdapter(mAdapter);
     }
 

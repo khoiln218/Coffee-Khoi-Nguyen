@@ -19,6 +19,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.KhachHangAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
+import com.khoinguyen.caphekhoinguyen.utils.Constants;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.List;
@@ -111,7 +112,7 @@ public class KhachHangFragment extends Fragment {
 
     private void getKhachHangs() {
         mKhachHangs = dbController.layDanhSachKhachHang();
-        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, mListener);
+        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_DANG_XY_LY, true, mListener);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -133,6 +134,6 @@ public class KhachHangFragment extends Fragment {
     }
 
     public interface OnKhachHangInteractionListener {
-        void onKhachHangInteraction(int idKhachHang);
+        void onKhachHangInteraction(int idKhachHang, int trangThai);
     }
 }

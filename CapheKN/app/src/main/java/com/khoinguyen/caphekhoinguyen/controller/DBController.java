@@ -29,12 +29,20 @@ public class DBController {
         return mDonHangHandler.getAllDonHang();
     }
 
+    public List<DonHang> layDonHangDangXuLy() {
+        return mDonHangHandler.getDonHangDangXuLy();
+    }
+
     public List<DonHang> layDonHangTheoNgay(long time) {
         return mDonHangHandler.getDonHangByTime(time);
     }
 
     public List<DonHang> layDonHangDangXuLyTheoKhachHang(int idKhachHang) {
         return mDonHangHandler.getDonHangDangXuLyByKhachHang(idKhachHang);
+    }
+
+    public List<DonHang> layDonHangHoanThanhTheoKhachHang(int idKhachHang) {
+        return mDonHangHandler.getDonHangHoanThanhByKhachHang(idKhachHang);
     }
 
     public void themDonHang(DonHang donHang) {

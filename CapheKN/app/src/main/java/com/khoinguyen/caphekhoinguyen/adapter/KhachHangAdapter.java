@@ -19,6 +19,7 @@ import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.utils.Constants;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -29,10 +30,14 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     private Context mContext;
     private DBController dbController;
     private KhachHangFragment.OnKhachHangInteractionListener mListener;
+    private int mTrangThai;
+    private boolean mIsChinhSua;
 
-    public KhachHangAdapter(Context context, List<KhachHang> items, KhachHangFragment.OnKhachHangInteractionListener listener) {
+    public KhachHangAdapter(Context context, List<KhachHang> items, int trangThai, boolean isChinhSua, KhachHangFragment.OnKhachHangInteractionListener listener) {
         mContext = context;
         mValues = items;
+        mTrangThai = trangThai;
+        mIsChinhSua = isChinhSua;
         mListener = listener;
         dbController = new DBController(context);
     }
@@ -63,7 +68,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
 
     private void openMenu(final KhachHang khachHang, View view) {
         PopupMenu popup = new PopupMenu(mContext, view);
-        popup.inflate(R.menu.menu_khach_hang);
+        popup.inflate(mIsChinhSua ? R.menu.menu_khach_hang : R.menu.menu_khach_hang_2);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -126,11 +131,11 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     }
 
     private void lichSuGiaoDich(KhachHang khachHang) {
-        mListener.onKhachHangInteraction(khachHang.getId());
+        mListener.onKhachHangInteraction(khachHang.getId(), mTrangThai);
     }
 
     private long getTongTien(int id) {
-        List<DonHang> donHangs = dbController.layDonHangDangXuLyTheoKhachHang(id);
+        List<DonHang> donHangs = mTrangThai == Constants.TRANG_THAI_HOAN_THANH ? dbController.layDonHangHoanThanhTheoKhachHang(id) : dbController.layDonHangDangXuLyTheoKhachHang(id);
         long tongTien = 0;
         for (DonHang donHang : donHangs) {
             for (SanPham sanPham : donHang.getSanPhams()) {

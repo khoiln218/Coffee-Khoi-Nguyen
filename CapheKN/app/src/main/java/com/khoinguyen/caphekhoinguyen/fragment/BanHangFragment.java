@@ -149,7 +149,7 @@ public class BanHangFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_ban_hang, menu);
+        inflater.inflate(R.menu.menu_main_ban_hang, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -240,7 +240,6 @@ public class BanHangFragment extends Fragment {
                 if (donHang.getSanPhams() != null) {
                     dbController.themDonHang(donHang);
                     mDonHangs.add(0, donHang);
-                    mAdapter.setData();
                     mAdapter.notifyDataSetChanged();
                 } else {
                     Utils.showToast(getActivity(), "Thêm đơn hàng thất bại");
@@ -270,7 +269,7 @@ public class BanHangFragment extends Fragment {
     }
 
     private void getDonHangs() {
-        mDonHangs = dbController.layDanhSachDonHang();
+        mDonHangs = dbController.layDonHangDangXuLy();
         mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new OnDonHangListerner() {
             @Override
             public void onShow() {

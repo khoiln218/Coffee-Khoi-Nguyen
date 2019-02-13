@@ -20,6 +20,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
+import com.khoinguyen.caphekhoinguyen.utils.Constants;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -40,6 +41,7 @@ public class LichSuGiaoDichFragment extends Fragment {
     private MenuItem actionChinhSua;
     private DBController dbController;
     private int idKhachHang;
+    private int trangThai;
 
     public LichSuGiaoDichFragment() {
         // Required empty public constructor
@@ -106,6 +108,11 @@ public class LichSuGiaoDichFragment extends Fragment {
         });
 
         idKhachHang = getArguments().getInt("idKhachHang");
+        trangThai = getArguments().getInt("trangThai");
+
+        if (trangThai == Constants.TRANG_THAI_HOAN_THANH) {
+            layoutTotal.setVisibility(View.GONE);
+        }
 
         dbController = new DBController(getActivity());
         return view;
@@ -126,7 +133,7 @@ public class LichSuGiaoDichFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_ban_hang, menu);
+        inflater.inflate(R.menu.menu_main_ban_hang, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -157,7 +164,7 @@ public class LichSuGiaoDichFragment extends Fragment {
     }
 
     private void getDonHangs() {
-        mDonHangs = dbController.layDonHangDangXuLyTheoKhachHang(idKhachHang);
+        mDonHangs = trangThai == Constants.TRANG_THAI_DANG_XY_LY ? dbController.layDonHangDangXuLyTheoKhachHang(idKhachHang) : dbController.layDonHangHoanThanhTheoKhachHang(idKhachHang);
         mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new BanHangFragment.OnDonHangListerner() {
             @Override
             public void onShow() {
@@ -174,7 +181,7 @@ public class LichSuGiaoDichFragment extends Fragment {
                 String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
                 tvTotalCost.setText(formattedPrice);
             }
-        }, true);
+        }, true, trangThai);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

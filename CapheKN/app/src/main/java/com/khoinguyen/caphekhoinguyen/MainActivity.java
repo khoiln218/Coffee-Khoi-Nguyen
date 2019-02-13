@@ -240,10 +240,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onKhachHangInteraction(int idKhachHang) {
+    public void onKhachHangInteraction(int idKhachHang, int trangThai) {
         LichSuGiaoDichFragment fragment = new LichSuGiaoDichFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("idKhachHang", idKhachHang);
+        bundle.putInt("trangThai", trangThai);
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment, getString(R.string.title_lich_su_giao_dich))
