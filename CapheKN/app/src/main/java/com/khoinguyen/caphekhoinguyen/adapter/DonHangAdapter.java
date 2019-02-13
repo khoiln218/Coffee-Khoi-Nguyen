@@ -82,7 +82,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         List<SanPham> sanPhams = holder.mItem.getSanPhams();
         if (sanPhams != null) {
             holder.mTvSanPham.setText(getSanPhamList(sanPhams));
-            String formattedPrice = new DecimalFormat("##,##0VNĐ").format(getTongTien(sanPhams));
+            String formattedPrice = new DecimalFormat("##,##0VNĐ").format(holder.mItem.getTongTien());
             holder.mTvTongTien.setText(formattedPrice);
         } else {
             holder.mTvSanPham.setText("---");
@@ -186,7 +186,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                     public void onClick(DialogInterface dialog, int id) {
                         DonHang dh = donHang;
                         donHang.setTrangThai(mContext.getString(R.string.status_da_huy));
-                        mValues.set(mValues.indexOf(donHang), dh);
+                        mValues.remove(dh);
                         dbController.capNhatDonHang(dh);
                         clearSelect();
                     }
@@ -306,14 +306,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         dialog.show();
     }
 
-    private long getTongTien(List<SanPham> sanPhams) {
-        long tongTien = 0;
-        for (SanPham sanPham : sanPhams) {
-            tongTien += sanPham.getDonGia();
-        }
-        return tongTien;
-    }
-
     private String getSanPhamList(List<SanPham> sanPhams) {
         String sanPhamString = sanPhams.get(0).getTenSP();
         for (int i = 1; i < sanPhams.size(); i++) {
@@ -369,7 +361,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         for (int i = 0; i < getItemCount(); i++) {
             if (itemStateArray.get(i, false)) {
                 DonHang dh = mValues.get(i);
-                tong += getTongTien(dh.getSanPhams());
+                tong += dh.getTongTien();
             }
         }
         return tong;

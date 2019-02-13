@@ -93,4 +93,12 @@ public class DonHang {
             sanPhams.add(sanPhamHandler.getSanPhamById(id));
         }
     }
+
+    public long getTongTien() {
+        long tongTien = 0;
+        for (SanPham sanPham : sanPhams) {
+            tongTien += sanPham.getDonGia();
+        }
+        return tongTien;
+    }
 }

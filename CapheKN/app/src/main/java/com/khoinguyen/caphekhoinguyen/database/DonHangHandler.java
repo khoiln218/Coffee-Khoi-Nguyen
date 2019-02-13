@@ -9,11 +9,14 @@ import android.text.TextUtils;
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
+import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class DonHangHandler {
+    private final static String TAG = "DonHangHandler";
 
     private SQLiteDatabase db;
     private DBHelper dbHelper;
@@ -185,10 +188,6 @@ public class DonHangHandler {
         return donHangs;
     }
 
-    public List<DonHang> getDonHangByTime(long time) {
-        return new ArrayList<>();
-    }
-
     public List<DonHang> getDonHangDangXuLyByKhachHang(int idKhachHang) {
         List<DonHang> donHangs = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
@@ -230,6 +229,475 @@ public class DonHangHandler {
                 + " WHERE " + DBConstant.DON_HANG_MA_KHACH_HANG + " = " + String.valueOf(idKhachHang)
                 + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_hoan_thanh) + "'"
                 + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> getDonHangByDate(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, day, 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " != " + "'" + context.getString(R.string.status_da_huy) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "getDonHangByDate: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> getDonHangByWeek(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, day - current.get(Calendar.DAY_OF_WEEK_IN_MONTH), 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " != " + "'" + context.getString(R.string.status_da_huy) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "getDonHangByWeek: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> getDonHangByMonth(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, 1, 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " != " + "'" + context.getString(R.string.status_da_huy) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "getDonHangByMonth: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> layDonHangHoanThanhTheoNgay(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, day, 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_hoan_thanh) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "layDonHangHoanThanhTheoNgay: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> layDonHangDangXuLyTheoNgay(long time) {
+
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, day, 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_dang_xu_ly) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "layDonHangDangXuLyTheoNgay: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> layDonHangHoanThanhTheoTuan(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, day - current.get(Calendar.DAY_OF_WEEK_IN_MONTH), 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_hoan_thanh) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "layDonHangHoanThanhTheoTuan: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> layDonHangDangXuLyTheoTuan(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, day - current.get(Calendar.DAY_OF_WEEK_IN_MONTH), 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_dang_xu_ly) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "layDonHangDangXuLyTheoTuan: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> layDonHangHoanThanhTheoThang(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, 1, 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_hoan_thanh) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "layDonHangHoanThanhTheoThang: " + selectQuery);
+
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DonHang donHang = new DonHang();
+                donHang.setId(cursor.getInt(0));
+                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setTrangThai(cursor.getString(2));
+
+                String maKH = cursor.getString(3);
+                if (!TextUtils.isEmpty(maKH)) {
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    donHang.setKhachHang(khachHang);
+                }
+
+                String sanPhams = cursor.getString(4);
+                if (!TextUtils.isEmpty(sanPhams)) {
+                    donHang.setSanPhamsFromJsonString(sanPhams, sanPhamHandler);
+                }
+                donHangs.add(donHang);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return donHangs;
+    }
+
+    public List<DonHang> layDonHangDangXuLyTheoThang(long time) {
+        Calendar current = Calendar.getInstance();
+        current.setTimeInMillis(time);
+        int year = current.get(Calendar.YEAR);
+        int month = current.get(Calendar.MONTH);
+        int day = current.get(Calendar.DAY_OF_MONTH);
+
+        Calendar to = Calendar.getInstance();
+        to.set(year, month, 1, 0, 0, 0);
+        to.clear(Calendar.MILLISECOND);
+
+        Calendar from = Calendar.getInstance();
+        from.set(year, month, day, 23, 59, 59);
+        from.clear(Calendar.MILLISECOND);
+
+        List<DonHang> donHangs = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
+                + " WHERE " + DBConstant.DON_HANG_THOI_GIAN_TAO + " > " + to.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_THOI_GIAN_TAO + " < " + from.getTimeInMillis()
+                + " AND " + DBConstant.DON_HANG_TRANG_THAI + " = " + "'" + context.getString(R.string.status_dang_xu_ly) + "'"
+                + " ORDER BY " + DBConstant.DON_HANG_THOI_GIAN_TAO + " DESC";
+
+        LogUtils.d(TAG, "layDonHangDangXuLyTheoThang: " + selectQuery);
 
         db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
