@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
@@ -37,22 +38,25 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private List<DonHang> mValues;
     private List<DonHang> mValuesFilter;
     private Context mContext;
+    private BanHangFragment.OnDonHangListerner mListerner;
     private boolean mIsLichSuGiaoDich;
     private DBController dbController;
     private SparseBooleanArray itemStateArray = new SparseBooleanArray();
 
-    public DonHangAdapter(Context context, List<DonHang> items) {
+    public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner listerner) {
         mContext = context;
         mValues = items;
+        mListerner = listerner;
         mIsLichSuGiaoDich = false;
         dbController = new DBController(context);
 
         setData();
     }
 
-    public DonHangAdapter(Context context, List<DonHang> items, boolean isLichSuGiaoDich) {
+    public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner listerner, boolean isLichSuGiaoDich) {
         mContext = context;
         mValues = items;
+        mListerner = listerner;
         mIsLichSuGiaoDich = isLichSuGiaoDich;
         dbController = new DBController(context);
 
@@ -104,9 +108,15 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 if (!itemStateArray.get(position, false)) {
                     itemStateArray.put(position, true);
                     holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                    mListerner.onShow();
+                    selectChange();
                 } else {
                     itemStateArray.delete(position);
                     holder.mView.setBackgroundColor(Color.WHITE);
+                    if (itemStateArray.size() == 0)
+                        mListerner.onHide();
+                    else mListerner.onShow();
+                    selectChange();
                 }
             }
         });
@@ -124,6 +134,17 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 chinhSua(holder.mItem, holder.btnChinhSua);
             }
         });
+    }
+
+    private void selectChange() {
+        mListerner.onUpdateTongTien(tongTien());
+    }
+
+    public void clearSelect() {
+        itemStateArray.clear();
+        mListerner.onHide();
+        notifyDataSetChanged();
+        selectChange();
     }
 
     private void chinhSua(final DonHang donHang, View view) {
@@ -156,14 +177,12 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         mValues.set(mValues.indexOf(donHang), dh);
                         setData();
                         dbController.capNhatDonHang(dh);
-                        itemStateArray.clear();
-                        notifyDataSetChanged();
+                        clearSelect();
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        itemStateArray.clear();
-                        notifyDataSetChanged();
+                        clearSelect();
                         dialog.cancel();
                     }
                 });
@@ -239,16 +258,14 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 } else {
                     Utils.showToast(mContext, "Chỉnh sửa đơn hàng thất bại");
                 }
-                itemStateArray.clear();
-                notifyDataSetChanged();
+                clearSelect();
             }
         });
 
         builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                itemStateArray.clear();
-                notifyDataSetChanged();
+                clearSelect();
                 dialog.cancel();
             }
         });
@@ -267,14 +284,12 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         mValues.set(mValues.indexOf(donHang), dh);
                         setData();
                         dbController.capNhatDonHang(dh);
-                        itemStateArray.clear();
-                        notifyDataSetChanged();
+                        clearSelect();
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        itemStateArray.clear();
-                        notifyDataSetChanged();
+                        clearSelect();
                         dialog.cancel();
                     }
                 });
@@ -324,15 +339,13 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                                     dbController.capNhatDonHang(donHang);
                                 }
                             }
-                            itemStateArray.clear();
                             setData();
-                            notifyDataSetChanged();
+                            clearSelect();
                         }
                     })
                     .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            itemStateArray.clear();
-                            notifyDataSetChanged();
+                            clearSelect();
                             dialog.cancel();
                         }
                     });

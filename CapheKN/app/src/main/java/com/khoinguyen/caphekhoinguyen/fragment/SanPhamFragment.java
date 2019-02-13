@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.SanPhamAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.List;
 
@@ -71,11 +73,15 @@ public class SanPhamFragment extends Fragment {
         builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sanPham.setTenSP(etTenSanPham.getText().toString());
-                sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
-                dbController.themSanPham(sanPham);
-                mSanPhams.add(sanPham);
-                mAdapter.notifyDataSetChanged();
+                if (!TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) && !TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
+                    sanPham.setTenSP(etTenSanPham.getText().toString().trim());
+                    sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
+                    dbController.themSanPham(sanPham);
+                    mSanPhams.add(sanPham);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Utils.showToast(getActivity(), "Vui lòng nhập tên và giá sản phẩm");
+                }
             }
         });
 

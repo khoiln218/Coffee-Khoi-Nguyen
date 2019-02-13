@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.KhachHangAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.List;
 
@@ -74,11 +76,15 @@ public class KhachHangFragment extends Fragment {
         builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                khachHang.setTenKH(etTenKhachHang.getText().toString());
-                khachHang.setSDT(etSoDienThoai.getText().toString());
-                dbController.themKhachHang(khachHang);
-                mKhachHangs.add(khachHang);
-                mAdapter.notifyDataSetChanged();
+                if (!TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
+                    khachHang.setTenKH(etTenKhachHang.getText().toString().trim());
+                    khachHang.setSDT(etSoDienThoai.getText().toString().trim());
+                    dbController.themKhachHang(khachHang);
+                    mKhachHangs.add(khachHang);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Utils.showToast(getActivity(), "Vui lòng nhập tên khách hàng");
+                }
             }
         });
 
