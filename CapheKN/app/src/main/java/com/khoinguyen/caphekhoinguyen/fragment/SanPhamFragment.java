@@ -40,8 +40,8 @@ public class SanPhamFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_ban_hang, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+        View view = inflater.inflate(R.layout.fragment_san_pham, container, false);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvSanPham);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -50,7 +50,7 @@ public class LichSuGiaoDichFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lich_su_giao_dich, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvLichSuGiaoDich);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         layoutTotal = view.findViewById(R.id.layoutTotal);
         btnGoUpDown = (ImageButton) view.findViewById(R.id.btnGoUpDown);
