@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <group android:checkableBehavior="single">
+    <group>
         <item
-            android:id="@+id/nav_ban_hang"
-            android:title="@string/menu_ban_hang" />
-        <item
-            android:id="@+id/nav_sp_dv"
-            android:title="@string/menu_sp_dv" />
-        <item
-            android:id="@+id/nav_top_phu_ho"
-            android:title="@string/menu_top_phu_ho" />
-        <item
-            android:id="@+id/nav_top_cong_no"
-            android:title="@string/menu_top_cong_no" />
-        <item
-            android:id="@+id/nav_khach_hang"
-            android:title="@string/menu_khach_hang" />
-        <item
-            android:id="@+id/nav_bao_cao"
-            android:title="@string/menu_bao_cao" />
+            android:id="@+id/nav_cai_dat"
+            android:title="Cài đặt" />
     </group>
 </menu>

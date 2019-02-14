@@ -95,56 +95,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToggle.setDrawerIndicatorEnabled(enabled);
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    */
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.nav_ban_hang:
-                openBanHang();
-                break;
-            case R.id.nav_sp_dv:
-                openSanPham();
-                break;
-            case R.id.nav_top_phu_ho:
-                openPhuHo();
-                break;
-            case R.id.nav_top_cong_no:
-                openCongNo();
-                break;
-            case R.id.nav_khach_hang:
-                openKhachHang();
-                break;
-            case R.id.nav_bao_cao:
-                openBaoCao();
+            case R.id.nav_cai_dat:
+                caiDat();
                 break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void caiDat() {
     }
 
     private void openHome() {

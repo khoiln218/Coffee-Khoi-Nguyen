@@ -7,14 +7,26 @@
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Light">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/nav_app_icon"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="20dp"
-        />
+        android:orientation="vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Cà phê Khôi Nguyên"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="0785938443"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 
 </LinearLayout>
