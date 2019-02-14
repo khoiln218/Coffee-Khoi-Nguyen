@@ -1,10 +1,10 @@
 package com.khoinguyen.caphekhoinguyen.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,25 +39,29 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
     private List<DonHang> mValues;
     private Context mContext;
-    private BanHangFragment.OnDonHangListerner mListerner;
+    private BanHangFragment.OnDonHangListerner mDonHangListerner;
+    private BanHangFragment.OnBanHangInteractionListener mBanHangListerner;
     private boolean mIsLichSuGiaoDich;
     private int mTrangThai;
     private DBController dbController;
+    private AlertDialog alertDialog;
     private SparseBooleanArray itemStateArray = new SparseBooleanArray();
 
-    public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner listerner) {
+    public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner donHangListerner, BanHangFragment.OnBanHangInteractionListener banHangListener) {
         mContext = context;
         mValues = items;
-        mListerner = listerner;
+        mDonHangListerner = donHangListerner;
+        mBanHangListerner = banHangListener;
         mIsLichSuGiaoDich = false;
         mTrangThai = Constants.TRANG_THAI_DANG_XY_LY;
         dbController = new DBController(context);
     }
 
-    public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner listerner, boolean isLichSuGiaoDich, int trangThai) {
+    public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner donHangListerner, BanHangFragment.OnBanHangInteractionListener banHangListener, boolean isLichSuGiaoDich, int trangThai) {
         mContext = context;
         mValues = items;
-        mListerner = listerner;
+        mDonHangListerner = donHangListerner;
+        mBanHangListerner = banHangListener;
         mIsLichSuGiaoDich = isLichSuGiaoDich;
         mTrangThai = trangThai;
         dbController = new DBController(context);
@@ -99,14 +104,14 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                     if (!itemStateArray.get(position, false)) {
                         itemStateArray.put(position, true);
                         holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-                        mListerner.onShow();
+                        mDonHangListerner.onShow();
                         selectChange();
                     } else {
                         itemStateArray.delete(position);
                         holder.mView.setBackgroundColor(Color.WHITE);
                         if (itemStateArray.size() == 0)
-                            mListerner.onHide();
-                        else mListerner.onShow();
+                            mDonHangListerner.onHide();
+                        else mDonHangListerner.onShow();
                         selectChange();
                     }
                 } else if (mTrangThai == Constants.TRANG_THAI_HOAN_THANH) {
@@ -149,12 +154,12 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     }
 
     private void selectChange() {
-        mListerner.onUpdateTongTien(tongTien());
+        mDonHangListerner.onUpdateTongTien(tongTien());
     }
 
     public void clearSelect() {
         itemStateArray.clear();
-        mListerner.onHide();
+        mDonHangListerner.onHide();
         notifyDataSetChanged();
         selectChange();
     }
@@ -208,7 +213,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         donHang.setTrangThai(dh.getTrangThai());
         donHang.setKhachHang(dh.getKhachHang());
 
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(mContext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("Chỉnh sửa đơn hàng");
         builder.setCancelable(false);
 
@@ -245,6 +250,26 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         etSanPham.setText(sanPhamString);
         etSanPham.requestFocus();
 
+        final Button btnThemKhachHang = (Button) view.findViewById(R.id.btnThemKhachHang);
+        btnThemKhachHang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBanHangListerner != null)
+                    mBanHangListerner.onThemKhachHangClick();
+                alertDialog.cancel();
+            }
+        });
+
+        final Button btnThemSanPham = (Button) view.findViewById(R.id.btnThemSanPham);
+        btnThemSanPham.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBanHangListerner != null)
+                    mBanHangListerner.onThemSanPhamClick();
+                alertDialog.cancel();
+            }
+        });
+
         builder.setView(view);
 
         builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
@@ -280,7 +305,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             }
         });
 
-        android.support.v7.app.AlertDialog alertDialog = builder.create();
+        alertDialog = builder.create();
         alertDialog.show();
     }
 

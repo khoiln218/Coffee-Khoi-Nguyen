@@ -1,5 +1,6 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class LichSuGiaoDichFragment extends Fragment {
+    private BanHangFragment.OnBanHangInteractionListener mListener;
+
     private List<DonHang> mDonHangs;
     private RecyclerView mRecyclerView;
     private DonHangAdapter mAdapter;
@@ -181,7 +184,24 @@ public class LichSuGiaoDichFragment extends Fragment {
                 String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
                 tvTotalCost.setText(formattedPrice);
             }
-        }, true, trangThai);
+        }, mListener, true, trangThai);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof TrangChuFragment.OnTrangChuInteractionListener) {
+            mListener = (BanHangFragment.OnBanHangInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnOrderInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 }

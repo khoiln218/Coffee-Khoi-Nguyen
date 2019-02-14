@@ -286,7 +286,7 @@ public class BanHangFragment extends Fragment {
                 String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
                 tvTotalCost.setText(formattedPrice);
             }
-        });
+        }, mListener);
         mRecyclerView.setAdapter(mAdapter);
     }
 
