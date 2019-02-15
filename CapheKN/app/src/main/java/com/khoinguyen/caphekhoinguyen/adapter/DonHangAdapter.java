@@ -309,15 +309,19 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         alertDialog.show();
     }
 
-    private void thanhToan(final DonHang donHang) {
+    private void thanhToan(final DonHang dh) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setMessage("Thanh toán đơn hàng?")
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        DonHang dh = donHang;
+                        DonHang donHang = new DonHang();
+                        donHang.setId(dh.getId());
+                        donHang.setThoiGianTao(dh.getThoiGianTao());
                         donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
-                        mValues.set(mValues.indexOf(donHang), dh);
-                        dbController.capNhatDonHang(dh);
+                        donHang.setKhachHang(dh.getKhachHang());
+                        donHang.setSanPhams(dh.getSanPhams());
+                        mValues.remove(dh);
+                        dbController.capNhatDonHang(donHang);
                         clearSelect();
                     }
                 })
@@ -361,7 +365,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                                     donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
                                     donHang.setKhachHang(dh.getKhachHang());
                                     donHang.setSanPhams(dh.getSanPhams());
-                                    mValues.set(mValues.indexOf(dh), donHang);
+                                    mValues.remove(dh);
                                     dbController.capNhatDonHang(donHang);
                                 }
                             }
