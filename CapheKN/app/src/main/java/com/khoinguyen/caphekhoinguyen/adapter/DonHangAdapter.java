@@ -54,7 +54,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         mBanHangListerner = banHangListener;
         mIsLichSuGiaoDich = false;
         mTrangThai = Constants.TRANG_THAI_DANG_XY_LY;
-        dbController = new DBController(context);
+        dbController = DBController.getInstance(context);
     }
 
     public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner donHangListerner, BanHangFragment.OnBanHangInteractionListener banHangListener, boolean isLichSuGiaoDich, int trangThai) {
@@ -64,7 +64,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         mBanHangListerner = banHangListener;
         mIsLichSuGiaoDich = isLichSuGiaoDich;
         mTrangThai = trangThai;
-        dbController = new DBController(context);
+        dbController = DBController.getInstance(context);
     }
 
     @Override

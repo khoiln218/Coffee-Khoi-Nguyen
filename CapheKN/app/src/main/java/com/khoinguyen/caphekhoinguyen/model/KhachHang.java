@@ -1,29 +1,18 @@
 package com.khoinguyen.caphekhoinguyen.model;
 
 public class KhachHang {
-    private int id;
+    private String id;
     private String tenKH;
     private String sDT;
 
     public KhachHang() {
     }
 
-    public KhachHang(int id, String tenKH, String sDT) {
-        this.id = id;
-        this.tenKH = tenKH;
-        this.sDT = sDT;
-    }
-
-    public KhachHang(int id, String tenKH) {
-        this.id = id;
-        this.tenKH = tenKH;
-    }
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

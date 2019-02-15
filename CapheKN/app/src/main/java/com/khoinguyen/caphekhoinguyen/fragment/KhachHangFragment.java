@@ -19,6 +19,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.KhachHangAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
+import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
@@ -55,7 +56,7 @@ public class KhachHangFragment extends Fragment {
             }
         });
 
-        dbController = new DBController(getActivity());
+        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -78,6 +79,7 @@ public class KhachHangFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
+                    khachHang.setId(RealtimeDatabaseController.getInstance().genKeyKhachHang());
                     khachHang.setTenKH(etTenKhachHang.getText().toString().trim());
                     khachHang.setSDT(etSoDienThoai.getText().toString().trim());
                     dbController.themKhachHang(khachHang);
@@ -134,6 +136,6 @@ public class KhachHangFragment extends Fragment {
     }
 
     public interface OnKhachHangInteractionListener {
-        void onKhachHangInteraction(int idKhachHang, int trangThai);
+        void onKhachHangInteraction(String idKhachHang, int trangThai);
     }
 }

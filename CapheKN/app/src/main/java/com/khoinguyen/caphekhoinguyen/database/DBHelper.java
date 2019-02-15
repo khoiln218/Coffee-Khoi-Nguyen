@@ -9,12 +9,21 @@ import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 public class DBHelper extends SQLiteOpenHelper {
     private final String TAG = "DBHelper";
 
+    private static DBHelper INSTANCE = null;
+
     public static final String DATABASE_NAME = "khoinguyen.db";
     public static final int DATABASE_VERSION = 1;
 
-    public DBHelper(Context context) {
+    private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         LogUtils.d(TAG, "init");
+    }
+
+    public static DBHelper getInstance(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = new DBHelper(context);
+        }
+        return (INSTANCE);
     }
 
     @Override

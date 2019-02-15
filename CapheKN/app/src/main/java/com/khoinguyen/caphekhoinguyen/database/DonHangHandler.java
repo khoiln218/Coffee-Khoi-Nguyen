@@ -27,7 +27,7 @@ public class DonHangHandler {
     private SanPhamHandler sanPhamHandler;
 
     public DonHangHandler(Context context) {
-        this.dbHelper = new DBHelper(context);
+        this.dbHelper = DBHelper.getInstance(context);
         this.context = context;
         khachHangHandler = new KhachHangHandler(context);
         sanPhamHandler = new SanPhamHandler(context);
@@ -37,6 +37,7 @@ public class DonHangHandler {
         db = dbHelper.getWritableDatabase();
 
         values = new ContentValues();
+        values.put(DBConstant.DON_HANG_ID, donHang.getId());
         values.put(DBConstant.DON_HANG_THOI_GIAN_TAO, donHang.getThoiGianTao());
         values.put(DBConstant.DON_HANG_TRANG_THAI, donHang.getTrangThai());
         values.put(DBConstant.DON_HANG_MA_KHACH_HANG, donHang.getKhachHang() != null ? donHang.getKhachHang().getId() : null);
@@ -66,7 +67,7 @@ public class DonHangHandler {
     Select a don hang by ID
      */
 
-    public DonHang getDonHangById(int id) {
+    public DonHang getDonHangById(String id) {
         db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DBConstant.TABLE_NAME_DON_HANG, new String[]{DBConstant.DON_HANG_ID,
                         DBConstant.DON_HANG_THOI_GIAN_TAO, DBConstant.DON_HANG_TRANG_THAI, DBConstant.DON_HANG_MA_KHACH_HANG, DBConstant.DON_HANG_SAN_PHAM}, DBConstant.DON_HANG_ID + "=?",
@@ -75,13 +76,13 @@ public class DonHangHandler {
             cursor.moveToFirst();
 
         DonHang donHang = new DonHang();
-        donHang.setId(cursor.getInt(0));
-        donHang.setThoiGianTao(cursor.getLong(1));
+        donHang.setId(cursor.getString(0));
+        donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
         donHang.setTrangThai(cursor.getString(2));
 
         String maKH = cursor.getString(3);
         if (!TextUtils.isEmpty(maKH)) {
-            KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+            KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
             donHang.setKhachHang(khachHang);
         }
 
@@ -109,13 +110,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -166,13 +167,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -188,7 +189,7 @@ public class DonHangHandler {
         return donHangs;
     }
 
-    public List<DonHang> getDonHangDangXuLyByKhachHang(int idKhachHang) {
+    public List<DonHang> getDonHangDangXuLyByKhachHang(String idKhachHang) {
         List<DonHang> donHangs = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
                 + " WHERE " + DBConstant.DON_HANG_MA_KHACH_HANG + " = " + String.valueOf(idKhachHang)
@@ -201,13 +202,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -223,7 +224,7 @@ public class DonHangHandler {
         return donHangs;
     }
 
-    public List<DonHang> getDonHangHoanThanhByKhachHang(int idKhachHang) {
+    public List<DonHang> getDonHangHoanThanhByKhachHang(String idKhachHang) {
         List<DonHang> donHangs = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_DON_HANG
                 + " WHERE " + DBConstant.DON_HANG_MA_KHACH_HANG + " = " + String.valueOf(idKhachHang)
@@ -236,13 +237,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -288,13 +289,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -340,13 +341,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -392,13 +393,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -444,13 +445,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -497,13 +498,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -549,13 +550,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -601,13 +602,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -653,13 +654,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 
@@ -705,13 +706,13 @@ public class DonHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 DonHang donHang = new DonHang();
-                donHang.setId(cursor.getInt(0));
-                donHang.setThoiGianTao(cursor.getLong(1));
+                donHang.setId(cursor.getString(0));
+                donHang.setThoiGianTao(Long.valueOf(cursor.getString(1)));
                 donHang.setTrangThai(cursor.getString(2));
 
                 String maKH = cursor.getString(3);
                 if (!TextUtils.isEmpty(maKH)) {
-                    KhachHang khachHang = khachHangHandler.getKhachHangById(Integer.valueOf(maKH));
+                    KhachHang khachHang = khachHangHandler.getKhachHangById(maKH);
                     donHang.setKhachHang(khachHang);
                 }
 

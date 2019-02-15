@@ -1,9 +1,9 @@
 package com.khoinguyen.caphekhoinguyen.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,7 +29,7 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
     public SanPhamAdapter(Context context, List<SanPham> items) {
         this.mContext = context;
         this.mValues = items;
-        dbController = new DBController(context);
+        dbController = DBController.getInstance(context);
     }
 
     @NonNull
@@ -65,9 +65,6 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
                     case R.id.option_chinh_sua:
                         chinhSua(sanPham);
                         break;
-                    case R.id.option_huy:
-                        huy(sanPham);
-                        break;
                 }
                 return false;
             }
@@ -81,7 +78,7 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
         sanPham.setTenSP(sp.getTenSP());
         sanPham.setDonGia(sp.getDonGia());
 
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(mContext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("Chỉnh sửa sản phẩm");
         builder.setCancelable(false);
 
@@ -115,27 +112,8 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
             }
         });
 
-        android.support.v7.app.AlertDialog alertDialog = builder.create();
+        AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    private void huy(final SanPham sanPham) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setMessage("Xóa sản phẩm này?")
-                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mValues.remove(sanPham);
-                        dbController.xoaSanPham(sanPham.getId());
-                        notifyDataSetChanged();
-                    }
-                })
-                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     @Override

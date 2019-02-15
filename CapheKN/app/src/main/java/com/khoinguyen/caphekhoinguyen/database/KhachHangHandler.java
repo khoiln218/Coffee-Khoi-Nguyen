@@ -17,13 +17,14 @@ public class KhachHangHandler {
     private ContentValues values;
 
     public KhachHangHandler(Context context) {
-        this.dbHelper = new DBHelper(context);
+        this.dbHelper = DBHelper.getInstance(context);
     }
 
     public void insertKhachHang(KhachHang khachHang) {
         db = dbHelper.getWritableDatabase();
 
         values = new ContentValues();
+        values.put(DBConstant.KHACH_HANG_ID, khachHang.getId());
         values.put(DBConstant.KHACH_HANG_TEN, khachHang.getTenKH());
         values.put(DBConstant.KHACH_HANG_SDT, khachHang.getSDT());
 
@@ -43,7 +44,7 @@ public class KhachHangHandler {
         return rowUpdate;
     }
 
-    public KhachHang getKhachHangById(int id) {
+    public KhachHang getKhachHangById(String id) {
         db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DBConstant.TABLE_NAME_KHACH_HANG, new String[]{DBConstant.KHACH_HANG_ID,
                         DBConstant.KHACH_HANG_TEN, DBConstant.KHACH_HANG_SDT}, DBConstant.KHACH_HANG_ID + "=?",
@@ -70,7 +71,7 @@ public class KhachHangHandler {
         if (cursor.moveToFirst()) {
             do {
                 KhachHang khachHang = new KhachHang();
-                khachHang.setId(cursor.getInt(0));
+                khachHang.setId(cursor.getString(0));
                 khachHang.setTenKH(cursor.getString(1));
                 khachHang.setSDT(cursor.getString(2));
                 khachHangs.add(khachHang);
@@ -81,7 +82,7 @@ public class KhachHangHandler {
         return khachHangs;
     }
 
-    public void deleteKhachHang(int id) {
+    public void deleteKhachHang(String id) {
         db = dbHelper.getWritableDatabase();
         db.delete(DBConstant.TABLE_NAME_KHACH_HANG, DBConstant.KHACH_HANG_ID + " = ?",
                 new String[]{String.valueOf(id)});

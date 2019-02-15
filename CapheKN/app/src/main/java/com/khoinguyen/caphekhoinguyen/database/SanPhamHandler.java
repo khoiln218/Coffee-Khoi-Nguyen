@@ -17,13 +17,14 @@ public class SanPhamHandler {
     private ContentValues values;
 
     public SanPhamHandler(Context context) {
-        this.dbHelper = new DBHelper(context);
+        this.dbHelper = DBHelper.getInstance(context);
     }
 
     public void insertSanPham(SanPham sanPham) {
         db = dbHelper.getWritableDatabase();
 
         values = new ContentValues();
+        values.put(DBConstant.SAN_PHAM_ID, sanPham.getId());
         values.put(DBConstant.SAN_PHAM_TEN, sanPham.getTenSP());
         values.put(DBConstant.SAN_PHAM_DON_GIA, sanPham.getDonGia());
 
@@ -44,7 +45,7 @@ public class SanPhamHandler {
         return rowUpdate;
     }
 
-    public SanPham getSanPhamById(int id) {
+    public SanPham getSanPhamById(String id) {
         db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DBConstant.TABLE_NAME_SAN_PHAM, new String[]{DBConstant.SAN_PHAM_ID,
                         DBConstant.SAN_PHAM_TEN, DBConstant.SAN_PHAM_DON_GIA}, DBConstant.SAN_PHAM_ID + "=?",
@@ -53,7 +54,7 @@ public class SanPhamHandler {
             cursor.moveToFirst();
 
         SanPham sanPham = new SanPham();
-        sanPham.setId(cursor.getInt(0));
+        sanPham.setId(cursor.getString(0));
         sanPham.setTenSP(cursor.getString(1));
         sanPham.setDonGia(Long.valueOf(cursor.getString(2)));
         cursor.close();
@@ -71,7 +72,7 @@ public class SanPhamHandler {
         if (cursor.moveToFirst()) {
             do {
                 SanPham sanPham = new SanPham();
-                sanPham.setId(cursor.getInt(0));
+                sanPham.setId(cursor.getString(0));
                 sanPham.setTenSP(cursor.getString(1));
                 sanPham.setDonGia(Long.valueOf(cursor.getString(2)));
                 sanPhams.add(sanPham);
@@ -82,7 +83,7 @@ public class SanPhamHandler {
         return sanPhams;
     }
 
-    public void deleteSanPham(int id) {
+    public void deleteSanPham(String id) {
         db = dbHelper.getWritableDatabase();
         db.delete(DBConstant.TABLE_NAME_SAN_PHAM, DBConstant.SAN_PHAM_ID + " = ?",
                 new String[]{String.valueOf(id)});

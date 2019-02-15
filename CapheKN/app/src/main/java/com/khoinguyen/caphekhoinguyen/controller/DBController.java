@@ -8,20 +8,30 @@ import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 
 import java.util.List;
 
 public class DBController {
-    private Context mContext;
+    private static DBController INSTANCE = null;
+
     private DonHangHandler mDonHangHandler;
     private KhachHangHandler mKhachHangHandler;
     private SanPhamHandler mSanPhamHandler;
+    private RealtimeDatabaseController mRealtimeDatabaseController;
 
     public DBController(Context context) {
-        this.mContext = context;
         mDonHangHandler = new DonHangHandler(context);
         mKhachHangHandler = new KhachHangHandler(context);
         mSanPhamHandler = new SanPhamHandler(context);
+        mRealtimeDatabaseController = RealtimeDatabaseController.getInstance();
+    }
+
+    public static DBController getInstance(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = new DBController(context);
+        }
+        return (INSTANCE);
     }
 
     // Don hang
@@ -33,11 +43,11 @@ public class DBController {
         return mDonHangHandler.getDonHangDangXuLy();
     }
 
-    public List<DonHang> layDonHangDangXuLyTheoKhachHang(int idKhachHang) {
+    public List<DonHang> layDonHangDangXuLyTheoKhachHang(String idKhachHang) {
         return mDonHangHandler.getDonHangDangXuLyByKhachHang(idKhachHang);
     }
 
-    public List<DonHang> layDonHangHoanThanhTheoKhachHang(int idKhachHang) {
+    public List<DonHang> layDonHangHoanThanhTheoKhachHang(String idKhachHang) {
         return mDonHangHandler.getDonHangHoanThanhByKhachHang(idKhachHang);
     }
 
@@ -79,10 +89,12 @@ public class DBController {
 
     public void themDonHang(DonHang donHang) {
         mDonHangHandler.insertDonHang(donHang);
+        mRealtimeDatabaseController.themDonHang(donHang);
     }
 
     public void capNhatDonHang(DonHang donHang) {
         mDonHangHandler.updateDonHang(donHang);
+        mRealtimeDatabaseController.capNhatDonHang(donHang);
     }
 
     // Khach hang
@@ -92,10 +104,12 @@ public class DBController {
 
     public void themKhachHang(KhachHang khachHang) {
         mKhachHangHandler.insertKhachHang(khachHang);
+        mRealtimeDatabaseController.themKhachHang(khachHang);
     }
 
     public void capNhatKhachHang(KhachHang khachHang) {
         mKhachHangHandler.updateKhachHang(khachHang);
+        mRealtimeDatabaseController.capNhatKhachHang(khachHang);
     }
 
     // San pham
@@ -105,13 +119,21 @@ public class DBController {
 
     public void themSanPham(SanPham sanPham) {
         mSanPhamHandler.insertSanPham(sanPham);
-    }
-
-    public void xoaSanPham(int id) {
-        mSanPhamHandler.deleteSanPham(id);
+        mRealtimeDatabaseController.themSanPham(sanPham);
     }
 
     public void capNhatSanPham(SanPham sanPham) {
         mSanPhamHandler.updateSanPham(sanPham);
+        mRealtimeDatabaseController.capNhatSanPham(sanPham);
+    }
+
+    public void taiDuLieuLenServer() {
+        List<SanPham> sanPhams = layDanhSachSanPham();
+        List<KhachHang> khachHangs = layDanhSachKhachHang();
+        List<DonHang> donHangs = layDanhSachDonHang();
+
+        mRealtimeDatabaseController.taiSanPhamLenServer(sanPhams);
+        mRealtimeDatabaseController.taiKhachHangLenServer(khachHangs);
+        mRealtimeDatabaseController.taiDonHangLenServer(donHangs);
     }
 }

@@ -46,7 +46,7 @@ public class PhuHoFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rvKhachHang);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        dbController = new DBController(getActivity());
+        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -77,7 +77,7 @@ public class PhuHoFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private long getTongTien(int id) {
+    private long getTongTien(String id) {
         List<DonHang> donHangs = dbController.layDonHangHoanThanhTheoKhachHang(id);
         long tongTien = 0;
         for (DonHang donHang : donHangs) {

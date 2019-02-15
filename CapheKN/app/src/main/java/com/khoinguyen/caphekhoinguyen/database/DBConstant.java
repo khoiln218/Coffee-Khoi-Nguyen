@@ -20,8 +20,8 @@ public class DBConstant {
     public static final String KHACH_HANG_SDT = "sdt";
 
     public static final String SQL_CREATE_DON_HANG = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_DON_HANG + " (" +
-            DON_HANG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            DON_HANG_THOI_GIAN_TAO + " INTEGER, " +
+            DON_HANG_ID + " TEXT PRIMARY KEY, " +
+            DON_HANG_THOI_GIAN_TAO + " TEXT, " +
             DON_HANG_TRANG_THAI + " TEXT, " +
             DON_HANG_MA_KHACH_HANG + " TEXT," +
             DON_HANG_SAN_PHAM + " TEXT)";
@@ -29,14 +29,14 @@ public class DBConstant {
     public static final String SQL_DROP_DON_HANG = "DROP TABLE IF EXISTS " + TABLE_NAME_DON_HANG;
 
     public static final String SQL_CREATE_SAN_PHAM = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_SAN_PHAM + " (" +
-            SAN_PHAM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            SAN_PHAM_ID + " TEXT PRIMARY KEY, " +
             SAN_PHAM_TEN + " TEXT, " +
             SAN_PHAM_DON_GIA + " TEXT)";
 
     public static final String SQL_DROP_SAN_PHAM = "DROP TABLE IF EXISTS " + TABLE_NAME_SAN_PHAM;
 
     public static final String SQL_CREATE_KHACH_HANG = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_KHACH_HANG + " (" +
-            KHACH_HANG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            KHACH_HANG_ID + " TEXT PRIMARY KEY, " +
             KHACH_HANG_TEN + " TEXT, " +
             KHACH_HANG_SDT + " TEXT)";
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DonHang {
-    private int id;
+    private String id;
     private long thoiGianTao;
     private String trangThai;
     private KhachHang khachHang;
@@ -19,19 +19,11 @@ public class DonHang {
 
     }
 
-    public DonHang(int id, long thoiGianTao, String trangThai, KhachHang khachHang, List<SanPham> sanPhams) {
-        this.id = id;
-        this.thoiGianTao = thoiGianTao;
-        this.trangThai = trangThai;
-        this.khachHang = khachHang;
-        this.sanPhams = sanPhams;
-    }
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -74,7 +66,7 @@ public class DonHang {
     }
 
     public String convertSanPhamsToJsonString() {
-        List<Integer> dsSanPhams = new ArrayList<>();
+        List<String> dsSanPhams = new ArrayList<>();
         for (SanPham sanPham : sanPhams) {
             dsSanPhams.add(sanPham.getId());
         }
@@ -83,13 +75,13 @@ public class DonHang {
     }
 
     public void setSanPhamsFromJsonString(String jsonString, SanPhamHandler sanPhamHandler) {
-        Type type = new TypeToken<ArrayList<Integer>>() {
+        Type type = new TypeToken<ArrayList<String>>() {
         }.getType();
         Gson gson = new Gson();
 
-        List<Integer> dsSanPhams = gson.fromJson(jsonString, type);
+        List<String> dsSanPhams = gson.fromJson(jsonString, type);
         sanPhams = new ArrayList<>();
-        for (Integer id : dsSanPhams) {
+        for (String id : dsSanPhams) {
             sanPhams.add(sanPhamHandler.getSanPhamById(id));
         }
     }

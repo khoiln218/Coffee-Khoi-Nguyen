@@ -48,7 +48,7 @@ public class BaoCaoFragment extends Fragment {
         tvThuNoTuan = (TextView) view.findViewById(R.id.tvThuNoTuan);
         tvThuNoThang = (TextView) view.findViewById(R.id.tvThuNoThang);
 
-        dbController = new DBController(getActivity());
+        dbController = DBController.getInstance(getActivity());
         baoCao();
         return view;
     }

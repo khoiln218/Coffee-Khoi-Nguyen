@@ -39,7 +39,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         mTrangThai = trangThai;
         mIsChinhSua = isChinhSua;
         mListener = listener;
-        dbController = new DBController(context);
+        dbController = DBController.getInstance(context);
     }
 
     @NonNull
@@ -134,7 +134,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         mListener.onKhachHangInteraction(khachHang.getId(), mTrangThai);
     }
 
-    private long getTongTien(int id) {
+    private long getTongTien(String id) {
         List<DonHang> donHangs = mTrangThai == Constants.TRANG_THAI_HOAN_THANH ? dbController.layDonHangHoanThanhTheoKhachHang(id) : dbController.layDonHangDangXuLyTheoKhachHang(id);
         long tongTien = 0;
         for (DonHang donHang : donHangs) {

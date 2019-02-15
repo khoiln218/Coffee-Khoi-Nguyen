@@ -5,6 +5,9 @@
             android:id="@+id/nav_dong_bo"
             android:title="Đồng bộ dữ liệu" />
         <item
+            android:id="@+id/nav_tai_du_lieu_len"
+            android:title="Tải dữ liệu lên server" />
+        <item
             android:id="@+id/nav_cai_dat"
             android:title="Cài đặt" />
     </group>

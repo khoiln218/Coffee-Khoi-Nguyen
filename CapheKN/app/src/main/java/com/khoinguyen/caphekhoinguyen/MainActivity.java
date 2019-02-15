@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.CongNoFragment;
@@ -31,8 +32,6 @@ import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         TrangChuFragment.OnTrangChuInteractionListener, KhachHangFragment.OnKhachHangInteractionListener, BanHangFragment.OnBanHangInteractionListener {
     private static final String TAG = "MainActivity";
-
-    private RealtimeDatabaseController mRealtimeDatabaseController;
 
     private TextView toolbarTitle;
     private DrawerLayout mDrawer;
@@ -85,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        mRealtimeDatabaseController = new RealtimeDatabaseController();
-
         openHome();
     }
 
@@ -108,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_dong_bo:
                 dongBo();
                 break;
+            case R.id.nav_tai_du_lieu_len:
+                taiDuLieuLenServer();
+                break;
             case R.id.nav_cai_dat:
                 caiDat();
                 break;
@@ -121,8 +121,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void taiDuLieuLenServer() {
+        DBController.getInstance(this).taiDuLieuLenServer();
+    }
+
     private void dongBo() {
-        mRealtimeDatabaseController.startListerner();
+        RealtimeDatabaseController.getInstance().dongBo();
     }
 
     private void logOut() {
@@ -227,10 +231,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onKhachHangInteraction(int idKhachHang, int trangThai) {
+    public void onKhachHangInteraction(String idKhachHang, int trangThai) {
         LichSuGiaoDichFragment fragment = new LichSuGiaoDichFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt("idKhachHang", idKhachHang);
+        bundle.putString("idKhachHang", idKhachHang);
         bundle.putInt("trangThai", trangThai);
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
@@ -253,11 +257,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
+        RealtimeDatabaseController.getInstance().startListerner();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mRealtimeDatabaseController.stopListerner();
+        RealtimeDatabaseController.getInstance().stopListerner();
     }
 }

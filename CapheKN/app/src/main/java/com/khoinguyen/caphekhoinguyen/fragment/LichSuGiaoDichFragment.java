@@ -43,7 +43,7 @@ public class LichSuGiaoDichFragment extends Fragment {
     private Animation animGoDown;
     private MenuItem actionChinhSua;
     private DBController dbController;
-    private int idKhachHang;
+    private String idKhachHang;
     private int trangThai;
 
     public LichSuGiaoDichFragment() {
@@ -110,14 +110,14 @@ public class LichSuGiaoDichFragment extends Fragment {
             }
         });
 
-        idKhachHang = getArguments().getInt("idKhachHang");
+        idKhachHang = getArguments().getString("idKhachHang");
         trangThai = getArguments().getInt("trangThai");
 
         if (trangThai == Constants.TRANG_THAI_HOAN_THANH) {
             layoutTotal.setVisibility(View.GONE);
         }
 
-        dbController = new DBController(getActivity());
+        dbController = DBController.getInstance(getActivity());
         return view;
     }
 

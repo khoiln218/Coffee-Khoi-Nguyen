@@ -1,7 +1,7 @@
 package com.khoinguyen.caphekhoinguyen.model;
 
 public class SanPham {
-    int id;
+    String id;
     String tenSP;
     long donGia;
 
@@ -9,17 +9,11 @@ public class SanPham {
 
     }
 
-    public SanPham(int id, String tenSP, long donGia) {
-        this.id = id;
-        this.tenSP = tenSP;
-        this.donGia = donGia;
-    }
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

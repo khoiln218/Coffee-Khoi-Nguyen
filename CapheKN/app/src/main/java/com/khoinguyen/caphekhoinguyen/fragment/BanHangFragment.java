@@ -34,6 +34,7 @@ import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.text.DecimalFormat;
@@ -130,7 +131,7 @@ public class BanHangFragment extends Fragment {
             }
         });
 
-        dbController = new DBController(getActivity());
+        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -226,6 +227,7 @@ public class BanHangFragment extends Fragment {
         builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                donHang.setId(RealtimeDatabaseController.getInstance().genKeyDonHang());
                 donHang.setThoiGianTao(System.currentTimeMillis());
                 donHang.setTrangThai(getString(R.string.status_dang_xu_ly));
                 String[] tenSPs = etSanPham.getText().toString().split(",");

@@ -18,6 +18,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.SanPhamAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class SanPhamFragment extends Fragment {
             }
         });
 
-        dbController = new DBController(getActivity());
+        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -74,6 +75,7 @@ public class SanPhamFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) && !TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
+                    sanPham.setId(RealtimeDatabaseController.getInstance().genKeySanPham());
                     sanPham.setTenSP(etTenSanPham.getText().toString().trim());
                     sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
                     dbController.themSanPham(sanPham);
