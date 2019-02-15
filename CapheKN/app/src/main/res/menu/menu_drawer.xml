@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dong_bo"
+            android:title="Đồng bộ dữ liệu" />
         <item
             android:id="@+id/nav_cai_dat"
             android:title="Cài đặt" />
+    </group>
+    <group>
+        <item
+            android:id="@+id/nav_log_out"
+            android:title="Đăng xuất" />
     </group>
 </menu>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "449455772025",
+    "firebase_url": "https://caphekhoinguyen-bcf50.firebaseio.com",
+    "project_id": "caphekhoinguyen-bcf50",
+    "storage_bucket": "caphekhoinguyen-bcf50.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449455772025:android:39e7565776cb201c",
+        "android_client_info": {
+          "package_name": "com.khoinguyen.caphekhoinguyen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "449455772025-jfocqnn4193v3esiomnh5c5r3qa18qhe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.khoinguyen.caphekhoinguyen",
+            "certificate_hash": "7e385562eafaf49d146220b458e395b982a16549"
+          }
+        },
+        {
+          "client_id": "449455772025-p9tpfian6megntch6mnqfgt6goi9gdmm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2aH_NAic4IKuPqLacSSaiY1rmvDtxDSM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "449455772025-p9tpfian6megntch6mnqfgt6goi9gdmm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

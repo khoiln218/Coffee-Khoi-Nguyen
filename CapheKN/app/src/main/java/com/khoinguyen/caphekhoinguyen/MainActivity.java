@@ -1,5 +1,6 @@
 package com.khoinguyen.caphekhoinguyen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.CongNoFragment;
@@ -23,12 +25,15 @@ import com.khoinguyen.caphekhoinguyen.fragment.LichSuGiaoDichFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.PhuHoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.SanPhamFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.TrangChuFragment;
+import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         TrangChuFragment.OnTrangChuInteractionListener, KhachHangFragment.OnKhachHangInteractionListener, BanHangFragment.OnBanHangInteractionListener {
-
     private static final String TAG = "MainActivity";
+
+    private RealtimeDatabaseController mRealtimeDatabaseController;
+
     private TextView toolbarTitle;
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mToggle;
@@ -80,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        mRealtimeDatabaseController = new RealtimeDatabaseController();
+
         openHome();
     }
 
@@ -98,14 +105,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
+            case R.id.nav_dong_bo:
+                dongBo();
+                break;
             case R.id.nav_cai_dat:
                 caiDat();
+                break;
+            case R.id.nav_log_out:
+                logOut();
                 break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void dongBo() {
+        mRealtimeDatabaseController.startListerner();
+    }
+
+    private void logOut() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(this, SignInActivity.class));
+        finish();
     }
 
     private void caiDat() {
@@ -225,5 +248,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onThemSanPhamClick() {
         openSanPham();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mRealtimeDatabaseController.stopListerner();
     }
 }
