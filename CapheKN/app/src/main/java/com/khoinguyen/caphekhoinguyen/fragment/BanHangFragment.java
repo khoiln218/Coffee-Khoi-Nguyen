@@ -31,11 +31,17 @@ import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
 import com.khoinguyen.caphekhoinguyen.adapter.KhachHangArrayAdapter;
 import com.khoinguyen.caphekhoinguyen.adapter.SanPhamArrayAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.event.DonHangEvent;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
+import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -290,6 +296,24 @@ public class BanHangFragment extends Fragment {
             }
         }, mListener);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DonHangEvent event) {
+        LogUtils.d(TAG, "onMessageEvent: " + event.getDonHang().getId());
+        getDonHangs();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

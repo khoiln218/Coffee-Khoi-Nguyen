@@ -17,9 +17,15 @@ import android.widget.EditText;
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.SanPhamAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.event.SanPhamEvent;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
+import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -112,5 +118,23 @@ public class SanPhamFragment extends Fragment {
         mSanPhams = dbController.layDanhSachSanPham();
         mAdapter = new SanPhamAdapter(getActivity(), mSanPhams);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(SanPhamEvent event) {
+        LogUtils.d(TAG, "onMessageEvent: " + event.getSanPham().getId());
+        getSanPhams();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

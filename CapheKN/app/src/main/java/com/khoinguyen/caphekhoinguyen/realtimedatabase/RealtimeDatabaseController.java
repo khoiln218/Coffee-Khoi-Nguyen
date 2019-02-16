@@ -12,10 +12,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.event.DonHangEvent;
+import com.khoinguyen.caphekhoinguyen.event.KhachHangEvent;
+import com.khoinguyen.caphekhoinguyen.event.SanPhamEvent;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -111,13 +116,21 @@ public class RealtimeDatabaseController {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "DonHang - onChildAdded: " + dataSnapshot.getKey());
-                DBController.getInstance(context).themDonHangDenDB(dataSnapshot.getValue(DonHang.class));
+                DonHang donHang = dataSnapshot.getValue(DonHang.class);
+                DBController.getInstance(context).themDonHangDenDB(donHang);
+                DonHangEvent event = new DonHangEvent();
+                event.setDonHang(donHang);
+                EventBus.getDefault().post(event);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "DonHang - onChildChanged: " + dataSnapshot.getKey());
-                DBController.getInstance(context).capNhatDonHangDenDB(dataSnapshot.getValue(DonHang.class));
+                DonHang donHang = dataSnapshot.getValue(DonHang.class);
+                DBController.getInstance(context).capNhatDonHangDenDB(donHang);
+                DonHangEvent event = new DonHangEvent();
+                event.setDonHang(donHang);
+                EventBus.getDefault().post(event);
             }
 
             @Override
@@ -140,13 +153,21 @@ public class RealtimeDatabaseController {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "KhachHang - onChildAdded: " + dataSnapshot.getKey());
-                DBController.getInstance(context).themKhachHangDenDB(dataSnapshot.getValue(KhachHang.class));
+                KhachHang khachHang = dataSnapshot.getValue(KhachHang.class);
+                DBController.getInstance(context).themKhachHangDenDB(khachHang);
+                KhachHangEvent event = new KhachHangEvent();
+                event.setKhachHang(khachHang);
+                EventBus.getDefault().post(event);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "KhachHang - onChildChanged: " + dataSnapshot.getKey());
-                DBController.getInstance(context).capNhatKhachHangDenDB(dataSnapshot.getValue(KhachHang.class));
+                KhachHang khachHang = dataSnapshot.getValue(KhachHang.class);
+                DBController.getInstance(context).capNhatKhachHangDenDB(khachHang);
+                KhachHangEvent event = new KhachHangEvent();
+                event.setKhachHang(khachHang);
+                EventBus.getDefault().post(event);
             }
 
             @Override
@@ -169,13 +190,21 @@ public class RealtimeDatabaseController {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "SanPham - onChildAdded: " + dataSnapshot.getKey());
-                DBController.getInstance(context).themSanPhamDenDB(dataSnapshot.getValue(SanPham.class));
+                SanPham sanPham = dataSnapshot.getValue(SanPham.class);
+                DBController.getInstance(context).themSanPhamDenDB(sanPham);
+                SanPhamEvent event = new SanPhamEvent();
+                event.setSanPham(sanPham);
+                EventBus.getDefault().post(event);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "SanPham - onChildChanged: " + dataSnapshot.getKey());
-                DBController.getInstance(context).capNhatSanPhamDenDB(dataSnapshot.getValue(SanPham.class));
+                SanPham sanPham = dataSnapshot.getValue(SanPham.class);
+                DBController.getInstance(context).capNhatSanPhamDenDB(sanPham);
+                SanPhamEvent event = new SanPhamEvent();
+                event.setSanPham(sanPham);
+                EventBus.getDefault().post(event);
             }
 
             @Override
