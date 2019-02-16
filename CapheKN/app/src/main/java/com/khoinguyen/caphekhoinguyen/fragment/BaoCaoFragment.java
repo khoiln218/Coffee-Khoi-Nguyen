@@ -2,6 +2,7 @@ package com.khoinguyen.caphekhoinguyen.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ public class BaoCaoFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bao_cao, container, false);
         tvBanHangNgay = (TextView) view.findViewById(R.id.tvBanHangNgay);
@@ -86,7 +87,7 @@ public class BaoCaoFragment extends Fragment {
     private long getTongTien(List<DonHang> donHangs) {
         long tongTien = 0;
         for (DonHang donHang : donHangs) {
-            tongTien += donHang.getTongTien();
+            tongTien += donHang.getTongTien(getActivity());
         }
         return tongTien;
     }

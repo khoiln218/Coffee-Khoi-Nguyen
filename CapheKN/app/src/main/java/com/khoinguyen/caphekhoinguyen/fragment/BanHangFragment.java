@@ -191,7 +191,7 @@ public class BanHangFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 KhachHang khachHang = (KhachHang) parent.getItemAtPosition(position);
-                donHang.setKhachHang(khachHang);
+                donHang.setIdKhachHang(khachHang.getId());
             }
         });
 
@@ -239,7 +239,7 @@ public class BanHangFragment extends Fragment {
                         }
                     }
                 }
-                if (donHang.getSanPhams() != null) {
+                if (donHang.getIdSanPhams() != null) {
                     dbController.themDonHang(donHang);
                     mDonHangs.add(0, donHang);
                     mAdapter.notifyDataSetChanged();

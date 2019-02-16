@@ -15,7 +15,6 @@ import com.khoinguyen.caphekhoinguyen.adapter.KhachHangAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
-import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
 
 import java.util.ArrayList;
@@ -80,9 +79,7 @@ public class CongNoFragment extends Fragment {
         List<DonHang> donHangs = dbController.layDonHangDangXuLyTheoKhachHang(id);
         long tongTien = 0;
         for (DonHang donHang : donHangs) {
-            for (SanPham sanPham : donHang.getSanPhams()) {
-                tongTien += sanPham.getDonGia();
-            }
+            tongTien += donHang.getTongTien(getActivity());
         }
         return tongTien;
     }

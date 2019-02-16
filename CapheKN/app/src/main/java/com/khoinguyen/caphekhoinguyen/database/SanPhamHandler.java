@@ -11,26 +11,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SanPhamHandler {
+    private static SanPhamHandler INSTANCE = null;
 
     private SQLiteDatabase db;
     private DBHelper dbHelper;
     private ContentValues values;
 
-    public SanPhamHandler(Context context) {
+    private SanPhamHandler(Context context) {
         this.dbHelper = DBHelper.getInstance(context);
     }
 
-    public void insertSanPham(SanPham sanPham) {
-        db = dbHelper.getWritableDatabase();
+    public static SanPhamHandler getInstance(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = new SanPhamHandler(context);
+        }
+        return (INSTANCE);
+    }
 
-        values = new ContentValues();
-        values.put(DBConstant.SAN_PHAM_ID, sanPham.getId());
-        values.put(DBConstant.SAN_PHAM_TEN, sanPham.getTenSP());
-        values.put(DBConstant.SAN_PHAM_DON_GIA, sanPham.getDonGia());
+    public void insertOrUpdateSanPham(SanPham sanPham) {
+        if (checkExits(sanPham.getId())) {
+            updateSanPham(sanPham);
+        } else {
+            db = dbHelper.getWritableDatabase();
 
-        db.insert(DBConstant.TABLE_NAME_SAN_PHAM, null, values);
-        values = null;
-        db.close();
+            values = new ContentValues();
+            values.put(DBConstant.SAN_PHAM_ID, sanPham.getId());
+            values.put(DBConstant.SAN_PHAM_TEN, sanPham.getTenSP());
+            values.put(DBConstant.SAN_PHAM_DON_GIA, sanPham.getDonGia());
+
+            db.insert(DBConstant.TABLE_NAME_SAN_PHAM, null, values);
+            values = null;
+            db.close();
+        }
     }
 
     public long updateSanPham(SanPham sanPham) {
@@ -46,20 +58,26 @@ public class SanPhamHandler {
     }
 
     public SanPham getSanPhamById(String id) {
-        db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DBConstant.TABLE_NAME_SAN_PHAM, new String[]{DBConstant.SAN_PHAM_ID,
-                        DBConstant.SAN_PHAM_TEN, DBConstant.SAN_PHAM_DON_GIA}, DBConstant.SAN_PHAM_ID + "=?",
-                new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_SAN_PHAM
+                + " WHERE " + DBConstant.SAN_PHAM_ID + " = " + "'" + id + "'";
 
-        SanPham sanPham = new SanPham();
-        sanPham.setId(cursor.getString(0));
-        sanPham.setTenSP(cursor.getString(1));
-        sanPham.setDonGia(Long.valueOf(cursor.getString(2)));
-        cursor.close();
-        db.close();
-        return sanPham;
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+
+            SanPham sanPham = new SanPham();
+            sanPham.setId(cursor.getString(0));
+            sanPham.setTenSP(cursor.getString(1));
+            sanPham.setDonGia(Long.valueOf(cursor.getString(2)));
+            cursor.close();
+            db.close();
+            return sanPham;
+        } else {
+            cursor.close();
+            db.close();
+            return null;
+        }
     }
 
     public List<SanPham> getAllSanPham() {
@@ -98,5 +116,9 @@ public class SanPhamHandler {
         cursor.close();
         db.close();
         return rowCount;
+    }
+
+    private boolean checkExits(String id) {
+        return getSanPhamById(id) != null;
     }
 }

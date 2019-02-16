@@ -15,10 +15,10 @@ import android.widget.TextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
 import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
-import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
 
 import java.text.DecimalFormat;
@@ -138,8 +138,8 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         List<DonHang> donHangs = mTrangThai == Constants.TRANG_THAI_HOAN_THANH ? dbController.layDonHangHoanThanhTheoKhachHang(id) : dbController.layDonHangDangXuLyTheoKhachHang(id);
         long tongTien = 0;
         for (DonHang donHang : donHangs) {
-            for (SanPham sanPham : donHang.getSanPhams()) {
-                tongTien += sanPham.getDonGia();
+            for (String idSanPham : donHang.getIdSanPhams()) {
+                tongTien += SanPhamHandler.getInstance(mContext).getSanPhamById(idSanPham).getDonGia();
             }
         }
         return tongTien;

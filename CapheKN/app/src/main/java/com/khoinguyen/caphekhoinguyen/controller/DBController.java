@@ -21,9 +21,9 @@ public class DBController {
     private RealtimeDatabaseController mRealtimeDatabaseController;
 
     public DBController(Context context) {
-        mDonHangHandler = new DonHangHandler(context);
-        mKhachHangHandler = new KhachHangHandler(context);
-        mSanPhamHandler = new SanPhamHandler(context);
+        mDonHangHandler = DonHangHandler.getInstance(context);
+        mKhachHangHandler = KhachHangHandler.getInstance(context);
+        mSanPhamHandler = SanPhamHandler.getInstance(context);
         mRealtimeDatabaseController = RealtimeDatabaseController.getInstance();
     }
 
@@ -88,12 +88,28 @@ public class DBController {
     }
 
     public void themDonHang(DonHang donHang) {
-        mDonHangHandler.insertDonHang(donHang);
+        themDonHangDenDB(donHang);
+        themDonHangDenServer(donHang);
+    }
+
+    public void themDonHangDenDB(DonHang donHang) {
+        mDonHangHandler.insertOrUpdateDonHang(donHang);
+    }
+
+    public void themDonHangDenServer(DonHang donHang) {
         mRealtimeDatabaseController.themDonHang(donHang);
     }
 
     public void capNhatDonHang(DonHang donHang) {
+        capNhatDonHangDenDB(donHang);
+        capNhatDonHangDenServer(donHang);
+    }
+
+    public void capNhatDonHangDenDB(DonHang donHang) {
         mDonHangHandler.updateDonHang(donHang);
+    }
+
+    public void capNhatDonHangDenServer(DonHang donHang) {
         mRealtimeDatabaseController.capNhatDonHang(donHang);
     }
 
@@ -103,12 +119,28 @@ public class DBController {
     }
 
     public void themKhachHang(KhachHang khachHang) {
-        mKhachHangHandler.insertKhachHang(khachHang);
+        themKhachHangDenDB(khachHang);
+        themKhachHangDenServer(khachHang);
+    }
+
+    public void themKhachHangDenDB(KhachHang khachHang) {
+        mKhachHangHandler.insertOrUpdateKhachHang(khachHang);
+    }
+
+    public void themKhachHangDenServer(KhachHang khachHang) {
         mRealtimeDatabaseController.themKhachHang(khachHang);
     }
 
     public void capNhatKhachHang(KhachHang khachHang) {
+        capNhatKhachHangDenDB(khachHang);
+        capNhatKhachHangDenServer(khachHang);
+    }
+
+    public void capNhatKhachHangDenDB(KhachHang khachHang) {
         mKhachHangHandler.updateKhachHang(khachHang);
+    }
+
+    public void capNhatKhachHangDenServer(KhachHang khachHang) {
         mRealtimeDatabaseController.capNhatKhachHang(khachHang);
     }
 
@@ -118,12 +150,28 @@ public class DBController {
     }
 
     public void themSanPham(SanPham sanPham) {
-        mSanPhamHandler.insertSanPham(sanPham);
+        themSanPhamDenDB(sanPham);
+        themSanPhamDenServer(sanPham);
+    }
+
+    public void themSanPhamDenDB(SanPham sanPham) {
+        mSanPhamHandler.insertOrUpdateSanPham(sanPham);
+    }
+
+    public void themSanPhamDenServer(SanPham sanPham) {
         mRealtimeDatabaseController.themSanPham(sanPham);
     }
 
     public void capNhatSanPham(SanPham sanPham) {
+        capNhatSanPhamDenDB(sanPham);
+        capNhatSanPhamDenServer(sanPham);
+    }
+
+    public void capNhatSanPhamDenDB(SanPham sanPham) {
         mSanPhamHandler.updateSanPham(sanPham);
+    }
+
+    public void capNhatSanPhamDenServer(SanPham sanPham) {
         mRealtimeDatabaseController.capNhatSanPham(sanPham);
     }
 

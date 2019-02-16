@@ -1,19 +1,23 @@
 package com.khoinguyen.caphekhoinguyen.model;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DonHang {
     private String id;
     private long thoiGianTao;
     private String trangThai;
-    private KhachHang khachHang;
-    private List<SanPham> sanPhams;
+    private String idKhachHang;
+    private List<String> idSanPhams;
 
     public DonHang() {
 
@@ -43,53 +47,45 @@ public class DonHang {
         this.trangThai = trangThai;
     }
 
-    public KhachHang getKhachHang() {
-        return khachHang;
+    public String getIdKhachHang() {
+        return idKhachHang;
     }
 
-    public void setKhachHang(KhachHang khachHang) {
-        this.khachHang = khachHang;
+    public void setIdKhachHang(String idKhachHang) {
+        this.idKhachHang = idKhachHang;
     }
 
-    public List<SanPham> getSanPhams() {
-        return sanPhams;
+    public List<String> getIdSanPhams() {
+        return idSanPhams;
     }
 
-    public void setSanPhams(List<SanPham> sanPhams) {
-        this.sanPhams = sanPhams;
+    public void setIdSanPhams(List<String> idSanPhams) {
+        this.idSanPhams = idSanPhams;
     }
 
     public void addSanPham(SanPham sanPham) {
-        if (this.sanPhams == null)
-            sanPhams = new ArrayList<>();
-        sanPhams.add(sanPham);
+        if (this.idSanPhams == null)
+            idSanPhams = new ArrayList<>();
+        idSanPhams.add(sanPham.getId());
     }
 
     public String convertSanPhamsToJsonString() {
-        List<String> dsSanPhams = new ArrayList<>();
-        for (SanPham sanPham : sanPhams) {
-            dsSanPhams.add(sanPham.getId());
-        }
         Gson gson = new Gson();
-        return gson.toJson(dsSanPhams);
+        return gson.toJson(idSanPhams);
     }
 
-    public void setSanPhamsFromJsonString(String jsonString, SanPhamHandler sanPhamHandler) {
+    public void setIdSanPhamsFromJsonString(String jsonString) {
         Type type = new TypeToken<ArrayList<String>>() {
         }.getType();
         Gson gson = new Gson();
 
-        List<String> dsSanPhams = gson.fromJson(jsonString, type);
-        sanPhams = new ArrayList<>();
-        for (String id : dsSanPhams) {
-            sanPhams.add(sanPhamHandler.getSanPhamById(id));
-        }
+        idSanPhams = gson.fromJson(jsonString, type);
     }
 
-    public long getTongTien() {
+    public long getTongTien(Context context) {
         long tongTien = 0;
-        for (SanPham sanPham : sanPhams) {
-            tongTien += sanPham.getDonGia();
+        for (String id : idSanPhams) {
+            tongTien += SanPhamHandler.getInstance(context).getSanPhamById(id).getDonGia();
         }
         return tongTien;
     }

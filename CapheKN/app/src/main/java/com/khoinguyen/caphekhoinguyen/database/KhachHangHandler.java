@@ -12,25 +12,38 @@ import java.util.List;
 
 public class KhachHangHandler {
 
+    private static KhachHangHandler INSTANCE = null;
+
     private SQLiteDatabase db;
     private DBHelper dbHelper;
     private ContentValues values;
 
-    public KhachHangHandler(Context context) {
+    private KhachHangHandler(Context context) {
         this.dbHelper = DBHelper.getInstance(context);
     }
 
-    public void insertKhachHang(KhachHang khachHang) {
-        db = dbHelper.getWritableDatabase();
+    public static KhachHangHandler getInstance(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = new KhachHangHandler(context);
+        }
+        return (INSTANCE);
+    }
 
-        values = new ContentValues();
-        values.put(DBConstant.KHACH_HANG_ID, khachHang.getId());
-        values.put(DBConstant.KHACH_HANG_TEN, khachHang.getTenKH());
-        values.put(DBConstant.KHACH_HANG_SDT, khachHang.getSDT());
+    public void insertOrUpdateKhachHang(KhachHang khachHang) {
+        if (checkExits(khachHang.getId())) {
+            updateKhachHang(khachHang);
+        } else {
+            db = dbHelper.getWritableDatabase();
 
-        db.insert(DBConstant.TABLE_NAME_KHACH_HANG, null, values);
-        values = null;
-        db.close();
+            values = new ContentValues();
+            values.put(DBConstant.KHACH_HANG_ID, khachHang.getId());
+            values.put(DBConstant.KHACH_HANG_TEN, khachHang.getTenKH());
+            values.put(DBConstant.KHACH_HANG_SDT, khachHang.getSDT());
+
+            db.insert(DBConstant.TABLE_NAME_KHACH_HANG, null, values);
+            values = null;
+            db.close();
+        }
     }
 
     public long updateKhachHang(KhachHang khachHang) {
@@ -45,20 +58,25 @@ public class KhachHangHandler {
     }
 
     public KhachHang getKhachHangById(String id) {
-        db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(DBConstant.TABLE_NAME_KHACH_HANG, new String[]{DBConstant.KHACH_HANG_ID,
-                        DBConstant.KHACH_HANG_TEN, DBConstant.KHACH_HANG_SDT}, DBConstant.KHACH_HANG_ID + "=?",
-                new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_KHACH_HANG
+                + " WHERE " + DBConstant.KHACH_HANG_ID + " = " + "'" + id + "'";
 
-        KhachHang khachHang = new KhachHang();
-        khachHang.setId(id);
-        khachHang.setTenKH(cursor.getString(1));
-        khachHang.setSDT(cursor.getString(2));
-        cursor.close();
-        db.close();
-        return khachHang;
+        db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            KhachHang khachHang = new KhachHang();
+            khachHang.setId(id);
+            khachHang.setTenKH(cursor.getString(1));
+            khachHang.setSDT(cursor.getString(2));
+            cursor.close();
+            db.close();
+            return khachHang;
+        } else {
+            cursor.close();
+            db.close();
+            return null;
+        }
     }
 
     public List<KhachHang> getAllKhachHang() {
@@ -97,6 +115,10 @@ public class KhachHangHandler {
         cursor.close();
         db.close();
         return rowCount;
+    }
+
+    private boolean checkExits(String id) {
+        return getKhachHangById(id) != null;
     }
 }
 
