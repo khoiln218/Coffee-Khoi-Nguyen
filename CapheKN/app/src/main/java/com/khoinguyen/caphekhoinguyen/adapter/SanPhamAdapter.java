@@ -19,7 +19,6 @@ import com.khoinguyen.caphekhoinguyen.model.SanPham;
 
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHolder> {
     private final List<SanPham> mValues;
@@ -43,7 +42,7 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mTvTen.setText(String.format(Locale.US, "%d.", (position + 1)) + holder.mItem.getTenSP());
+        holder.mTvTen.setText(holder.mItem.getTenSP());
         String formattedPrice = new DecimalFormat("##,##0VNĐ").format(holder.mItem.getDonGia());
         holder.mTvDonGia.setText(formattedPrice);
 

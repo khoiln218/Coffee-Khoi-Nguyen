@@ -10,9 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
@@ -23,7 +26,6 @@ import com.khoinguyen.caphekhoinguyen.utils.Constants;
 
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.ViewHolder> {
     private final List<KhachHang> mValues;
@@ -53,8 +55,10 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mTvTen.setText(String.format(Locale.US, "%d.", (position + 1)) + holder.mItem.getTenKH());
-        holder.mTvSoDienThoai.setText(holder.mItem.getSDT());
+        TextDrawable drawable = TextDrawable.builder()
+                .round().build(String.valueOf(holder.mItem.getTenKH().charAt(0)), ColorGenerator.MATERIAL.getColor(holder.mItem.getTenKH()));
+        holder.imageView.setImageDrawable(drawable);
+        holder.mTvTen.setText(holder.mItem.getTenKH());
         String formattedPrice = new DecimalFormat("##,##0VNĐ").format(getTongTien(holder.mItem.getId()));
         holder.mTvTongTien.setText(formattedPrice);
 
@@ -152,16 +156,16 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
+        final ImageView imageView;
         final TextView mTvTen;
-        final TextView mTvSoDienThoai;
         final TextView mTvTongTien;
         KhachHang mItem;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             mView = view;
+            imageView = (ImageView) view.findViewById(R.id.ivIcon);
             mTvTen = (TextView) view.findViewById(R.id.tvTen);
-            mTvSoDienThoai = (TextView) view.findViewById(R.id.tvSoDienThoai);
             mTvTongTien = (TextView) view.findViewById(R.id.tvTongTien);
         }
     }
