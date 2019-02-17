@@ -59,6 +59,7 @@ public class BanHangFragment extends Fragment {
     private List<DonHang> mDonHangs;
     private RecyclerView mRecyclerView;
     private DonHangAdapter mAdapter;
+    private SimpleSectionedAdapter mSectionedAdapter;
     private View layoutTotal;
     private View layoutMoney;
     private ImageButton btnGoUpDown;
@@ -272,8 +273,8 @@ public class BanHangFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (null != mAdapter) {
-            mRecyclerView.setAdapter(mAdapter);
+        if (null != mSectionedAdapter) {
+            mRecyclerView.setAdapter(mSectionedAdapter);
         } else {
             getDonHangs();
         }
@@ -298,16 +299,17 @@ public class BanHangFragment extends Fragment {
                 tvTotalCost.setText(formattedPrice);
             }
         }, mListener);
-        mRecyclerView.setAdapter(new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter));
+        mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
+        mRecyclerView.setAdapter(mSectionedAdapter);
     }
 
     private List<SimpleSectionedAdapter.Section> getSections() {
         if (mDonHangs.size() == 0) return new ArrayList<>();
         List<SimpleSectionedAdapter.Section> sections = new ArrayList<>();
-        sections.add(new SimpleSectionedAdapter.Section(0, Utils.convTimestamp(mDonHangs.get(0).getThoiGianTao(), "dd/MM/yyyy")));
+        sections.add(new SimpleSectionedAdapter.Section(0, mDonHangs.get(0).getThoiGianTao()));
         for (int i = 1; i < mDonHangs.size(); i++) {
             if (!TextUtils.equals(Utils.convTimestamp(mDonHangs.get(i).getThoiGianTao(), "dd/MM/yyyy"), Utils.convTimestamp(mDonHangs.get(i - 1).getThoiGianTao(), "dd/MM/yyyy")))
-                sections.add(new SimpleSectionedAdapter.Section(i, Utils.convTimestamp(mDonHangs.get(i).getThoiGianTao(), "dd/MM/yyyy")));
+                sections.add(new SimpleSectionedAdapter.Section(i, mDonHangs.get(i).getThoiGianTao()));
         }
         return sections;
     }

@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -131,11 +133,26 @@ public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public static class Section {
         int firstPosition;
         int sectionedPosition;
-        CharSequence title;
+        String title;
 
-        public Section(int firstPosition, CharSequence title) {
+        public Section(int firstPosition, long timeTamp) {
             this.firstPosition = firstPosition;
-            this.title = title;
+            this.title = getTitle(timeTamp);
+        }
+
+        private String getTitle(long timeTamp) {
+            Calendar now = Calendar.getInstance();
+
+            Calendar target = Calendar.getInstance();
+            target.setTimeInMillis(timeTamp);
+
+            if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR) && now.get(Calendar.MONTH) == target.get(Calendar.MONTH)
+                    && now.get(Calendar.DAY_OF_MONTH) == target.get(Calendar.DAY_OF_MONTH))
+                return "Hôm nay";
+            if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR) && now.get(Calendar.MONTH) == target.get(Calendar.MONTH)
+                    && now.get(Calendar.DAY_OF_MONTH) == target.get(Calendar.DAY_OF_MONTH) + 1)
+                return "Hôm qua";
+            return Utils.convTimestamp(timeTamp, "dd/MM/yyyy");
         }
     }
 
