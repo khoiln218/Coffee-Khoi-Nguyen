@@ -237,8 +237,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         etKhachHang.setAdapter(adapterKH);
         if (!TextUtils.isEmpty(donHang.getIdKhachHang()))
             etKhachHang.setText(KhachHangHandler.getInstance(mContext).getKhachHangById(donHang.getIdKhachHang()).getTenKH());
-        else
-            etKhachHang.setEnabled(false);
         etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

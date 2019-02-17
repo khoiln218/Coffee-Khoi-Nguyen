@@ -14,7 +14,10 @@
             android:id="@+id/layout_ban_hang"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="2.5dp"
+            android:layout_marginBottom="2.5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_menu_ban_hang">
 
@@ -45,7 +48,10 @@
             android:id="@+id/layout_san_pham"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="2.5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="2.5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_menu_sp_dv">
 
@@ -83,7 +89,10 @@
             android:id="@+id/layout_cong_no"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginRight="2.5dp"
+            android:layout_marginBottom="2.5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_menu_top_cong_no">
 
@@ -114,7 +123,10 @@
             android:id="@+id/layout_phu_ho"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="2.5dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="2.5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_menu_top_phu_ho">
 
@@ -152,7 +164,10 @@
             android:id="@+id/layout_khach_hang"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginRight="2.5dp"
+            android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_menu_khach_hang">
 
@@ -183,7 +198,10 @@
             android:id="@+id/layout_bao_cao"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="2.5dp"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_menu_bao_cao">
 

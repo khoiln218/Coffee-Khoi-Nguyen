@@ -59,8 +59,13 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
                 .round().build(String.valueOf(holder.mItem.getTenKH().charAt(0)), ColorGenerator.MATERIAL.getColor(holder.mItem.getTenKH()));
         holder.ivIcon.setImageDrawable(drawable);
         holder.mTvTen.setText(holder.mItem.getTenKH());
-        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(getTongTien(holder.mItem.getId()));
-        holder.mTvTongTien.setText(formattedPrice);
+        long tongTien = getTongTien(holder.mItem.getId());
+        if (tongTien > 0) {
+            String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
+            holder.mTvTongTien.setText(formattedPrice);
+        } else {
+            holder.mTvTongTien.setVisibility(View.GONE);
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
