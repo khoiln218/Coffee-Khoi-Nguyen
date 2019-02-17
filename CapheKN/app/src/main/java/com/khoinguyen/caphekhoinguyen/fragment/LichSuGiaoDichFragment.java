@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +20,14 @@ import android.widget.TextView;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
+import com.khoinguyen.caphekhoinguyen.adapter.SimpleSectionedAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -185,7 +189,18 @@ public class LichSuGiaoDichFragment extends Fragment {
                 tvTotalCost.setText(formattedPrice);
             }
         }, mListener, true, trangThai);
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter));
+    }
+
+    private List<SimpleSectionedAdapter.Section> getSections() {
+        if (mDonHangs.size() == 0) return new ArrayList<>();
+        List<SimpleSectionedAdapter.Section> sections = new ArrayList<>();
+        sections.add(new SimpleSectionedAdapter.Section(0, Utils.convTimestamp(mDonHangs.get(0).getThoiGianTao(), "dd/MM/yyyy")));
+        for (int i = 1; i < mDonHangs.size(); i++) {
+            if (!TextUtils.equals(Utils.convTimestamp(mDonHangs.get(i).getThoiGianTao(), "dd/MM/yyyy"), Utils.convTimestamp(mDonHangs.get(i - 1).getThoiGianTao(), "dd/MM/yyyy")))
+                sections.add(new SimpleSectionedAdapter.Section(i, Utils.convTimestamp(mDonHangs.get(i).getThoiGianTao(), "dd/MM/yyyy")));
+        }
+        return sections;
     }
 
     @Override

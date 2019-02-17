@@ -81,7 +81,8 @@ public class KhachHangHandler {
 
     public List<KhachHang> getAllKhachHang() {
         List<KhachHang> khachHangs = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_KHACH_HANG;
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_KHACH_HANG
+                + " ORDER BY " + DBConstant.KHACH_HANG_TEN + " ASC";
 
         db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

@@ -29,6 +29,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
 import com.khoinguyen.caphekhoinguyen.adapter.KhachHangArrayAdapter;
 import com.khoinguyen.caphekhoinguyen.adapter.SanPhamArrayAdapter;
+import com.khoinguyen.caphekhoinguyen.adapter.SimpleSectionedAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.event.DonHangEvent;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
@@ -44,6 +45,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -296,7 +298,18 @@ public class BanHangFragment extends Fragment {
                 tvTotalCost.setText(formattedPrice);
             }
         }, mListener);
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter));
+    }
+
+    private List<SimpleSectionedAdapter.Section> getSections() {
+        if (mDonHangs.size() == 0) return new ArrayList<>();
+        List<SimpleSectionedAdapter.Section> sections = new ArrayList<>();
+        sections.add(new SimpleSectionedAdapter.Section(0, Utils.convTimestamp(mDonHangs.get(0).getThoiGianTao(), "dd/MM/yyyy")));
+        for (int i = 1; i < mDonHangs.size(); i++) {
+            if (!TextUtils.equals(Utils.convTimestamp(mDonHangs.get(i).getThoiGianTao(), "dd/MM/yyyy"), Utils.convTimestamp(mDonHangs.get(i - 1).getThoiGianTao(), "dd/MM/yyyy")))
+                sections.add(new SimpleSectionedAdapter.Section(i, Utils.convTimestamp(mDonHangs.get(i).getThoiGianTao(), "dd/MM/yyyy")));
+        }
+        return sections;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

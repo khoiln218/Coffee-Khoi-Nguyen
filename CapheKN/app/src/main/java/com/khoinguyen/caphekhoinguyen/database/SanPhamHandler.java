@@ -82,7 +82,8 @@ public class SanPhamHandler {
 
     public List<SanPham> getAllSanPham() {
         List<SanPham> sanPhams = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_SAN_PHAM;
+        String selectQuery = "SELECT  * FROM " + DBConstant.TABLE_NAME_SAN_PHAM
+                + " ORDER BY " + DBConstant.SAN_PHAM_TEN + " ASC";
 
         db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
