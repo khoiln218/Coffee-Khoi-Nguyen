@@ -83,7 +83,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        holder.mTvThoiGianTao.setText(Utils.convTimestamp(holder.mItem.getThoiGianTao(), "hh:mm:ss"));
+        holder.mTvThoiGianTao.setText(Utils.convTimestamp(holder.mItem.getThoiGianTao(), "h:mm a"));
         if (holder.mItem.getIdKhachHang() != null) {
             KhachHang khachHang = KhachHangHandler.getInstance(mContext).getKhachHangById(holder.mItem.getIdKhachHang());
             holder.mTvKhachHang.setText(khachHang.getTenKH());
