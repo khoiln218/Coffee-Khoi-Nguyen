@@ -149,6 +149,10 @@ public class DBController {
         return mSanPhamHandler.getAllSanPham();
     }
 
+    public SanPham laySanPhamTheoId(String idSanPham) {
+        return mSanPhamHandler.getSanPhamById(idSanPham);
+    }
+
     public void themSanPham(SanPham sanPham) {
         themSanPhamDenDB(sanPham);
         themSanPhamDenServer(sanPham);
