@@ -102,6 +102,9 @@
                 android:background="@drawable/transparent_button_background"
                 android:padding="10dp"
                 android:src="@drawable/orderlist_11" />
+
         </LinearLayout>
+
     </LinearLayout>
+
 </android.support.v7.widget.CardView>

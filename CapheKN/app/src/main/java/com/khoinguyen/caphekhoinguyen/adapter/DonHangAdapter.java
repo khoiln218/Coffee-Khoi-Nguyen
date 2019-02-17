@@ -105,7 +105,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             holder.mTvTongTien.setText(formattedPrice);
         }
 
-        holder.mView.setBackgroundColor(itemStateArray.get(position, false) ? ContextCompat.getColor(mContext, R.color.colorAccent) : Color.WHITE);
+        holder.mView.setBackgroundColor(itemStateArray.get(position, false) ? ContextCompat.getColor(mContext, R.color.colorDonHangSelect) : Color.WHITE);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,12 +113,12 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 if (mTrangThai == Constants.TRANG_THAI_DANG_XY_LY) {
                     if (!itemStateArray.get(position, false)) {
                         itemStateArray.put(position, true);
-                        holder.mView.setBackgroundColor(0x999be6ff);
+                        holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorDonHangSelect));
                         mDonHangListerner.onShow();
                         selectChange();
                     } else {
                         itemStateArray.delete(position);
-                        holder.mView.setBackgroundColor(Color.TRANSPARENT);
+                        holder.mView.setBackgroundColor(Color.WHITE);
                         if (itemStateArray.size() == 0)
                             mDonHangListerner.onHide();
                         else mDonHangListerner.onShow();

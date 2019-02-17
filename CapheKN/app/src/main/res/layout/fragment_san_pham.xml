@@ -20,5 +20,5 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/plus"
         app:fab_colorNormal="@color/colorPrimaryDark"
-        app:fab_colorPressed="@color/colorAccent" />
+        app:fab_colorPressed="@color/colorPrimary" />
 </RelativeLayout>

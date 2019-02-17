@@ -2,9 +2,10 @@
 <resources>
     <color name="colorPrimary">#4cbe86</color>
     <color name="colorPrimaryDark">#19A15F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#19A15F</color>
 
     <color name="colorHighlight">#ebebeb</color>
     <color name="colorDisabled">#c9c9c9</color>
     <color name="separateLineColor">#999999</color>
+    <color name="colorDonHangSelect">#9be6ff</color>
 </resources>
