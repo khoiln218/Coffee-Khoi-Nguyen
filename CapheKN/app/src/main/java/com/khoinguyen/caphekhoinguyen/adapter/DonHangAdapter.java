@@ -22,6 +22,8 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.database.KhachHangHandler;
@@ -36,7 +38,8 @@ import com.khoinguyen.caphekhoinguyen.utils.Utils;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+import me.next.tagview.TagCloudView;
 
 public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHolder> {
 
@@ -80,26 +83,28 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        String thoiGian = String.format(Locale.US, "%d.", (position + 1)) + Utils.convTimestamp(holder.mItem.getThoiGianTao());
-        holder.mTvThoiGianTao.setText(thoiGian);
+        holder.mTvThoiGianTao.setText(Utils.convTimestamp(holder.mItem.getThoiGianTao(), "hh:mm:ss"));
         if (holder.mItem.getIdKhachHang() != null) {
-            holder.mTvKhachHang.setText(KhachHangHandler.getInstance(mContext).getKhachHangById(holder.mItem.getIdKhachHang()).getTenKH());
+            KhachHang khachHang = KhachHangHandler.getInstance(mContext).getKhachHangById(holder.mItem.getIdKhachHang());
+            holder.mTvKhachHang.setText(khachHang.getTenKH());
+            TextDrawable drawable = TextDrawable.builder()
+                    .round().build(String.valueOf(khachHang.getTenKH().charAt(0)), ColorGenerator.MATERIAL.getColor(khachHang.getTenKH()));
+            holder.ivIcon.setImageDrawable(drawable);
         } else {
             holder.mTvKhachHang.setText("Khách vãng lai");
+            TextDrawable drawable = TextDrawable.builder()
+                    .round().build("K", ColorGenerator.MATERIAL.getColor("Khách vãng lai"));
+            holder.ivIcon.setImageDrawable(drawable);
         }
         List<SanPham> sanPhams = new ArrayList<>();
         for (String id : holder.mItem.getIdSanPhams())
             sanPhams.add(SanPhamHandler.getInstance(mContext).getSanPhamById(id));
         if (sanPhams != null) {
-            holder.mTvSanPham.setText(getSanPhamList(sanPhams));
+            holder.tcvSanPham.setTags(getTagSanPhams(sanPhams));
             String formattedPrice = new DecimalFormat("##,##0VNĐ").format(holder.mItem.getTongTien(mContext));
             holder.mTvTongTien.setText(formattedPrice);
-        } else {
-            holder.mTvSanPham.setText("---");
         }
 
-        boolean isTracking = TextUtils.equals(holder.mItem.getTrangThai(), mContext.getString(R.string.status_dang_xu_ly));
-        holder.mIvTrangThai.setImageResource(isTracking ? R.drawable.orderlist_07 : R.drawable.orderlist_08);
         holder.mView.setBackgroundColor(itemStateArray.get(position, false) ? ContextCompat.getColor(mContext, R.color.colorAccent) : Color.WHITE);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -340,10 +345,10 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         dialog.show();
     }
 
-    private String getSanPhamList(List<SanPham> sanPhams) {
-        String sanPhamString = sanPhams.get(0).getTenSP();
-        for (int i = 1; i < sanPhams.size(); i++) {
-            sanPhamString += ", " + sanPhams.get(i).getTenSP();
+    private List<String> getTagSanPhams(List<SanPham> sanPhams) {
+        List<String> sanPhamString = new ArrayList<>();
+        for (SanPham sanPham : sanPhams) {
+            sanPhamString.add(sanPham.getTenSP());
         }
         return sanPhamString;
     }
@@ -404,9 +409,9 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         final TextView mTvThoiGianTao;
-        final ImageView mIvTrangThai;
+        final ImageView ivIcon;
         final TextView mTvKhachHang;
-        final TextView mTvSanPham;
+        final TagCloudView tcvSanPham;
         final TextView mTvTongTien;
         final LinearLayout mSeparateLine;
         final LinearLayout mLayoutChinhSua;
@@ -418,9 +423,9 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             super(view);
             mView = view;
             mTvThoiGianTao = (TextView) view.findViewById(R.id.tvThoiGianTao);
-            mIvTrangThai = (ImageView) view.findViewById(R.id.trangThai);
+            ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
             mTvKhachHang = (TextView) view.findViewById(R.id.tvKhachHang);
-            mTvSanPham = (TextView) view.findViewById(R.id.tvSanPham);
+            tcvSanPham = (TagCloudView) view.findViewById(R.id.tcvSanPham);
             mTvTongTien = (TextView) view.findViewById(R.id.tvTongTien);
             mSeparateLine = (LinearLayout) view.findViewById(R.id.separateLine);
             mLayoutChinhSua = (LinearLayout) view.findViewById(R.id.layoutChinhSua);

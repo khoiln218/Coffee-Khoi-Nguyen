@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp">
@@ -16,51 +17,59 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:paddingVertical="8dp"
+            android:paddingLeft="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="1dp">
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ivIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="5dp" />
+
+                <TextView
+                    android:id="@+id/tvKhachHang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Khách hàng" />
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/clock" />
 
                 <TextView
                     android:id="@+id/tvThoiGianTao"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1.27/11/2018 08:11:30"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/trangThai"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:src="@drawable/orderlist_08" />
+                    android:text="08:11:30" />
 
                 <TextView
                     android:id="@+id/tvTongTien"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="end"
                     android:padding="5dp"
                     android:text="50.000VND"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvKhachHang"
+            <me.next.tagview.TagCloudView
+                android:id="@+id/tcvSanPham"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="1dp"
-                android:text="Khách hàng" />
+                android:layout_marginTop="5dp"
+                app:tcvCanTagClick="false"
+                app:tcvTextColor="@android:color/white"
+                app:tcvTextSize="8sp" />
 
-            <TextView
-                android:id="@+id/tvSanPham"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="1dp"
-                android:text="Sản phẩm" />
         </LinearLayout>
 
         <LinearLayout

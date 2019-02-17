@@ -4,7 +4,6 @@ package com.khoinguyen.caphekhoinguyen.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +23,7 @@ import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseControlle
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
+import com.melnykov.fab.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -61,6 +61,7 @@ public class KhachHangFragment extends Fragment {
                 themKhachHang();
             }
         });
+        fab.attachToRecyclerView(mRecyclerView);
 
         dbController = DBController.getInstance(getActivity());
         return view;

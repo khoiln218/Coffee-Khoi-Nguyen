@@ -57,7 +57,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         holder.mItem = mValues.get(position);
         TextDrawable drawable = TextDrawable.builder()
                 .round().build(String.valueOf(holder.mItem.getTenKH().charAt(0)), ColorGenerator.MATERIAL.getColor(holder.mItem.getTenKH()));
-        holder.imageView.setImageDrawable(drawable);
+        holder.ivIcon.setImageDrawable(drawable);
         holder.mTvTen.setText(holder.mItem.getTenKH());
         String formattedPrice = new DecimalFormat("##,##0VNĐ").format(getTongTien(holder.mItem.getId()));
         holder.mTvTongTien.setText(formattedPrice);
@@ -156,7 +156,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        final ImageView imageView;
+        final ImageView ivIcon;
         final TextView mTvTen;
         final TextView mTvTongTien;
         KhachHang mItem;
@@ -164,7 +164,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         public ViewHolder(@NonNull View view) {
             super(view);
             mView = view;
-            imageView = (ImageView) view.findViewById(R.id.ivIcon);
+            ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
             mTvTen = (TextView) view.findViewById(R.id.tvTen);
             mTvTongTien = (TextView) view.findViewById(R.id.tvTongTien);
         }
