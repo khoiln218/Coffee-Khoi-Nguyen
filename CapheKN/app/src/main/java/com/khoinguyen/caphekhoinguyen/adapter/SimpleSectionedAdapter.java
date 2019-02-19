@@ -152,7 +152,7 @@ public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR) && now.get(Calendar.MONTH) == target.get(Calendar.MONTH)
                     && now.get(Calendar.DAY_OF_MONTH) == target.get(Calendar.DAY_OF_MONTH) + 1)
                 return "Hôm qua";
-            return Utils.convTimestamp(timeTamp, "dd/MM/yyyy");
+            return Utils.convTimestamp(timeTamp, "EEE, dd/MM/yyyy");
         }
     }
 

@@ -185,6 +185,11 @@ public class LichSuGiaoDichFragment extends Fragment {
             }
 
             @Override
+            public void onRefresh() {
+                getDonHangs();
+            }
+
+            @Override
             public void onUpdateTongTien(long tongTien) {
                 String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
                 tvTotalCost.setText(formattedPrice);

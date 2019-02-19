@@ -7,7 +7,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,6 @@ import java.util.List;
 import me.next.tagview.TagCloudView;
 
 public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHolder> {
-
     private List<DonHang> mValues;
     private Context mContext;
     private BanHangFragment.OnDonHangListerner mDonHangListerner;
@@ -51,7 +49,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private int mTrangThai;
     private DBController dbController;
     private AlertDialog alertDialog;
-    private SparseBooleanArray itemStateArray = new SparseBooleanArray();
+    private List<String> itemStateArray = new ArrayList<>();
 
     public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner donHangListerner, BanHangFragment.OnBanHangInteractionListener banHangListener) {
         mContext = context;
@@ -105,23 +103,23 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             holder.mTvTongTien.setText(formattedPrice);
         }
 
-        holder.mView.setBackgroundColor(itemStateArray.get(position, false) ? ContextCompat.getColor(mContext, R.color.colorDonHangSelect) : Color.WHITE);
+        holder.mView.setBackgroundColor(itemStateArray.contains(holder.mItem.getId()) ? ContextCompat.getColor(mContext, R.color.colorDonHangSelect) : Color.WHITE);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mTrangThai == Constants.TRANG_THAI_DANG_XY_LY) {
-                    if (!itemStateArray.get(position, false)) {
-                        itemStateArray.put(position, true);
-                        holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorDonHangSelect));
-                        mDonHangListerner.onShow();
-                        selectChange();
-                    } else {
-                        itemStateArray.delete(position);
+                    if (itemStateArray.contains(holder.mItem.getId())) {
+                        itemStateArray.remove(holder.mItem.getId());
                         holder.mView.setBackgroundColor(Color.WHITE);
                         if (itemStateArray.size() == 0)
                             mDonHangListerner.onHide();
                         else mDonHangListerner.onShow();
+                        selectChange();
+                    } else {
+                        itemStateArray.add(holder.mItem.getId());
+                        holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorDonHangSelect));
+                        mDonHangListerner.onShow();
                         selectChange();
                     }
                 } else if (mTrangThai == Constants.TRANG_THAI_HOAN_THANH) {
@@ -204,6 +202,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         mValues.remove(dh);
                         dbController.capNhatDonHang(dh);
                         clearSelect();
+                        mDonHangListerner.onRefresh();
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
@@ -292,16 +291,17 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         }
                     }
                 }
+                clearSelect();
                 if (donHang.getIdSanPhams() != null) {
                     dbController.capNhatDonHang(donHang);
                     if (mIsLichSuGiaoDich && !TextUtils.equals(donHang.getIdKhachHang(), dh.getIdKhachHang())) {
-                        mValues.remove(dh);
-                    } else
+                        mDonHangListerner.onRefresh();
+                    } else {
                         mValues.set(mValues.indexOf(dh), donHang);
+                    }
                 } else {
                     Utils.showToast(mContext, "Chỉnh sửa đơn hàng thất bại");
                 }
-                clearSelect();
             }
         });
 
@@ -328,9 +328,9 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
                         donHang.setIdKhachHang(dh.getIdKhachHang());
                         donHang.setIdSanPhams(dh.getIdSanPhams());
-                        mValues.remove(dh);
                         dbController.capNhatDonHang(donHang);
                         clearSelect();
+                        mDonHangListerner.onRefresh();
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
@@ -364,20 +364,13 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                     .setMessage("Thành tiền " + formattedPrice)
                     .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            for (int i = 0; i < getItemCount(); i++) {
-                                if (itemStateArray.get(i, false)) {
-                                    DonHang dh = mValues.get(i);
-                                    DonHang donHang = new DonHang();
-                                    donHang.setId(dh.getId());
-                                    donHang.setThoiGianTao(dh.getThoiGianTao());
-                                    donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
-                                    donHang.setIdKhachHang(dh.getIdKhachHang());
-                                    donHang.setIdSanPhams(dh.getIdSanPhams());
-                                    mValues.remove(dh);
-                                    dbController.capNhatDonHang(donHang);
-                                }
+                            for (String idDonHang : itemStateArray) {
+                                DonHang donHang = DBController.getInstance(mContext).layDonHangTheoId(idDonHang);
+                                donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
+                                dbController.capNhatDonHang(donHang);
                             }
                             clearSelect();
+                            mDonHangListerner.onRefresh();
                         }
                     })
                     .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
@@ -395,11 +388,9 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
     private long tongTien() {
         long tong = 0;
-        for (int i = 0; i < getItemCount(); i++) {
-            if (itemStateArray.get(i, false)) {
-                DonHang dh = mValues.get(i);
-                tong += dh.getTongTien(mContext);
-            }
+        for (String id : itemStateArray) {
+            DonHang dh = DBController.getInstance(mContext).layDonHangTheoId(id);
+            tong += dh.getTongTien(mContext);
         }
         return tong;
     }

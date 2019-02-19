@@ -294,6 +294,11 @@ public class BanHangFragment extends Fragment {
             }
 
             @Override
+            public void onRefresh() {
+                getDonHangs();
+            }
+
+            @Override
             public void onUpdateTongTien(long tongTien) {
                 String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
                 tvTotalCost.setText(formattedPrice);
@@ -359,6 +364,8 @@ public class BanHangFragment extends Fragment {
         void onShow();
 
         void onHide();
+
+        void onRefresh();
 
         void onUpdateTongTien(long tongTien);
     }

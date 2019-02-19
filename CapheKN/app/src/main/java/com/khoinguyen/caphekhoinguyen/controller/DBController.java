@@ -39,6 +39,10 @@ public class DBController {
         return mDonHangHandler.getAllDonHang();
     }
 
+    public DonHang layDonHangTheoId(String idDonHang) {
+        return mDonHangHandler.getDonHangById(idDonHang);
+    }
+
     public List<DonHang> layDonHangDangXuLy() {
         return mDonHangHandler.getDonHangDangXuLy();
     }
