@@ -62,6 +62,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         long tongTien = getTongTien(holder.mItem.getId());
         if (tongTien > 0) {
             String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
+            holder.mTvTongTien.setVisibility(View.VISIBLE);
             holder.mTvTongTien.setText(formattedPrice);
         } else {
             holder.mTvTongTien.setVisibility(View.GONE);

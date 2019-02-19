@@ -4,13 +4,11 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
+import com.khoinguyen.caphekhoinguyen.controller.DBController;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DonHang {
     private String id;
@@ -85,7 +83,7 @@ public class DonHang {
     public long getTongTien(Context context) {
         long tongTien = 0;
         for (String id : idSanPhams) {
-            tongTien += SanPhamHandler.getInstance(context).getSanPhamById(id).getDonGia();
+            tongTien += DBController.getInstance(context).laySanPhamTheoId(id).getDonGia();
         }
         return tongTien;
     }
