@@ -1,8 +1,8 @@
 package com.khoinguyen.caphekhoinguyen.realtimedatabase;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -11,14 +11,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.Nullable;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.event.DonHangEvent;
 import com.khoinguyen.caphekhoinguyen.event.KhachHangEvent;
+import com.khoinguyen.caphekhoinguyen.event.NetStatusEvent;
 import com.khoinguyen.caphekhoinguyen.event.SanPhamEvent;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -33,16 +36,24 @@ public class RealtimeDatabaseController {
     private DatabaseReference mDonHangDatabase;
     private DatabaseReference mKhachHangDatabase;
     private DatabaseReference mSanPhamDatabase;
+    private DatabaseReference mConnectedRef;
 
     private ChildEventListener mDonHangChildEventListener;
     private ChildEventListener mKhachHangChildEventListener;
     private ChildEventListener mSanPhamChildEventListener;
+
+    private ValueEventListener mConnectValueEventListener;
+
+    private boolean isLoadDonHangComplete = false;
+    private boolean isLoadKhachHangComplete = false;
+    private boolean isLoadSanPhamComplete = false;
 
     private RealtimeDatabaseController() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDonHangDatabase = mDatabase.child(getUid()).child("donhang");
         mKhachHangDatabase = mDatabase.child(getUid()).child("khachhang");
         mSanPhamDatabase = mDatabase.child(getUid()).child("sanpham");
+        mConnectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
     }
 
     public static RealtimeDatabaseController getInstance() {
@@ -66,12 +77,29 @@ public class RealtimeDatabaseController {
 
     public void dongBo(final Context context) {
         LogUtils.d(TAG, "dongBo");
+
+        startLoad(context);
+
         ValueEventListener donHangValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(final DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "DonHang - onDataChange");
-                for (DataSnapshot ds : dataSnapshot.getChildren())
-                    DBController.getInstance(context).themDonHangDenDB(ds.getValue(DonHang.class));
+                new AsyncTask<Void, Integer, Void>() {
+
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren())
+                            DBController.getInstance(context).themDonHangDenDB(ds.getValue(DonHang.class));
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        super.onPostExecute(result);
+                        isLoadDonHangComplete = true;
+                        stopLoad();
+                    }
+                }.execute();
             }
 
             @Override
@@ -81,10 +109,23 @@ public class RealtimeDatabaseController {
 
         ValueEventListener khachHangValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(final DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "KhachHang - onDataChange");
-                for (DataSnapshot ds : dataSnapshot.getChildren())
-                    DBController.getInstance(context).themKhachHangDenDB(ds.getValue(KhachHang.class));
+                new AsyncTask<Void, Integer, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren())
+                            DBController.getInstance(context).themKhachHangDenDB(ds.getValue(KhachHang.class));
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        super.onPostExecute(result);
+                        isLoadKhachHangComplete = true;
+                        stopLoad();
+                    }
+                }.execute();
             }
 
             @Override
@@ -94,10 +135,23 @@ public class RealtimeDatabaseController {
 
         ValueEventListener sanPhamValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(final DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "SanPham - onDataChange");
-                for (DataSnapshot ds : dataSnapshot.getChildren())
-                    DBController.getInstance(context).themSanPhamDenDB(ds.getValue(SanPham.class));
+                new AsyncTask<Void, Integer, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren())
+                            DBController.getInstance(context).themSanPhamDenDB(ds.getValue(SanPham.class));
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        super.onPostExecute(result);
+                        isLoadSanPhamComplete = true;
+                        stopLoad();
+                    }
+                }.execute();
             }
 
             @Override
@@ -223,23 +277,52 @@ public class RealtimeDatabaseController {
             }
         };
 
+        mConnectValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                NetStatusEvent event = new NetStatusEvent();
+                event.setConnect(connected);
+                EventBus.getDefault().post(event);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                LogUtils.w(TAG, "Listener was cancelled");
+            }
+        };
+
         mDonHangDatabase.addChildEventListener(mDonHangChildEventListener);
         mKhachHangDatabase.addChildEventListener(mKhachHangChildEventListener);
         mSanPhamDatabase.addChildEventListener(mSanPhamChildEventListener);
+        mConnectedRef.addValueEventListener(mConnectValueEventListener);
     }
 
-    private void stopChildListerner() {
-        LogUtils.d(TAG, "stopChildListerner");
+    private void startLoad(Context context) {
+        LogUtils.d(TAG, "startLoad");
+        isLoadDonHangComplete = false;
+        isLoadKhachHangComplete = false;
+        isLoadSanPhamComplete = false;
+        Utils.showProgressDialog(context);
+    }
+
+    private void stopLoad() {
+        if (isLoadDonHangComplete && isLoadKhachHangComplete && isLoadSanPhamComplete) {
+            LogUtils.d(TAG, "stopLoad");
+            Utils.hideProgressDialog();
+        }
+    }
+
+    public void stopListerner() {
+        LogUtils.d(TAG, "stopListerner");
         if (mDonHangChildEventListener != null)
             mDonHangDatabase.removeEventListener(mDonHangChildEventListener);
         if (mKhachHangChildEventListener != null)
             mKhachHangDatabase.removeEventListener(mKhachHangChildEventListener);
         if (mSanPhamChildEventListener != null)
             mSanPhamDatabase.removeEventListener(mSanPhamChildEventListener);
-    }
-
-    public void stopListerner() {
-        stopChildListerner();
+        if (mConnectValueEventListener != null)
+            mConnectedRef.removeEventListener(mConnectValueEventListener);
     }
 
     public String getUid() {

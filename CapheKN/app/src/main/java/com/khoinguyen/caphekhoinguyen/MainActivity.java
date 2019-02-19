@@ -14,10 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.event.NetStatusEvent;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.CongNoFragment;
@@ -29,6 +31,10 @@ import com.khoinguyen.caphekhoinguyen.fragment.TrangChuFragment;
 import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         TrangChuFragment.OnTrangChuInteractionListener, KhachHangFragment.OnKhachHangInteractionListener, BanHangFragment.OnBanHangInteractionListener {
     private static final String TAG = "MainActivity";
@@ -36,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView toolbarTitle;
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mToggle;
+    private LinearLayout mLayoutMang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+
+        mLayoutMang = findViewById(R.id.layoutMang);
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
@@ -254,15 +263,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         openSanPham();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NetStatusEvent event) {
+        LogUtils.d(TAG, "onMessageEvent: " + event.isConnect());
+        mLayoutMang.setVisibility(event.isConnect() ? View.GONE : View.VISIBLE);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         RealtimeDatabaseController.getInstance().startListerner(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         RealtimeDatabaseController.getInstance().stopListerner();
+        EventBus.getDefault().unregister(this);
     }
 }
