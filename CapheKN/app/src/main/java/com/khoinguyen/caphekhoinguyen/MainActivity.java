@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void dongBo() {
-        RealtimeDatabaseController.getInstance().dongBo(this);
+        RealtimeDatabaseController.getInstance(this).dongBo();
     }
 
     private void logOut() {
@@ -272,14 +272,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        RealtimeDatabaseController.getInstance().startListerner(this);
+        RealtimeDatabaseController.getInstance(this).startListerner();
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        RealtimeDatabaseController.getInstance().stopListerner();
+        RealtimeDatabaseController.getInstance(this).stopListerner();
         EventBus.getDefault().unregister(this);
     }
 }

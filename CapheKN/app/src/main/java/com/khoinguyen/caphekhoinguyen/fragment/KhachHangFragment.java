@@ -86,7 +86,7 @@ public class KhachHangFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
-                    khachHang.setId(RealtimeDatabaseController.getInstance().genKeyKhachHang());
+                    khachHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyKhachHang());
                     khachHang.setTenKH(etTenKhachHang.getText().toString().trim());
                     khachHang.setSDT(etSoDienThoai.getText().toString().trim());
                     dbController.themKhachHang(khachHang);

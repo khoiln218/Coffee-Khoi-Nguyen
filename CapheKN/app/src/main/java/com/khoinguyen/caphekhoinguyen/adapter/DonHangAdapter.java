@@ -25,8 +25,6 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
-import com.khoinguyen.caphekhoinguyen.database.KhachHangHandler;
-import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
@@ -83,7 +81,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         holder.mItem = mValues.get(position);
         holder.mTvThoiGianTao.setText(Utils.convTimestamp(holder.mItem.getThoiGianTao(), "h:mm a"));
         if (holder.mItem.getIdKhachHang() != null) {
-            KhachHang khachHang = KhachHangHandler.getInstance(mContext).getKhachHangById(holder.mItem.getIdKhachHang());
+            KhachHang khachHang = dbController.layKhachHangTheoId(holder.mItem.getIdKhachHang());
             holder.mTvKhachHang.setText(khachHang.getTenKH());
             TextDrawable drawable = TextDrawable.builder()
                     .round().build(String.valueOf(khachHang.getTenKH().charAt(0)), ColorGenerator.MATERIAL.getColor(khachHang.getTenKH()));
@@ -96,7 +94,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         }
         List<SanPham> sanPhams = new ArrayList<>();
         for (String id : holder.mItem.getIdSanPhams())
-            sanPhams.add(SanPhamHandler.getInstance(mContext).getSanPhamById(id));
+            sanPhams.add(dbController.laySanPhamTheoId(id));
         if (sanPhams != null) {
             holder.tcvSanPham.setTags(getTagSanPhams(sanPhams));
             String formattedPrice = new DecimalFormat("##,##0VNĐ").format(holder.mItem.getTongTien(mContext));
@@ -235,7 +233,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         etKhachHang.setThreshold(1);
         etKhachHang.setAdapter(adapterKH);
         if (!TextUtils.isEmpty(donHang.getIdKhachHang()))
-            etKhachHang.setText(KhachHangHandler.getInstance(mContext).getKhachHangById(donHang.getIdKhachHang()).getTenKH());
+            etKhachHang.setText(dbController.layKhachHangTheoId(donHang.getIdKhachHang()).getTenKH());
         etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -252,7 +250,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         etSanPham.setAdapter(adapterSP);
         String sanPhamString = "";
         for (String id : dh.getIdSanPhams()) {
-            sanPhamString += SanPhamHandler.getInstance(mContext).getSanPhamById(id).getTenSP() + ",";
+            sanPhamString += dbController.laySanPhamTheoId(id).getTenSP() + ",";
         }
         etSanPham.setText(sanPhamString);
         etSanPham.requestFocus();
@@ -365,7 +363,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                     .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             for (String idDonHang : itemStateArray) {
-                                DonHang donHang = DBController.getInstance(mContext).layDonHangTheoId(idDonHang);
+                                DonHang donHang = dbController.layDonHangTheoId(idDonHang);
                                 donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
                                 dbController.capNhatDonHang(donHang);
                             }
@@ -389,7 +387,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private long tongTien() {
         long tong = 0;
         for (String id : itemStateArray) {
-            DonHang dh = DBController.getInstance(mContext).layDonHangTheoId(id);
+            DonHang dh = dbController.layDonHangTheoId(id);
             tong += dh.getTongTien(mContext);
         }
         return tong;

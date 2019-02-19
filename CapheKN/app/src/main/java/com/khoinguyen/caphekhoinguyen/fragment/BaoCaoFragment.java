@@ -108,7 +108,7 @@ public class BaoCaoFragment extends Fragment {
         for (DonHang donHang : donHangs) {
             List<String> idSanPhams = donHang.getIdSanPhams();
             for (String id : idSanPhams) {
-                SanPham sanPham = new DBController(getActivity()).laySanPhamTheoId(id);
+                SanPham sanPham = dbController.laySanPhamTheoId(id);
                 Integer tong = sanPhamData.get(sanPham.getTenSP());
                 sanPhamData.put(sanPham.getTenSP(), tong != null ? tong.intValue() + 1 : 1);
             }

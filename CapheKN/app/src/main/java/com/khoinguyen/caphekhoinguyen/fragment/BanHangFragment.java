@@ -237,7 +237,7 @@ public class BanHangFragment extends Fragment {
         builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                donHang.setId(RealtimeDatabaseController.getInstance().genKeyDonHang());
+                donHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyDonHang());
                 donHang.setThoiGianTao(System.currentTimeMillis());
                 donHang.setTrangThai(getString(R.string.status_dang_xu_ly));
                 String[] tenSPs = etSanPham.getText().toString().split(",");

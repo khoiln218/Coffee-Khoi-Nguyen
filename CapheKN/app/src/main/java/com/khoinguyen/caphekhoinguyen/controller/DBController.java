@@ -20,11 +20,11 @@ public class DBController {
     private SanPhamHandler mSanPhamHandler;
     private RealtimeDatabaseController mRealtimeDatabaseController;
 
-    public DBController(Context context) {
+    private DBController(Context context) {
         mDonHangHandler = DonHangHandler.getInstance(context);
         mKhachHangHandler = KhachHangHandler.getInstance(context);
         mSanPhamHandler = SanPhamHandler.getInstance(context);
-        mRealtimeDatabaseController = RealtimeDatabaseController.getInstance();
+        mRealtimeDatabaseController = RealtimeDatabaseController.getInstance(context);
     }
 
     public static DBController getInstance(Context context) {
@@ -120,6 +120,10 @@ public class DBController {
     // Khach hang
     public List<KhachHang> layDanhSachKhachHang() {
         return mKhachHangHandler.getAllKhachHang();
+    }
+
+    public KhachHang layKhachHangTheoId(String idKhachHang) {
+        return mKhachHangHandler.getKhachHangById(idKhachHang);
     }
 
     public void themKhachHang(KhachHang khachHang) {

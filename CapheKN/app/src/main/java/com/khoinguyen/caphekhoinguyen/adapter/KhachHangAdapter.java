@@ -18,7 +18,6 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
-import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
 import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
@@ -149,7 +148,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         long tongTien = 0;
         for (DonHang donHang : donHangs) {
             for (String idSanPham : donHang.getIdSanPhams()) {
-                tongTien += SanPhamHandler.getInstance(mContext).getSanPhamById(idSanPham).getDonGia();
+                tongTien += dbController.laySanPhamTheoId(idSanPham).getDonGia();
             }
         }
         return tongTien;
