@@ -2,8 +2,8 @@ package com.khoinguyen.caphekhoinguyen.fragment;
 
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +17,7 @@ import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,25 +62,16 @@ public class PhuHoFragment extends Fragment {
     }
 
     private void getKhachHangs() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
-                mKhachHangs = new ArrayList<>();
-                for (KhachHang khachHang : khachHangs) {
-                    if (getTongTien(khachHang.getId()) > 0)
-                        mKhachHangs.add(khachHang);
-                }
-                Collections.sort(mKhachHangs, new Comparator<KhachHang>() {
-                    @Override
-                    public int compare(KhachHang left, KhachHang right) {
-                        return (int) (getTongTien(right.getId()) - getTongTien(left.getId()));
-                    }
-                });
-                mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_HOAN_THANH, false, mListener);
-                mRecyclerView.setAdapter(mAdapter);
-            }
-        });
+        showLoading();
+        new MyTask().execute();
+    }
+
+    private void showLoading() {
+        Utils.showProgressDialog(getActivity());
+    }
+
+    private void hideLoading() {
+        Utils.hideProgressDialog();
     }
 
     private long getTongTien(String id) {
@@ -106,5 +98,33 @@ public class PhuHoFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private class MyTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
+            mKhachHangs = new ArrayList<>();
+            for (KhachHang khachHang : khachHangs) {
+                if (getTongTien(khachHang.getId()) > 0)
+                    mKhachHangs.add(khachHang);
+            }
+            Collections.sort(mKhachHangs, new Comparator<KhachHang>() {
+                @Override
+                public int compare(KhachHang left, KhachHang right) {
+                    return (int) (getTongTien(right.getId()) - getTongTien(left.getId()));
+                }
+            });
+            mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_HOAN_THANH, false, mListener);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mRecyclerView.setAdapter(mAdapter);
+            hideLoading();
+        }
     }
 }

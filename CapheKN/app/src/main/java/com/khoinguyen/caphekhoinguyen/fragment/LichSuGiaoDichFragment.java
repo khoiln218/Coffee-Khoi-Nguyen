@@ -1,8 +1,8 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,7 +47,7 @@ public class LichSuGiaoDichFragment extends Fragment {
     private TextView tvTotalCost;
     private Animation animGoUp;
     private Animation animGoDown;
-    private MenuItem actionChinhSua;
+    private MenuItem actionThanhToan;
     private DBController dbController;
     private String idKhachHang;
     private int trangThai;
@@ -136,8 +136,8 @@ public class LichSuGiaoDichFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        actionChinhSua = menu.findItem(R.id.action_thanh_toan);
-        actionChinhSua.setVisible(false);
+        actionThanhToan = menu.findItem(R.id.action_thanh_toan);
+        actionThanhToan.setVisible(false);
     }
 
     @Override
@@ -173,36 +173,18 @@ public class LichSuGiaoDichFragment extends Fragment {
     }
 
     private void getDonHangs() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                mDonHangs = trangThai == Constants.TRANG_THAI_DANG_XY_LY ? dbController.layDonHangDangXuLyTheoKhachHang(idKhachHang) : dbController.layDonHangHoanThanhTheoKhachHang(idKhachHang);
-                mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new BanHangFragment.OnDonHangListerner() {
-                    @Override
-                    public void onShow() {
-                        actionChinhSua.setVisible(true);
-                    }
+        showLoading();
+        if (actionThanhToan != null)
+            actionThanhToan.setVisible(false);
+        new MyTask().execute();
+    }
 
-                    @Override
-                    public void onHide() {
-                        actionChinhSua.setVisible(false);
-                    }
+    private void showLoading() {
+//        Utils.showProgressDialog(getActivity());
+    }
 
-                    @Override
-                    public void onRefresh() {
-                        getDonHangs();
-                    }
-
-                    @Override
-                    public void onUpdateTongTien(long tongTien) {
-                        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
-                        tvTotalCost.setText(formattedPrice);
-                    }
-                }, mListener, true, trangThai);
-                mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
-                mRecyclerView.setAdapter(mSectionedAdapter);
-            }
-        });
+    private void hideLoading() {
+//        Utils.hideProgressDialog();
     }
 
     private List<SimpleSectionedAdapter.Section> getSections() {
@@ -231,5 +213,44 @@ public class LichSuGiaoDichFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private class MyTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mDonHangs = trangThai == Constants.TRANG_THAI_DANG_XY_LY ? dbController.layDonHangDangXuLyTheoKhachHang(idKhachHang) : dbController.layDonHangHoanThanhTheoKhachHang(idKhachHang);
+            mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new BanHangFragment.OnDonHangListerner() {
+                @Override
+                public void onShow() {
+                    actionThanhToan.setVisible(true);
+                }
+
+                @Override
+                public void onHide() {
+                    actionThanhToan.setVisible(false);
+                }
+
+                @Override
+                public void onRefresh() {
+                    getDonHangs();
+                }
+
+                @Override
+                public void onUpdateTongTien(long tongTien) {
+                    String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
+                    tvTotalCost.setText(formattedPrice);
+                }
+            }, mListener, true, trangThai);
+            mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mRecyclerView.setAdapter(mSectionedAdapter);
+            hideLoading();
+        }
     }
 }

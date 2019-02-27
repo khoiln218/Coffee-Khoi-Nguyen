@@ -1,8 +1,8 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +16,7 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -43,7 +44,20 @@ public class BaoCaoFragment extends Fragment {
     private PieChartView chartNgay;
     private PieChartView chartTuan;
     private PieChartView chartThang;
-    private DBController dbController;
+
+    private String mDoanhThuNgay;
+    private String mBanHangNgay;
+    private String mThuNoNgay;
+    private String mDoanhThuTuan;
+    private String mBanHangTuan;
+    private String mThuNoTuan;
+    private String mDoanhThuThang;
+    private String mBanHangThang;
+    private String mThuNoThang;
+
+    private PieChartData mPieChartDataNgay;
+    private PieChartData mPieChartDataTuan;
+    private PieChartData mPieChartDataThang;
 
     public BaoCaoFragment() {
         // Required empty public constructor
@@ -66,55 +80,29 @@ public class BaoCaoFragment extends Fragment {
         chartTuan = (PieChartView) view.findViewById(R.id.chartTuan);
         chartThang = (PieChartView) view.findViewById(R.id.chartThang);
 
-        dbController = DBController.getInstance(getActivity());
         baoCao();
         return view;
     }
 
     private void baoCao() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                List<DonHang> donHangsTheoNgay = dbController.layDonHangTheoNgay(System.currentTimeMillis());
-                initChart(chartNgay, donHangsTheoNgay);
-                String formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoNgay));
-                tvDoanhThuNgay.setText(formattedPrice);
-                List<DonHang> donHangsHoanThanhTheoNgay = dbController.layDonHangHoanThanhTheoNgay(System.currentTimeMillis());
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoNgay));
-                tvBanHangNgay.setText(formattedPrice);
-                List<DonHang> donHangsDangXuLyTheoNgay = dbController.layDonHangDangXuLyTheoNgay(System.currentTimeMillis());
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoNgay));
-                tvThuNoNgay.setText(formattedPrice);
-                List<DonHang> donHangsTheoTuan = dbController.layDonHangTheoTuan(System.currentTimeMillis());
-                initChart(chartTuan, donHangsTheoTuan);
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoTuan));
-                tvDoanhThuTuan.setText(formattedPrice);
-                List<DonHang> donHangsHoanThanhTheoTuan = dbController.layDonHangHoanThanhTheoTuan(System.currentTimeMillis());
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoTuan));
-                tvBanHangTuan.setText(formattedPrice);
-                List<DonHang> donHangsDangXuLyTheoTuan = dbController.layDonHangDangXuLyTheoTuan(System.currentTimeMillis());
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoTuan));
-                tvThuNoTuan.setText(formattedPrice);
-                List<DonHang> donHangsTheoThang = dbController.layDonHangTheoThang(System.currentTimeMillis());
-                initChart(chartThang, donHangsTheoThang);
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoThang));
-                tvDoanhThuThang.setText(formattedPrice);
-                List<DonHang> donHangsHoanThanhTheoThang = dbController.layDonHangHoanThanhTheoThang(System.currentTimeMillis());
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoThang));
-                tvBanHangThang.setText(formattedPrice);
-                List<DonHang> donHangsDangXuLyTheoThang = dbController.layDonHangDangXuLyTheoThang(System.currentTimeMillis());
-                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoThang));
-                tvThuNoThang.setText(formattedPrice);
-            }
-        });
+        showLoading();
+        new MyTask().execute();
     }
 
-    private void initChart(PieChartView chart, List<DonHang> donHangs) {
+    private void showLoading() {
+        Utils.showProgressDialog(getActivity());
+    }
+
+    private void hideLoading() {
+        Utils.hideProgressDialog();
+    }
+
+    private PieChartData getPieChartData(List<DonHang> donHangs) {
         Map<String, Integer> sanPhamData = new HashMap<>();
         for (DonHang donHang : donHangs) {
             List<String> idSanPhams = donHang.getIdSanPhams();
             for (String id : idSanPhams) {
-                SanPham sanPham = dbController.laySanPhamTheoId(id);
+                SanPham sanPham = DBController.getInstance(getActivity()).laySanPhamTheoId(id);
                 Integer tong = sanPhamData.get(sanPham.getTenSP());
                 sanPhamData.put(sanPham.getTenSP(), tong != null ? tong.intValue() + 1 : 1);
             }
@@ -128,7 +116,7 @@ public class BaoCaoFragment extends Fragment {
         PieChartData pieChartData = new PieChartData(pieData);
         pieChartData.setHasLabels(true).setValueLabelTextSize(8);
         pieChartData.setHasCenterCircle(true).setCenterText1("Tỉ trọng các mặt hàng").setCenterText1FontSize(10).setCenterText1Color(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-        chart.setPieChartData(pieChartData);
+        return pieChartData;
     }
 
     private long getTongTien(List<DonHang> donHangs) {
@@ -137,5 +125,51 @@ public class BaoCaoFragment extends Fragment {
             tongTien += donHang.getTongTien(getActivity());
         }
         return tongTien;
+    }
+
+    private class MyTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            List<DonHang> donHangsTheoNgay = DBController.getInstance(getActivity()).layDonHangTheoNgay(System.currentTimeMillis());
+            mDoanhThuNgay = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoNgay));
+            mPieChartDataNgay = getPieChartData(donHangsTheoNgay);
+            List<DonHang> donHangsHoanThanhTheoNgay = DBController.getInstance(getActivity()).layDonHangHoanThanhTheoNgay(System.currentTimeMillis());
+            mBanHangNgay = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoNgay));
+            List<DonHang> donHangsDangXuLyTheoNgay = DBController.getInstance(getActivity()).layDonHangDangXuLyTheoNgay(System.currentTimeMillis());
+            mThuNoNgay = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoNgay));
+            List<DonHang> donHangsTheoTuan = DBController.getInstance(getActivity()).layDonHangTheoTuan(System.currentTimeMillis());
+            mDoanhThuTuan = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoTuan));
+            mPieChartDataTuan = getPieChartData(donHangsTheoTuan);
+            List<DonHang> donHangsHoanThanhTheoTuan = DBController.getInstance(getActivity()).layDonHangHoanThanhTheoTuan(System.currentTimeMillis());
+            mBanHangTuan = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoTuan));
+            List<DonHang> donHangsDangXuLyTheoTuan = DBController.getInstance(getActivity()).layDonHangDangXuLyTheoTuan(System.currentTimeMillis());
+            mThuNoTuan = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoTuan));
+            List<DonHang> donHangsTheoThang = DBController.getInstance(getActivity()).layDonHangTheoThang(System.currentTimeMillis());
+            mDoanhThuThang = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoThang));
+            mPieChartDataThang = getPieChartData(donHangsTheoThang);
+            List<DonHang> donHangsHoanThanhTheoThang = DBController.getInstance(getActivity()).layDonHangHoanThanhTheoThang(System.currentTimeMillis());
+            mBanHangThang = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoThang));
+            List<DonHang> donHangsDangXuLyTheoThang = DBController.getInstance(getActivity()).layDonHangDangXuLyTheoThang(System.currentTimeMillis());
+            mThuNoThang = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoThang));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            chartNgay.setPieChartData(mPieChartDataNgay);
+            tvDoanhThuNgay.setText(mDoanhThuNgay);
+            tvBanHangNgay.setText(mBanHangNgay);
+            tvThuNoNgay.setText(mThuNoNgay);
+            chartTuan.setPieChartData(mPieChartDataTuan);
+            tvDoanhThuTuan.setText(mDoanhThuTuan);
+            tvBanHangTuan.setText(mBanHangTuan);
+            tvThuNoTuan.setText(mThuNoTuan);
+            chartThang.setPieChartData(mPieChartDataThang);
+            tvDoanhThuThang.setText(mDoanhThuThang);
+            tvBanHangThang.setText(mBanHangThang);
+            tvThuNoThang.setText(mThuNoThang);
+            hideLoading();
+        }
     }
 }

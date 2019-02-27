@@ -5,8 +5,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -332,36 +332,18 @@ public class BanHangFragment extends Fragment {
     }
 
     private void getDonHangs() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                mDonHangs = dbController.layDonHangDangXuLy();
-                mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new OnDonHangListerner() {
-                    @Override
-                    public void onShow() {
-                        actionThanhToan.setVisible(true);
-                    }
+        showLoading();
+        if (actionThanhToan != null)
+            actionThanhToan.setVisible(false);
+        new MyTask().execute();
+    }
 
-                    @Override
-                    public void onHide() {
-                        actionThanhToan.setVisible(false);
-                    }
+    private void showLoading() {
+//        Utils.showProgressDialog(getActivity());
+    }
 
-                    @Override
-                    public void onRefresh() {
-                        getDonHangs();
-                    }
-
-                    @Override
-                    public void onUpdateTongTien(long tongTien) {
-                        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
-                        tvTotalCost.setText(formattedPrice);
-                    }
-                }, mListener);
-                mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
-                mRecyclerView.setAdapter(mSectionedAdapter);
-            }
-        });
+    private void hideLoading() {
+//        Utils.hideProgressDialog();
     }
 
     private List<SimpleSectionedAdapter.Section> getSections() {
@@ -424,5 +406,44 @@ public class BanHangFragment extends Fragment {
         void onRefresh();
 
         void onUpdateTongTien(long tongTien);
+    }
+
+    private class MyTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mDonHangs = dbController.layDonHangDangXuLy();
+            mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new OnDonHangListerner() {
+                @Override
+                public void onShow() {
+                    actionThanhToan.setVisible(true);
+                }
+
+                @Override
+                public void onHide() {
+                    actionThanhToan.setVisible(false);
+                }
+
+                @Override
+                public void onRefresh() {
+                    getDonHangs();
+                }
+
+                @Override
+                public void onUpdateTongTien(long tongTien) {
+                    String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
+                    tvTotalCost.setText(formattedPrice);
+                }
+            }, mListener);
+            mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mRecyclerView.setAdapter(mSectionedAdapter);
+            hideLoading();
+        }
     }
 }

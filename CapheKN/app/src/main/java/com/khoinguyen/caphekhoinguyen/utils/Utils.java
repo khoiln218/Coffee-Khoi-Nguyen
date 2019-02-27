@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.khoinguyen.caphekhoinguyen.R;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,7 +46,7 @@ public final class Utils {
 
     public static ProgressDialog createProgressDialog(Context context) {
         ProgressDialog progressDialog = new ProgressDialog(context, R.style.ProgressTheme);
-        progressDialog.setMessage("");
+        progressDialog.setMessage("Đang tải dữ liệu");
         progressDialog.setIndeterminate(true);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(false);
