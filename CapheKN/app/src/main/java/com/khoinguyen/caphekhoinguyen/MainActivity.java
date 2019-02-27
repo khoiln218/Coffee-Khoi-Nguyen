@@ -93,6 +93,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        RealtimeDatabaseController.getInstance(this).startListerner();
+        EventBus.getDefault().register(this);
+
         openHome();
     }
 
@@ -270,15 +273,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        RealtimeDatabaseController.getInstance(this).startListerner();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         RealtimeDatabaseController.getInstance(this).stopListerner();
         EventBus.getDefault().unregister(this);
     }
