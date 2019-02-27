@@ -191,7 +191,7 @@ public class DonHangHandler {
         int day = current.get(Calendar.DAY_OF_MONTH);
 
         Calendar to = Calendar.getInstance();
-        to.set(year, month, day - current.get(Calendar.DAY_OF_WEEK_IN_MONTH), 0, 0, 0);
+        to.set(year, month, day - (current.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY), 0, 0, 0);
         to.clear(Calendar.MILLISECOND);
 
         Calendar from = Calendar.getInstance();
@@ -296,7 +296,7 @@ public class DonHangHandler {
         int day = current.get(Calendar.DAY_OF_MONTH);
 
         Calendar to = Calendar.getInstance();
-        to.set(year, month, day - current.get(Calendar.DAY_OF_WEEK_IN_MONTH), 0, 0, 0);
+        to.set(year, month, day - (current.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY), 0, 0, 0);
         to.clear(Calendar.MILLISECOND);
 
         Calendar from = Calendar.getInstance();
@@ -322,7 +322,7 @@ public class DonHangHandler {
         int day = current.get(Calendar.DAY_OF_MONTH);
 
         Calendar to = Calendar.getInstance();
-        to.set(year, month, day - current.get(Calendar.DAY_OF_WEEK_IN_MONTH), 0, 0, 0);
+        to.set(year, month, day - (current.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY), 0, 0, 0);
         to.clear(Calendar.MILLISECOND);
 
         Calendar from = Calendar.getInstance();
