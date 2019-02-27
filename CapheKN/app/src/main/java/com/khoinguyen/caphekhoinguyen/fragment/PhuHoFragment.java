@@ -3,6 +3,7 @@ package com.khoinguyen.caphekhoinguyen.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,20 +61,25 @@ public class PhuHoFragment extends Fragment {
     }
 
     private void getKhachHangs() {
-        List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
-        mKhachHangs = new ArrayList<>();
-        for (KhachHang khachHang : khachHangs) {
-            if (getTongTien(khachHang.getId()) > 0)
-                mKhachHangs.add(khachHang);
-        }
-        Collections.sort(mKhachHangs, new Comparator<KhachHang>() {
+        new Handler().post(new Runnable() {
             @Override
-            public int compare(KhachHang left, KhachHang right) {
-                return (int) (getTongTien(right.getId()) - getTongTien(left.getId()));
+            public void run() {
+                List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
+                mKhachHangs = new ArrayList<>();
+                for (KhachHang khachHang : khachHangs) {
+                    if (getTongTien(khachHang.getId()) > 0)
+                        mKhachHangs.add(khachHang);
+                }
+                Collections.sort(mKhachHangs, new Comparator<KhachHang>() {
+                    @Override
+                    public int compare(KhachHang left, KhachHang right) {
+                        return (int) (getTongTien(right.getId()) - getTongTien(left.getId()));
+                    }
+                });
+                mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_HOAN_THANH, false, mListener);
+                mRecyclerView.setAdapter(mAdapter);
             }
         });
-        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_HOAN_THANH, false, mListener);
-        mRecyclerView.setAdapter(mAdapter);
     }
 
     private long getTongTien(String id) {

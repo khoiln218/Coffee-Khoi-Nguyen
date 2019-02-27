@@ -2,6 +2,7 @@ package com.khoinguyen.caphekhoinguyen.fragment;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -71,36 +72,41 @@ public class BaoCaoFragment extends Fragment {
     }
 
     private void baoCao() {
-        List<DonHang> donHangsTheoNgay = dbController.layDonHangTheoNgay(System.currentTimeMillis());
-        initChart(chartNgay, donHangsTheoNgay);
-        String formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoNgay));
-        tvDoanhThuNgay.setText(formattedPrice);
-        List<DonHang> donHangsHoanThanhTheoNgay = dbController.layDonHangHoanThanhTheoNgay(System.currentTimeMillis());
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoNgay));
-        tvBanHangNgay.setText(formattedPrice);
-        List<DonHang> donHangsDangXuLyTheoNgay = dbController.layDonHangDangXuLyTheoNgay(System.currentTimeMillis());
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoNgay));
-        tvThuNoNgay.setText(formattedPrice);
-        List<DonHang> donHangsTheoTuan = dbController.layDonHangTheoTuan(System.currentTimeMillis());
-        initChart(chartTuan, donHangsTheoTuan);
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoTuan));
-        tvDoanhThuTuan.setText(formattedPrice);
-        List<DonHang> donHangsHoanThanhTheoTuan = dbController.layDonHangHoanThanhTheoTuan(System.currentTimeMillis());
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoTuan));
-        tvBanHangTuan.setText(formattedPrice);
-        List<DonHang> donHangsDangXuLyTheoTuan = dbController.layDonHangDangXuLyTheoTuan(System.currentTimeMillis());
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoTuan));
-        tvThuNoTuan.setText(formattedPrice);
-        List<DonHang> donHangsTheoThang = dbController.layDonHangTheoThang(System.currentTimeMillis());
-        initChart(chartThang, donHangsTheoThang);
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoThang));
-        tvDoanhThuThang.setText(formattedPrice);
-        List<DonHang> donHangsHoanThanhTheoThang = dbController.layDonHangHoanThanhTheoThang(System.currentTimeMillis());
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoThang));
-        tvBanHangThang.setText(formattedPrice);
-        List<DonHang> donHangsDangXuLyTheoThang = dbController.layDonHangDangXuLyTheoThang(System.currentTimeMillis());
-        formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoThang));
-        tvThuNoThang.setText(formattedPrice);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                List<DonHang> donHangsTheoNgay = dbController.layDonHangTheoNgay(System.currentTimeMillis());
+                initChart(chartNgay, donHangsTheoNgay);
+                String formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoNgay));
+                tvDoanhThuNgay.setText(formattedPrice);
+                List<DonHang> donHangsHoanThanhTheoNgay = dbController.layDonHangHoanThanhTheoNgay(System.currentTimeMillis());
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoNgay));
+                tvBanHangNgay.setText(formattedPrice);
+                List<DonHang> donHangsDangXuLyTheoNgay = dbController.layDonHangDangXuLyTheoNgay(System.currentTimeMillis());
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoNgay));
+                tvThuNoNgay.setText(formattedPrice);
+                List<DonHang> donHangsTheoTuan = dbController.layDonHangTheoTuan(System.currentTimeMillis());
+                initChart(chartTuan, donHangsTheoTuan);
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoTuan));
+                tvDoanhThuTuan.setText(formattedPrice);
+                List<DonHang> donHangsHoanThanhTheoTuan = dbController.layDonHangHoanThanhTheoTuan(System.currentTimeMillis());
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoTuan));
+                tvBanHangTuan.setText(formattedPrice);
+                List<DonHang> donHangsDangXuLyTheoTuan = dbController.layDonHangDangXuLyTheoTuan(System.currentTimeMillis());
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoTuan));
+                tvThuNoTuan.setText(formattedPrice);
+                List<DonHang> donHangsTheoThang = dbController.layDonHangTheoThang(System.currentTimeMillis());
+                initChart(chartThang, donHangsTheoThang);
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsTheoThang));
+                tvDoanhThuThang.setText(formattedPrice);
+                List<DonHang> donHangsHoanThanhTheoThang = dbController.layDonHangHoanThanhTheoThang(System.currentTimeMillis());
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsHoanThanhTheoThang));
+                tvBanHangThang.setText(formattedPrice);
+                List<DonHang> donHangsDangXuLyTheoThang = dbController.layDonHangDangXuLyTheoThang(System.currentTimeMillis());
+                formattedPrice = new DecimalFormat("##,##0").format(getTongTien(donHangsDangXuLyTheoThang));
+                tvThuNoThang.setText(formattedPrice);
+            }
+        });
     }
 
     private void initChart(PieChartView chart, List<DonHang> donHangs) {

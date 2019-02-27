@@ -1,7 +1,7 @@
 package com.khoinguyen.caphekhoinguyen.realtimedatabase;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +29,7 @@ import java.util.List;
 
 public class RealtimeDatabaseController {
     private static final String TAG = "RealtimeDatabaseController";
+    private static final int TIME_INTERVAL = 2000;
 
     private static RealtimeDatabaseController INSTANCE = null;
 
@@ -50,12 +51,38 @@ public class RealtimeDatabaseController {
     private boolean isLoadKhachHangComplete = false;
     private boolean isLoadSanPhamComplete = false;
 
+    private Handler handler = new Handler();
+    private Runnable rDonHang = new Runnable() {
+        @Override
+        public void run() {
+            isLoadDonHangComplete = true;
+            stopLoad();
+        }
+    };
+
+    private Runnable rKhachHang = new Runnable() {
+        @Override
+        public void run() {
+            isLoadKhachHangComplete = true;
+            stopLoad();
+        }
+    };
+
+    private Runnable rSanPham = new Runnable() {
+        @Override
+        public void run() {
+            isLoadSanPhamComplete = true;
+            stopLoad();
+        }
+    };
+
     private RealtimeDatabaseController(Context context) {
         mContext = context;
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDonHangDatabase = mDatabase.child(getUid()).child("donhang");
-        mKhachHangDatabase = mDatabase.child(getUid()).child("khachhang");
-        mSanPhamDatabase = mDatabase.child(getUid()).child("sanpham");
+        String uid = getUid();
+        mDonHangDatabase = mDatabase.child(uid).child("donhang");
+        mKhachHangDatabase = mDatabase.child(uid).child("khachhang");
+        mSanPhamDatabase = mDatabase.child(uid).child("sanpham");
         mConnectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
     }
 
@@ -87,22 +114,15 @@ public class RealtimeDatabaseController {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "DonHang - onDataChange");
-                new AsyncTask<Void, Integer, Void>() {
-
+                new Thread(new Runnable() {
                     @Override
-                    protected Void doInBackground(Void... params) {
+                    public void run() {
                         for (DataSnapshot ds : dataSnapshot.getChildren())
                             DBController.getInstance(mContext).themDonHangDenDB(ds.getValue(DonHang.class));
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        super.onPostExecute(result);
                         isLoadDonHangComplete = true;
                         stopLoad();
                     }
-                }.execute();
+                }).start();
             }
 
             @Override
@@ -114,21 +134,15 @@ public class RealtimeDatabaseController {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "KhachHang - onDataChange");
-                new AsyncTask<Void, Integer, Void>() {
+                new Thread(new Runnable() {
                     @Override
-                    protected Void doInBackground(Void... params) {
+                    public void run() {
                         for (DataSnapshot ds : dataSnapshot.getChildren())
                             DBController.getInstance(mContext).themKhachHangDenDB(ds.getValue(KhachHang.class));
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        super.onPostExecute(result);
                         isLoadKhachHangComplete = true;
                         stopLoad();
                     }
-                }.execute();
+                }).start();
             }
 
             @Override
@@ -140,21 +154,15 @@ public class RealtimeDatabaseController {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "SanPham - onDataChange");
-                new AsyncTask<Void, Integer, Void>() {
+                new Thread(new Runnable() {
                     @Override
-                    protected Void doInBackground(Void... params) {
+                    public void run() {
                         for (DataSnapshot ds : dataSnapshot.getChildren())
                             DBController.getInstance(mContext).themSanPhamDenDB(ds.getValue(SanPham.class));
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void result) {
-                        super.onPostExecute(result);
                         isLoadSanPhamComplete = true;
                         stopLoad();
                     }
-                }.execute();
+                }).start();
             }
 
             @Override
@@ -169,15 +177,28 @@ public class RealtimeDatabaseController {
 
     public void startListerner() {
         LogUtils.d(TAG, "startListerner");
+
+        startLoad();
+
         mDonHangChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "DonHang - onChildAdded: " + dataSnapshot.getKey());
-                DonHang donHang = dataSnapshot.getValue(DonHang.class);
-                DBController.getInstance(mContext).themDonHangDenDB(donHang);
-                DonHangEvent event = new DonHangEvent();
-                event.setDonHang(donHang);
-                EventBus.getDefault().post(event);
+                final DonHang donHang = dataSnapshot.getValue(DonHang.class);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DBController.getInstance(mContext).themDonHangDenDB(donHang);
+                        if (isLoadDonHangComplete) {
+                            DonHangEvent event = new DonHangEvent();
+                            event.setDonHang(donHang);
+                            EventBus.getDefault().post(event);
+                        } else {
+                            handler.removeCallbacks(rDonHang);
+                            handler.postDelayed(rDonHang, TIME_INTERVAL);
+                        }
+                    }
+                }).start();
             }
 
             @Override
@@ -210,11 +231,21 @@ public class RealtimeDatabaseController {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "KhachHang - onChildAdded: " + dataSnapshot.getKey());
-                KhachHang khachHang = dataSnapshot.getValue(KhachHang.class);
-                DBController.getInstance(mContext).themKhachHangDenDB(khachHang);
-                KhachHangEvent event = new KhachHangEvent();
-                event.setKhachHang(khachHang);
-                EventBus.getDefault().post(event);
+                final KhachHang khachHang = dataSnapshot.getValue(KhachHang.class);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DBController.getInstance(mContext).themKhachHangDenDB(khachHang);
+                        if (isLoadKhachHangComplete) {
+                            KhachHangEvent event = new KhachHangEvent();
+                            event.setKhachHang(khachHang);
+                            EventBus.getDefault().post(event);
+                        } else {
+                            handler.removeCallbacks(rKhachHang);
+                            handler.postDelayed(rKhachHang, TIME_INTERVAL);
+                        }
+                    }
+                }).start();
             }
 
             @Override
@@ -247,11 +278,21 @@ public class RealtimeDatabaseController {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LogUtils.d(TAG, "SanPham - onChildAdded: " + dataSnapshot.getKey());
-                SanPham sanPham = dataSnapshot.getValue(SanPham.class);
-                DBController.getInstance(mContext).themSanPhamDenDB(sanPham);
-                SanPhamEvent event = new SanPhamEvent();
-                event.setSanPham(sanPham);
-                EventBus.getDefault().post(event);
+                final SanPham sanPham = dataSnapshot.getValue(SanPham.class);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DBController.getInstance(mContext).themSanPhamDenDB(sanPham);
+                        if (isLoadSanPhamComplete) {
+                            SanPhamEvent event = new SanPhamEvent();
+                            event.setSanPham(sanPham);
+                            EventBus.getDefault().post(event);
+                        } else {
+                            handler.removeCallbacks(rSanPham);
+                            handler.postDelayed(rSanPham, TIME_INTERVAL);
+                        }
+                    }
+                }).start();
             }
 
             @Override

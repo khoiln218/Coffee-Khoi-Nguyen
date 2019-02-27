@@ -15,19 +15,19 @@ import java.util.List;
 public class DBController {
     private static DBController INSTANCE = null;
 
+    private Context mContext;
     private DonHangHandler mDonHangHandler;
     private KhachHangHandler mKhachHangHandler;
     private SanPhamHandler mSanPhamHandler;
-    private RealtimeDatabaseController mRealtimeDatabaseController;
 
     private DBController(Context context) {
+        mContext = context;
         mDonHangHandler = DonHangHandler.getInstance(context);
         mKhachHangHandler = KhachHangHandler.getInstance(context);
         mSanPhamHandler = SanPhamHandler.getInstance(context);
-        mRealtimeDatabaseController = RealtimeDatabaseController.getInstance(context);
     }
 
-    public static DBController getInstance(Context context) {
+    public synchronized static DBController getInstance(Context context) {
         if (INSTANCE == null) {
             INSTANCE = new DBController(context);
         }
@@ -96,12 +96,12 @@ public class DBController {
         themDonHangDenServer(donHang);
     }
 
-    public void themDonHangDenDB(DonHang donHang) {
+    public synchronized void themDonHangDenDB(DonHang donHang) {
         mDonHangHandler.insertOrUpdateDonHang(donHang);
     }
 
     public void themDonHangDenServer(DonHang donHang) {
-        mRealtimeDatabaseController.themDonHang(donHang);
+        RealtimeDatabaseController.getInstance(mContext).themDonHang(donHang);
     }
 
     public void capNhatDonHang(DonHang donHang) {
@@ -114,7 +114,7 @@ public class DBController {
     }
 
     public void capNhatDonHangDenServer(DonHang donHang) {
-        mRealtimeDatabaseController.capNhatDonHang(donHang);
+        RealtimeDatabaseController.getInstance(mContext).capNhatDonHang(donHang);
     }
 
     // Khach hang
@@ -131,12 +131,12 @@ public class DBController {
         themKhachHangDenServer(khachHang);
     }
 
-    public void themKhachHangDenDB(KhachHang khachHang) {
+    public synchronized void themKhachHangDenDB(KhachHang khachHang) {
         mKhachHangHandler.insertOrUpdateKhachHang(khachHang);
     }
 
     public void themKhachHangDenServer(KhachHang khachHang) {
-        mRealtimeDatabaseController.themKhachHang(khachHang);
+        RealtimeDatabaseController.getInstance(mContext).themKhachHang(khachHang);
     }
 
     public void capNhatKhachHang(KhachHang khachHang) {
@@ -149,7 +149,7 @@ public class DBController {
     }
 
     public void capNhatKhachHangDenServer(KhachHang khachHang) {
-        mRealtimeDatabaseController.capNhatKhachHang(khachHang);
+        RealtimeDatabaseController.getInstance(mContext).capNhatKhachHang(khachHang);
     }
 
     // San pham
@@ -166,12 +166,12 @@ public class DBController {
         themSanPhamDenServer(sanPham);
     }
 
-    public void themSanPhamDenDB(SanPham sanPham) {
+    public synchronized void themSanPhamDenDB(SanPham sanPham) {
         mSanPhamHandler.insertOrUpdateSanPham(sanPham);
     }
 
     public void themSanPhamDenServer(SanPham sanPham) {
-        mRealtimeDatabaseController.themSanPham(sanPham);
+        RealtimeDatabaseController.getInstance(mContext).themSanPham(sanPham);
     }
 
     public void capNhatSanPham(SanPham sanPham) {
@@ -184,7 +184,7 @@ public class DBController {
     }
 
     public void capNhatSanPhamDenServer(SanPham sanPham) {
-        mRealtimeDatabaseController.capNhatSanPham(sanPham);
+        RealtimeDatabaseController.getInstance(mContext).capNhatSanPham(sanPham);
     }
 
     public void taiDuLieuLenServer() {
@@ -192,8 +192,8 @@ public class DBController {
         List<KhachHang> khachHangs = layDanhSachKhachHang();
         List<DonHang> donHangs = layDanhSachDonHang();
 
-        mRealtimeDatabaseController.taiSanPhamLenServer(sanPhams);
-        mRealtimeDatabaseController.taiKhachHangLenServer(khachHangs);
-        mRealtimeDatabaseController.taiDonHangLenServer(donHangs);
+        RealtimeDatabaseController.getInstance(mContext).taiSanPhamLenServer(sanPhams);
+        RealtimeDatabaseController.getInstance(mContext).taiKhachHangLenServer(khachHangs);
+        RealtimeDatabaseController.getInstance(mContext).taiDonHangLenServer(donHangs);
     }
 }

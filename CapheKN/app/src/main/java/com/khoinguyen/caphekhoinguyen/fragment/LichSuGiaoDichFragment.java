@@ -2,6 +2,7 @@ package com.khoinguyen.caphekhoinguyen.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -172,31 +173,36 @@ public class LichSuGiaoDichFragment extends Fragment {
     }
 
     private void getDonHangs() {
-        mDonHangs = trangThai == Constants.TRANG_THAI_DANG_XY_LY ? dbController.layDonHangDangXuLyTheoKhachHang(idKhachHang) : dbController.layDonHangHoanThanhTheoKhachHang(idKhachHang);
-        mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new BanHangFragment.OnDonHangListerner() {
+        new Handler().post(new Runnable() {
             @Override
-            public void onShow() {
-                actionChinhSua.setVisible(true);
-            }
+            public void run() {
+                mDonHangs = trangThai == Constants.TRANG_THAI_DANG_XY_LY ? dbController.layDonHangDangXuLyTheoKhachHang(idKhachHang) : dbController.layDonHangHoanThanhTheoKhachHang(idKhachHang);
+                mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new BanHangFragment.OnDonHangListerner() {
+                    @Override
+                    public void onShow() {
+                        actionChinhSua.setVisible(true);
+                    }
 
-            @Override
-            public void onHide() {
-                actionChinhSua.setVisible(false);
-            }
+                    @Override
+                    public void onHide() {
+                        actionChinhSua.setVisible(false);
+                    }
 
-            @Override
-            public void onRefresh() {
-                getDonHangs();
-            }
+                    @Override
+                    public void onRefresh() {
+                        getDonHangs();
+                    }
 
-            @Override
-            public void onUpdateTongTien(long tongTien) {
-                String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
-                tvTotalCost.setText(formattedPrice);
+                    @Override
+                    public void onUpdateTongTien(long tongTien) {
+                        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
+                        tvTotalCost.setText(formattedPrice);
+                    }
+                }, mListener, true, trangThai);
+                mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
+                mRecyclerView.setAdapter(mSectionedAdapter);
             }
-        }, mListener, true, trangThai);
-        mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
-        mRecyclerView.setAdapter(mSectionedAdapter);
+        });
     }
 
     private List<SimpleSectionedAdapter.Section> getSections() {

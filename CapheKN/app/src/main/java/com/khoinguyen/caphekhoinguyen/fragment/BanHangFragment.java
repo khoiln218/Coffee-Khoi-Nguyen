@@ -4,6 +4,7 @@ package com.khoinguyen.caphekhoinguyen.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -66,7 +67,7 @@ public class BanHangFragment extends Fragment {
     private TextView tvTotalCost;
     private Animation animGoUp;
     private Animation animGoDown;
-    private MenuItem actionChinhSua;
+    private MenuItem actionThanhToan;
     private DBController dbController;
     private AlertDialog alertDialog;
 
@@ -154,8 +155,8 @@ public class BanHangFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        actionChinhSua = menu.findItem(R.id.action_thanh_toan);
-        actionChinhSua.setVisible(false);
+        actionThanhToan = menu.findItem(R.id.action_thanh_toan);
+        actionThanhToan.setVisible(false);
     }
 
     @Override
@@ -281,31 +282,36 @@ public class BanHangFragment extends Fragment {
     }
 
     private void getDonHangs() {
-        mDonHangs = dbController.layDonHangDangXuLy();
-        mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new OnDonHangListerner() {
+        new Handler().post(new Runnable() {
             @Override
-            public void onShow() {
-                actionChinhSua.setVisible(true);
-            }
+            public void run() {
+                mDonHangs = dbController.layDonHangDangXuLy();
+                mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new OnDonHangListerner() {
+                    @Override
+                    public void onShow() {
+                        actionThanhToan.setVisible(true);
+                    }
 
-            @Override
-            public void onHide() {
-                actionChinhSua.setVisible(false);
-            }
+                    @Override
+                    public void onHide() {
+                        actionThanhToan.setVisible(false);
+                    }
 
-            @Override
-            public void onRefresh() {
-                getDonHangs();
-            }
+                    @Override
+                    public void onRefresh() {
+                        getDonHangs();
+                    }
 
-            @Override
-            public void onUpdateTongTien(long tongTien) {
-                String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
-                tvTotalCost.setText(formattedPrice);
+                    @Override
+                    public void onUpdateTongTien(long tongTien) {
+                        String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
+                        tvTotalCost.setText(formattedPrice);
+                    }
+                }, mListener);
+                mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
+                mRecyclerView.setAdapter(mSectionedAdapter);
             }
-        }, mListener);
-        mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
-        mRecyclerView.setAdapter(mSectionedAdapter);
+        });
     }
 
     private List<SimpleSectionedAdapter.Section> getSections() {
