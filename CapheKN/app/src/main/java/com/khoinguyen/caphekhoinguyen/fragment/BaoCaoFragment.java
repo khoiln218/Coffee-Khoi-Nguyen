@@ -126,7 +126,7 @@ public class BaoCaoFragment extends Fragment {
         }
 
         PieChartData pieChartData = new PieChartData(pieData);
-        pieChartData.setHasLabels(true).setValueLabelTextSize(10);
+        pieChartData.setHasLabels(true).setValueLabelTextSize(8);
         pieChartData.setHasCenterCircle(true).setCenterText1("Tỉ trọng các mặt hàng").setCenterText1FontSize(10).setCenterText1Color(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
         chart.setPieChartData(pieChartData);
     }

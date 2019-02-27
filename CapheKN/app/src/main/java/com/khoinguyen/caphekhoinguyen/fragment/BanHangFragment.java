@@ -1,6 +1,8 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -22,9 +24,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
@@ -47,6 +51,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -70,6 +75,7 @@ public class BanHangFragment extends Fragment {
     private MenuItem actionThanhToan;
     private DBController dbController;
     private AlertDialog alertDialog;
+    private Calendar mCalendar;
 
     public BanHangFragment() {
         // Required empty public constructor
@@ -185,6 +191,8 @@ public class BanHangFragment extends Fragment {
         mAdapter.clearSelect();
 
         final DonHang donHang = new DonHang();
+        mCalendar = Calendar.getInstance();
+        mCalendar.setTimeInMillis(System.currentTimeMillis());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Bán hàng");
@@ -233,13 +241,32 @@ public class BanHangFragment extends Fragment {
             }
         });
 
+        final TextView tvNgay = (TextView) view.findViewById(R.id.tvNgay);
+        final TextView tvThoiGian = (TextView) view.findViewById(R.id.tvThoiGian);
+        tvThoiGian.setText(String.format("%1$tH:%1$tM", mCalendar));
+        tvNgay.setText(String.format("%1$td/%1$tm/%1$ty", mCalendar));
+
+        tvNgay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(tvNgay);
+            }
+        });
+
+        tvThoiGian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog(tvThoiGian);
+            }
+        });
+
         builder.setView(view);
 
         builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 donHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyDonHang());
-                donHang.setThoiGianTao(System.currentTimeMillis());
+                donHang.setThoiGianTao(mCalendar.getTimeInMillis());
                 donHang.setTrangThai(getString(R.string.status_dang_xu_ly));
                 String[] tenSPs = etSanPham.getText().toString().split(",");
                 for (String tenSP : tenSPs) {
@@ -269,6 +296,29 @@ public class BanHangFragment extends Fragment {
 
         alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void showTimePickerDialog(final TextView tvThoiGian) {
+        new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                mCalendar.set(Calendar.HOUR, hour);
+                mCalendar.set(Calendar.MINUTE, minute);
+                mCalendar.clear(Calendar.SECOND);
+                mCalendar.clear(Calendar.MILLISECOND);
+                tvThoiGian.setText(String.format("%1$tH:%1$tM", mCalendar));
+            }
+        }, mCalendar.get(Calendar.HOUR), mCalendar.get(Calendar.MINUTE), true).show();
+    }
+
+    private void showDatePickerDialog(final TextView tvNgay) {
+        new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                mCalendar.set(year, month, dayOfMonth);
+                tvNgay.setText(String.format("%1$td/%1$tm/%1$ty", mCalendar));
+            }
+        }, mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     @Override

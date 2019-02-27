@@ -33,8 +33,8 @@
         <Button
             android:id="@+id/btnThemKhachHang"
             android:layout_width="30dp"
-            android:padding="0dp"
             android:layout_height="wrap_content"
+            android:padding="0dp"
             android:text="+" />
     </TableRow>
 
@@ -62,9 +62,42 @@
         <Button
             android:id="@+id/btnThemSanPham"
             android:layout_width="30dp"
-            android:padding="0dp"
             android:layout_height="wrap_content"
+            android:padding="0dp"
             android:text="+" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ngày tạo"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvThoiGian"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:padding="5dp" />
+
+            <TextView
+                android:id="@+id/tvNgay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="5dp" />
+        </LinearLayout>
     </TableRow>
 
 </TableLayout>
