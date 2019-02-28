@@ -109,7 +109,7 @@ public class BaoCaoFragment extends Fragment {
         }
         List<SliceValue> pieData = new ArrayList<>();
         for (String key : sanPhamData.keySet()) {
-            int tong = sanPhamData.get(key).byteValue();
+            int tong = sanPhamData.get(key).intValue();
             pieData.add(new SliceValue(tong, ColorGenerator.MATERIAL.getColor(key)).setLabel(key + ":" + tong));
         }
 
