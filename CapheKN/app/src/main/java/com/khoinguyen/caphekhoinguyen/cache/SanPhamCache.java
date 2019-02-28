@@ -34,13 +34,17 @@ public class SanPhamCache {
     }
 
     public void capNhatHoacThemSanPham(SanPham sanPham) {
-        for (int i = 0; i < sanPhams.size(); i++) {
-            if (sanPham.getTenSP().compareTo(sanPhams.get(i).getTenSP()) <= 0) {
-                sanPhams.add(i, sanPham);
-                return;
+        if (laySanPhamTheoId(sanPham.getId()) != null)
+            capNhatSanPham(sanPham);
+        else {
+            for (int i = 0; i < sanPhams.size(); i++) {
+                if (sanPham.getTenSP().compareTo(sanPhams.get(i).getTenSP()) <= 0) {
+                    sanPhams.add(i, sanPham);
+                    return;
+                }
             }
+            sanPhams.add(sanPham);
         }
-        sanPhams.add(sanPham);
     }
 
     public void capNhatSanPham(SanPham sanPham) {

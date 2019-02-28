@@ -403,12 +403,16 @@ public class DonHangCache {
     }
 
     public void capNhatHoacThemDonHang(DonHang donHang) {
-        for (int i = 0; i < donHangs.size(); i++)
-            if (donHang.getThoiGianTao() > donHangs.get(i).getThoiGianTao()) {
-                donHangs.add(i, donHang);
-                return;
-            }
-        donHangs.add(donHang);
+        if (layDonHangTheoId(donHang.getId()) != null)
+            capNhatDonHang(donHang);
+        else {
+            for (int i = 0; i < donHangs.size(); i++)
+                if (donHang.getThoiGianTao() > donHangs.get(i).getThoiGianTao()) {
+                    donHangs.add(i, donHang);
+                    return;
+                }
+            donHangs.add(donHang);
+        }
     }
 
     public void capNhatDonHang(DonHang donHang) {

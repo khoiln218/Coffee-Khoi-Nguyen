@@ -34,13 +34,17 @@ public class KhachHangCache {
     }
 
     public void capNhatHoacThemKhachHang(KhachHang khachHang) {
-        for (int i = 0; i < khachHangs.size(); i++) {
-            if (khachHang.getTenKH().compareTo(khachHangs.get(i).getTenKH()) <= 0) {
-                khachHangs.add(i, khachHang);
-                return;
+        if (layKhachHangTheoId(khachHang.getId()) != null)
+            capNhatKhachHang(khachHang);
+        else {
+            for (int i = 0; i < khachHangs.size(); i++) {
+                if (khachHang.getTenKH().compareTo(khachHangs.get(i).getTenKH()) <= 0) {
+                    khachHangs.add(i, khachHang);
+                    return;
+                }
             }
+            khachHangs.add(khachHang);
         }
-        khachHangs.add(khachHang);
     }
 
     public void capNhatKhachHang(KhachHang khachHang) {
