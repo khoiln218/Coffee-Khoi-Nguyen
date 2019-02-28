@@ -117,6 +117,7 @@ public class RealtimeDatabaseController {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        handler.removeCallbacks(rDonHang);
                         for (DataSnapshot ds : dataSnapshot.getChildren())
                             DBController.getInstance(mContext).themDonHangDenDB(ds.getValue(DonHang.class));
                         isLoadDonHangComplete = true;
@@ -137,6 +138,7 @@ public class RealtimeDatabaseController {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        handler.removeCallbacks(rKhachHang);
                         for (DataSnapshot ds : dataSnapshot.getChildren())
                             DBController.getInstance(mContext).themKhachHangDenDB(ds.getValue(KhachHang.class));
                         isLoadKhachHangComplete = true;
@@ -157,6 +159,7 @@ public class RealtimeDatabaseController {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        handler.removeCallbacks(rSanPham);
                         for (DataSnapshot ds : dataSnapshot.getChildren())
                             DBController.getInstance(mContext).themSanPhamDenDB(ds.getValue(SanPham.class));
                         isLoadSanPhamComplete = true;
@@ -348,6 +351,9 @@ public class RealtimeDatabaseController {
         isLoadKhachHangComplete = false;
         isLoadSanPhamComplete = false;
         Utils.showProgressDialog(mContext);
+        handler.postDelayed(rDonHang, TIME_INTERVAL);
+        handler.postDelayed(rKhachHang, TIME_INTERVAL);
+        handler.postDelayed(rSanPham, TIME_INTERVAL);
     }
 
     private void stopLoad() {
