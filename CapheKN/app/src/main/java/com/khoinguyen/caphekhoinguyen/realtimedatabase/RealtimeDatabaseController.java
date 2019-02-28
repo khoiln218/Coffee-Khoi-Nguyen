@@ -29,7 +29,7 @@ import java.util.List;
 
 public class RealtimeDatabaseController {
     private static final String TAG = "RealtimeDatabaseController";
-    private static final int TIME_INTERVAL = 2000;
+    private static final int TIME_INTERVAL = 3500;
 
     private static RealtimeDatabaseController INSTANCE = null;
 

@@ -62,6 +62,8 @@ public class SignInActivity extends Activity implements View.OnClickListener {
 
     private void signIn() {
         LogUtils.d(TAG, "signIn");
+
+        Utils.hideKeyBoard(this);
         if (!validateForm()) {
             return;
         }
@@ -80,7 +82,7 @@ public class SignInActivity extends Activity implements View.OnClickListener {
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
                         } else {
-                            Utils.showToast(SignInActivity.this, "Sign In Failed");
+                            Utils.showToast(SignInActivity.this, "Đăng nhập không thành công");
                         }
                     }
                 });
@@ -88,6 +90,8 @@ public class SignInActivity extends Activity implements View.OnClickListener {
 
     private void signUp() {
         LogUtils.d(TAG, "signUp");
+
+        Utils.hideKeyBoard(this);
         if (!validateForm()) {
             return;
         }
@@ -106,7 +110,7 @@ public class SignInActivity extends Activity implements View.OnClickListener {
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
                         } else {
-                            Utils.showToast(SignInActivity.this, "Sign Up Failed");
+                            Utils.showToast(SignInActivity.this, "Đăng ký không thành công");
                         }
                     }
                 });
@@ -132,22 +136,23 @@ public class SignInActivity extends Activity implements View.OnClickListener {
     }
 
     private boolean validateForm() {
-        boolean result = true;
-        if (TextUtils.isEmpty(mEmailField.getText().toString())) {
-            mEmailField.setError("Required");
-            result = false;
-        } else {
-            mEmailField.setError(null);
+        mEmailField.setError(null);
+        mPasswordField.setError(null);
+        if (!Utils.isValidEmail(mEmailField.getText().toString())) {
+            mEmailField.setError("Email không hợp lệ");
+            mEmailField.requestFocus();
+            Utils.showSoftKeyboard(this);
+            return false;
         }
 
         if (TextUtils.isEmpty(mPasswordField.getText().toString())) {
-            mPasswordField.setError("Required");
-            result = false;
-        } else {
-            mPasswordField.setError(null);
+            mPasswordField.setError("Mật khẩu không hợp lệ");
+            mPasswordField.requestFocus();
+            Utils.showSoftKeyboard(this);
+            return false;
         }
 
-        return result;
+        return true;
     }
 
     // [START basic_write]
