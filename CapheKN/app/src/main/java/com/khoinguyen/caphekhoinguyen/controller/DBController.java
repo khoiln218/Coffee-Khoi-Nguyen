@@ -1,10 +1,11 @@
 package com.khoinguyen.caphekhoinguyen.controller;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.khoinguyen.caphekhoinguyen.database.DonHangHandler;
-import com.khoinguyen.caphekhoinguyen.database.KhachHangHandler;
-import com.khoinguyen.caphekhoinguyen.database.SanPhamHandler;
+import com.khoinguyen.caphekhoinguyen.cache.DonHangCache;
+import com.khoinguyen.caphekhoinguyen.cache.KhachHangCache;
+import com.khoinguyen.caphekhoinguyen.cache.SanPhamCache;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
@@ -13,18 +14,20 @@ import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseControlle
 import java.util.List;
 
 public class DBController {
+    @SuppressLint("StaticFieldLeak")
     private static DBController INSTANCE = null;
 
     private Context mContext;
-    private DonHangHandler mDonHangHandler;
-    private KhachHangHandler mKhachHangHandler;
-    private SanPhamHandler mSanPhamHandler;
+
+    private DonHangCache donHangCache;
+    private KhachHangCache khachHangCache;
+    private SanPhamCache sanPhamCache;
 
     private DBController(Context context) {
         mContext = context;
-        mDonHangHandler = DonHangHandler.getInstance(context);
-        mKhachHangHandler = KhachHangHandler.getInstance(context);
-        mSanPhamHandler = SanPhamHandler.getInstance(context);
+        donHangCache = DonHangCache.getInstance(context);
+        khachHangCache = KhachHangCache.getInstance();
+        sanPhamCache = SanPhamCache.getInstance();
     }
 
     public synchronized static DBController getInstance(Context context) {
@@ -36,68 +39,67 @@ public class DBController {
 
     // Don hang
     public List<DonHang> layDanhSachDonHang() {
-        return mDonHangHandler.getAllDonHang();
+        return donHangCache.layDanhSachDonHang();
     }
 
     public DonHang layDonHangTheoId(String idDonHang) {
-        return mDonHangHandler.getDonHangById(idDonHang);
+        return donHangCache.layDonHangTheoId(idDonHang);
     }
 
     public List<DonHang> layDonHangDangXuLy() {
-        return mDonHangHandler.getDonHangDangXuLy();
+        return donHangCache.layDonHangDangXuLy();
     }
 
     public List<DonHang> layDonHangDangXuLyTheoKhachHang(String idKhachHang) {
-        return mDonHangHandler.getDonHangDangXuLyByKhachHang(idKhachHang);
+        return donHangCache.layDonHangDangXuLyTheoKhachHang(idKhachHang);
     }
 
     public List<DonHang> layDonHangHoanThanhTheoKhachHang(String idKhachHang) {
-        return mDonHangHandler.getDonHangHoanThanhByKhachHang(idKhachHang);
+        return donHangCache.layDonHangHoanThanhTheoKhachHang(idKhachHang);
     }
 
     public List<DonHang> layDonHangTheoNgay(long time) {
-        return mDonHangHandler.getDonHangByDate(time);
+        return donHangCache.layDonHangTheoNgay(time);
     }
 
     public List<DonHang> layDonHangTheoTuan(long time) {
-        return mDonHangHandler.getDonHangByWeek(time);
+        return donHangCache.layDonHangTheoTuan(time);
     }
 
     public List<DonHang> layDonHangTheoThang(long time) {
-        return mDonHangHandler.getDonHangByMonth(time);
+        return donHangCache.layDonHangTheoThang(time);
     }
 
     public List<DonHang> layDonHangHoanThanhTheoNgay(long time) {
-        return mDonHangHandler.layDonHangHoanThanhTheoNgay(time);
+        return donHangCache.layDonHangHoanThanhTheoNgay(time);
     }
 
     public List<DonHang> layDonHangDangXuLyTheoNgay(long time) {
-        return mDonHangHandler.layDonHangDangXuLyTheoNgay(time);
+        return donHangCache.layDonHangDangXuLyTheoNgay(time);
     }
 
     public List<DonHang> layDonHangHoanThanhTheoTuan(long time) {
-        return mDonHangHandler.layDonHangHoanThanhTheoTuan(time);
+        return donHangCache.layDonHangHoanThanhTheoTuan(time);
     }
 
     public List<DonHang> layDonHangDangXuLyTheoTuan(long time) {
-        return mDonHangHandler.layDonHangDangXuLyTheoTuan(time);
+        return donHangCache.layDonHangDangXuLyTheoTuan(time);
     }
 
     public List<DonHang> layDonHangHoanThanhTheoThang(long time) {
-        return mDonHangHandler.layDonHangHoanThanhTheoThang(time);
+        return donHangCache.layDonHangHoanThanhTheoThang(time);
     }
 
     public List<DonHang> layDonHangDangXuLyTheoThang(long time) {
-        return mDonHangHandler.layDonHangDangXuLyTheoThang(time);
+        return donHangCache.layDonHangDangXuLyTheoThang(time);
     }
 
     public void themDonHang(DonHang donHang) {
-        themDonHangDenDB(donHang);
         themDonHangDenServer(donHang);
     }
 
-    public synchronized void themDonHangDenDB(DonHang donHang) {
-        mDonHangHandler.insertOrUpdateDonHang(donHang);
+    public synchronized void capNhatHoacThemDonHangDenCache(DonHang donHang) {
+        donHangCache.capNhatHoacThemDonHang(donHang);
     }
 
     public void themDonHangDenServer(DonHang donHang) {
@@ -105,12 +107,11 @@ public class DBController {
     }
 
     public void capNhatDonHang(DonHang donHang) {
-        capNhatDonHangDenDB(donHang);
         capNhatDonHangDenServer(donHang);
     }
 
-    public void capNhatDonHangDenDB(DonHang donHang) {
-        mDonHangHandler.updateDonHang(donHang);
+    public synchronized void capNhatDonHangDenCache(DonHang donHang) {
+        donHangCache.capNhatDonHang(donHang);
     }
 
     public void capNhatDonHangDenServer(DonHang donHang) {
@@ -119,20 +120,19 @@ public class DBController {
 
     // Khach hang
     public List<KhachHang> layDanhSachKhachHang() {
-        return mKhachHangHandler.getAllKhachHang();
+        return khachHangCache.layDanhSachKhachHang();
     }
 
     public KhachHang layKhachHangTheoId(String idKhachHang) {
-        return mKhachHangHandler.getKhachHangById(idKhachHang);
+        return khachHangCache.layKhachHangTheoId(idKhachHang);
     }
 
     public void themKhachHang(KhachHang khachHang) {
-        themKhachHangDenDB(khachHang);
         themKhachHangDenServer(khachHang);
     }
 
-    public synchronized void themKhachHangDenDB(KhachHang khachHang) {
-        mKhachHangHandler.insertOrUpdateKhachHang(khachHang);
+    public synchronized void capNhatHoacThemKhachHangDenCache(KhachHang khachHang) {
+        khachHangCache.capNhatHoacThemKhachHang(khachHang);
     }
 
     public void themKhachHangDenServer(KhachHang khachHang) {
@@ -140,12 +140,11 @@ public class DBController {
     }
 
     public void capNhatKhachHang(KhachHang khachHang) {
-        capNhatKhachHangDenDB(khachHang);
         capNhatKhachHangDenServer(khachHang);
     }
 
-    public void capNhatKhachHangDenDB(KhachHang khachHang) {
-        mKhachHangHandler.updateKhachHang(khachHang);
+    public synchronized void capNhatKhachHangDenCache(KhachHang khachHang) {
+        khachHangCache.capNhatKhachHang(khachHang);
     }
 
     public void capNhatKhachHangDenServer(KhachHang khachHang) {
@@ -154,20 +153,19 @@ public class DBController {
 
     // San pham
     public List<SanPham> layDanhSachSanPham() {
-        return mSanPhamHandler.getAllSanPham();
+        return sanPhamCache.layDanhSachSanPham();
     }
 
     public SanPham laySanPhamTheoId(String idSanPham) {
-        return mSanPhamHandler.getSanPhamById(idSanPham);
+        return sanPhamCache.laySanPhamTheoId(idSanPham);
     }
 
     public void themSanPham(SanPham sanPham) {
-        themSanPhamDenDB(sanPham);
         themSanPhamDenServer(sanPham);
     }
 
-    public synchronized void themSanPhamDenDB(SanPham sanPham) {
-        mSanPhamHandler.insertOrUpdateSanPham(sanPham);
+    public synchronized void capNhatHoacThemSanPhamDenCache(SanPham sanPham) {
+        sanPhamCache.capNhatHoacThemSanPham(sanPham);
     }
 
     public void themSanPhamDenServer(SanPham sanPham) {
@@ -175,12 +173,11 @@ public class DBController {
     }
 
     public void capNhatSanPham(SanPham sanPham) {
-        capNhatSanPhamDenDB(sanPham);
         capNhatSanPhamDenServer(sanPham);
     }
 
-    public void capNhatSanPhamDenDB(SanPham sanPham) {
-        mSanPhamHandler.updateSanPham(sanPham);
+    public synchronized void capNhatSanPhamDenCache(SanPham sanPham) {
+        sanPhamCache.capNhatSanPham(sanPham);
     }
 
     public void capNhatSanPhamDenServer(SanPham sanPham) {
@@ -188,12 +185,12 @@ public class DBController {
     }
 
     public void taiDuLieuLenServer() {
-        List<SanPham> sanPhams = layDanhSachSanPham();
-        List<KhachHang> khachHangs = layDanhSachKhachHang();
         List<DonHang> donHangs = layDanhSachDonHang();
+        List<KhachHang> khachHangs = layDanhSachKhachHang();
+        List<SanPham> sanPhams = layDanhSachSanPham();
 
-        RealtimeDatabaseController.getInstance(mContext).taiSanPhamLenServer(sanPhams);
-        RealtimeDatabaseController.getInstance(mContext).taiKhachHangLenServer(khachHangs);
         RealtimeDatabaseController.getInstance(mContext).taiDonHangLenServer(donHangs);
+        RealtimeDatabaseController.getInstance(mContext).taiKhachHangLenServer(khachHangs);
+        RealtimeDatabaseController.getInstance(mContext).taiSanPhamLenServer(sanPhams);
     }
 }

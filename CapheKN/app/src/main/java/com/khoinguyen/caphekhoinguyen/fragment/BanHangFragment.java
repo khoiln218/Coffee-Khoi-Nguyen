@@ -73,7 +73,6 @@ public class BanHangFragment extends Fragment {
     private Animation animGoUp;
     private Animation animGoDown;
     private MenuItem actionThanhToan;
-    private DBController dbController;
     private AlertDialog alertDialog;
     private Calendar mCalendar;
 
@@ -148,7 +147,6 @@ public class BanHangFragment extends Fragment {
             }
         });
 
-        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -201,7 +199,7 @@ public class BanHangFragment extends Fragment {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         View view = inflater.inflate(R.layout.dialog_them_don_hang, null);
 
-        final List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
+        final List<KhachHang> khachHangs = DBController.getInstance(getActivity()).layDanhSachKhachHang();
         KhachHangArrayAdapter adapterKH = new KhachHangArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, khachHangs);
         AutoCompleteTextView etKhachHang = (AutoCompleteTextView) view.findViewById(R.id.etKhachHang);
         etKhachHang.setThreshold(1);
@@ -214,7 +212,7 @@ public class BanHangFragment extends Fragment {
             }
         });
 
-        final List<SanPham> sanPhams = dbController.layDanhSachSanPham();
+        final List<SanPham> sanPhams = DBController.getInstance(getActivity()).layDanhSachSanPham();
         SanPhamArrayAdapter adapterSP = new SanPhamArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, sanPhams);
         final MultiAutoCompleteTextView etSanPham = (MultiAutoCompleteTextView) view.findViewById(R.id.etSanPham);
         etSanPham.setThreshold(1);
@@ -278,7 +276,7 @@ public class BanHangFragment extends Fragment {
                     }
                 }
                 if (donHang.getIdSanPhams() != null) {
-                    dbController.themDonHang(donHang);
+                    DBController.getInstance(getActivity()).themDonHang(donHang);
                     mDonHangs.add(0, donHang);
                     mAdapter.notifyDataSetChanged();
                 } else {
@@ -412,7 +410,7 @@ public class BanHangFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            mDonHangs = dbController.layDonHangDangXuLy();
+            mDonHangs = DBController.getInstance(getActivity()).layDonHangDangXuLy();
             mAdapter = new DonHangAdapter(getActivity(), mDonHangs, new OnDonHangListerner() {
                 @Override
                 public void onShow() {

@@ -29,7 +29,6 @@ import java.util.List;
 public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.ViewHolder> {
     private final List<KhachHang> mValues;
     private Context mContext;
-    private DBController dbController;
     private KhachHangFragment.OnKhachHangInteractionListener mListener;
     private int mTrangThai;
     private boolean mIsChinhSua;
@@ -40,7 +39,6 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         mTrangThai = trangThai;
         mIsChinhSua = isChinhSua;
         mListener = listener;
-        dbController = DBController.getInstance(context);
     }
 
     @NonNull
@@ -122,7 +120,7 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
             public void onClick(DialogInterface dialog, int which) {
                 khachHang.setTenKH(etTenKhachHang.getText().toString());
                 khachHang.setSDT(etSoDienThoai.getText().toString());
-                dbController.capNhatKhachHang(khachHang);
+                DBController.getInstance(mContext).capNhatKhachHang(khachHang);
                 mValues.set(mValues.indexOf(kh), khachHang);
                 notifyDataSetChanged();
             }
@@ -144,12 +142,10 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
     }
 
     private long getTongTien(String id) {
-        List<DonHang> donHangs = mTrangThai == Constants.TRANG_THAI_HOAN_THANH ? dbController.layDonHangHoanThanhTheoKhachHang(id) : dbController.layDonHangDangXuLyTheoKhachHang(id);
+        List<DonHang> donHangs = mTrangThai == Constants.TRANG_THAI_HOAN_THANH ? DBController.getInstance(mContext).layDonHangHoanThanhTheoKhachHang(id) : DBController.getInstance(mContext).layDonHangDangXuLyTheoKhachHang(id);
         long tongTien = 0;
         for (DonHang donHang : donHangs) {
-            for (String idSanPham : donHang.getIdSanPhams()) {
-                tongTien += dbController.laySanPhamTheoId(idSanPham).getDonGia();
-            }
+            tongTien += donHang.getTongTien(mContext);
         }
         return tongTien;
     }

@@ -33,7 +33,6 @@ public class CongNoFragment extends Fragment {
     private List<KhachHang> mKhachHangs;
     private RecyclerView mRecyclerView;
     private KhachHangAdapter mAdapter;
-    private DBController dbController;
 
     public CongNoFragment() {
         // Required empty public constructor
@@ -46,7 +45,6 @@ public class CongNoFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rvKhachHang);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -74,7 +72,7 @@ public class CongNoFragment extends Fragment {
     }
 
     private long getTongTien(String id) {
-        List<DonHang> donHangs = dbController.layDonHangDangXuLyTheoKhachHang(id);
+        List<DonHang> donHangs = DBController.getInstance(getActivity()).layDonHangDangXuLyTheoKhachHang(id);
         long tongTien = 0;
         for (DonHang donHang : donHangs) {
             tongTien += donHang.getTongTien(getActivity());
@@ -103,7 +101,7 @@ public class CongNoFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
+            List<KhachHang> khachHangs = DBController.getInstance(getActivity()).layDanhSachKhachHang();
             mKhachHangs = new ArrayList<>();
             for (KhachHang khachHang : khachHangs) {
                 if (getTongTien(khachHang.getId()) > 0)

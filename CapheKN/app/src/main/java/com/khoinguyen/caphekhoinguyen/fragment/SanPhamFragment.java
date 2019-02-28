@@ -38,7 +38,6 @@ public class SanPhamFragment extends Fragment {
     private List<SanPham> mSanPhams;
     private RecyclerView mRecyclerView;
     private SanPhamAdapter mAdapter;
-    private DBController dbController;
 
     public SanPhamFragment() {
         // Required empty public constructor
@@ -59,7 +58,6 @@ public class SanPhamFragment extends Fragment {
         });
         fab.attachToRecyclerView(mRecyclerView);
 
-        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -85,7 +83,7 @@ public class SanPhamFragment extends Fragment {
                     sanPham.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeySanPham());
                     sanPham.setTenSP(etTenSanPham.getText().toString().trim());
                     sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
-                    dbController.themSanPham(sanPham);
+                    DBController.getInstance(getActivity()).themSanPham(sanPham);
                     mSanPhams.add(sanPham);
                     mAdapter.notifyDataSetChanged();
                 } else {
@@ -116,7 +114,7 @@ public class SanPhamFragment extends Fragment {
     }
 
     private void getSanPhams() {
-        mSanPhams = dbController.layDanhSachSanPham();
+        mSanPhams = DBController.getInstance(getActivity()).layDanhSachSanPham();
         mAdapter = new SanPhamAdapter(getActivity(), mSanPhams);
         mRecyclerView.setAdapter(mAdapter);
     }

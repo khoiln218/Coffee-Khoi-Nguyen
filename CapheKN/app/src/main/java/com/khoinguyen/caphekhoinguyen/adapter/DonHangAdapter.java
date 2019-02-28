@@ -45,7 +45,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private BanHangFragment.OnBanHangInteractionListener mBanHangListerner;
     private boolean mIsLichSuGiaoDich;
     private int mTrangThai;
-    private DBController dbController;
     private AlertDialog alertDialog;
     private List<String> itemStateArray = new ArrayList<>();
 
@@ -56,7 +55,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         mBanHangListerner = banHangListener;
         mIsLichSuGiaoDich = false;
         mTrangThai = Constants.TRANG_THAI_DANG_XY_LY;
-        dbController = DBController.getInstance(context);
     }
 
     public DonHangAdapter(Context context, List<DonHang> items, BanHangFragment.OnDonHangListerner donHangListerner, BanHangFragment.OnBanHangInteractionListener banHangListener, boolean isLichSuGiaoDich, int trangThai) {
@@ -66,7 +64,6 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         mBanHangListerner = banHangListener;
         mIsLichSuGiaoDich = isLichSuGiaoDich;
         mTrangThai = trangThai;
-        dbController = DBController.getInstance(context);
     }
 
     @Override
@@ -81,7 +78,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         holder.mItem = mValues.get(position);
         holder.mTvThoiGianTao.setText(Utils.convTimestamp(holder.mItem.getThoiGianTao(), "HH:mm"));
         if (holder.mItem.getIdKhachHang() != null) {
-            KhachHang khachHang = dbController.layKhachHangTheoId(holder.mItem.getIdKhachHang());
+            KhachHang khachHang = DBController.getInstance(mContext).layKhachHangTheoId(holder.mItem.getIdKhachHang());
             holder.mTvKhachHang.setText(khachHang.getTenKH());
             TextDrawable drawable = TextDrawable.builder()
                     .round().build(String.valueOf(khachHang.getTenKH().charAt(0)), ColorGenerator.MATERIAL.getColor(khachHang.getTenKH()));
@@ -94,7 +91,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         }
         List<SanPham> sanPhams = new ArrayList<>();
         for (String id : holder.mItem.getIdSanPhams())
-            sanPhams.add(dbController.laySanPhamTheoId(id));
+            sanPhams.add(DBController.getInstance(mContext).laySanPhamTheoId(id));
         if (sanPhams != null) {
             holder.tcvSanPham.setTags(getTagSanPhams(sanPhams));
             String formattedPrice = new DecimalFormat("##,##0VNĐ").format(holder.mItem.getTongTien(mContext));
@@ -198,7 +195,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         DonHang dh = donHang;
                         donHang.setTrangThai(mContext.getString(R.string.status_da_huy));
                         mValues.remove(dh);
-                        dbController.capNhatDonHang(dh);
+                        DBController.getInstance(mContext).capNhatDonHang(dh);
                         clearSelect();
                         mDonHangListerner.onRefresh();
                     }
@@ -227,13 +224,13 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.dialog_them_don_hang, null);
 
-        final List<KhachHang> khachHangs = dbController.layDanhSachKhachHang();
+        final List<KhachHang> khachHangs = DBController.getInstance(mContext).layDanhSachKhachHang();
         KhachHangArrayAdapter adapterKH = new KhachHangArrayAdapter(mContext, android.R.layout.simple_dropdown_item_1line, khachHangs);
         AutoCompleteTextView etKhachHang = (AutoCompleteTextView) view.findViewById(R.id.etKhachHang);
         etKhachHang.setThreshold(1);
         etKhachHang.setAdapter(adapterKH);
         if (!TextUtils.isEmpty(donHang.getIdKhachHang()))
-            etKhachHang.setText(dbController.layKhachHangTheoId(donHang.getIdKhachHang()).getTenKH());
+            etKhachHang.setText(DBController.getInstance(mContext).layKhachHangTheoId(donHang.getIdKhachHang()).getTenKH());
         etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -242,7 +239,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             }
         });
 
-        final List<SanPham> sanPhams = dbController.layDanhSachSanPham();
+        final List<SanPham> sanPhams = DBController.getInstance(mContext).layDanhSachSanPham();
         SanPhamArrayAdapter adapterSP = new SanPhamArrayAdapter(mContext, android.R.layout.simple_dropdown_item_1line, sanPhams);
         final MultiAutoCompleteTextView etSanPham = (MultiAutoCompleteTextView) view.findViewById(R.id.etSanPham);
         etSanPham.setThreshold(1);
@@ -250,7 +247,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         etSanPham.setAdapter(adapterSP);
         String sanPhamString = "";
         for (String id : dh.getIdSanPhams()) {
-            sanPhamString += dbController.laySanPhamTheoId(id).getTenSP() + ",";
+            sanPhamString += DBController.getInstance(mContext).laySanPhamTheoId(id).getTenSP() + ",";
         }
         etSanPham.setText(sanPhamString);
         etSanPham.requestFocus();
@@ -291,7 +288,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                 }
                 clearSelect();
                 if (donHang.getIdSanPhams() != null) {
-                    dbController.capNhatDonHang(donHang);
+                    DBController.getInstance(mContext).capNhatDonHang(donHang);
                     if (mIsLichSuGiaoDich && !TextUtils.equals(donHang.getIdKhachHang(), dh.getIdKhachHang())) {
                         mDonHangListerner.onRefresh();
                     } else {
@@ -326,7 +323,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                         donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
                         donHang.setIdKhachHang(dh.getIdKhachHang());
                         donHang.setIdSanPhams(dh.getIdSanPhams());
-                        dbController.capNhatDonHang(donHang);
+                        DBController.getInstance(mContext).capNhatDonHang(donHang);
                         clearSelect();
                         mDonHangListerner.onRefresh();
                     }
@@ -363,9 +360,9 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                     .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             for (String idDonHang : itemStateArray) {
-                                DonHang donHang = dbController.layDonHangTheoId(idDonHang);
+                                DonHang donHang = DBController.getInstance(mContext).layDonHangTheoId(idDonHang);
                                 donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
-                                dbController.capNhatDonHang(donHang);
+                                DBController.getInstance(mContext).capNhatDonHang(donHang);
                             }
                             clearSelect();
                             mDonHangListerner.onRefresh();
@@ -387,7 +384,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private long tongTien() {
         long tong = 0;
         for (String id : itemStateArray) {
-            DonHang dh = dbController.layDonHangTheoId(id);
+            DonHang dh = DBController.getInstance(mContext).layDonHangTheoId(id);
             tong += dh.getTongTien(mContext);
         }
         return tong;

@@ -42,7 +42,6 @@ public class KhachHangFragment extends Fragment {
     private List<KhachHang> mKhachHangs;
     private RecyclerView mRecyclerView;
     private KhachHangAdapter mAdapter;
-    private DBController dbController;
 
     public KhachHangFragment() {
         // Required empty public constructor
@@ -63,7 +62,6 @@ public class KhachHangFragment extends Fragment {
         });
         fab.attachToRecyclerView(mRecyclerView);
 
-        dbController = DBController.getInstance(getActivity());
         return view;
     }
 
@@ -89,7 +87,7 @@ public class KhachHangFragment extends Fragment {
                     khachHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyKhachHang());
                     khachHang.setTenKH(etTenKhachHang.getText().toString().trim());
                     khachHang.setSDT(etSoDienThoai.getText().toString().trim());
-                    dbController.themKhachHang(khachHang);
+                    DBController.getInstance(getActivity()).themKhachHang(khachHang);
                     mKhachHangs.add(khachHang);
                     mAdapter.notifyDataSetChanged();
                 } else {
@@ -120,7 +118,7 @@ public class KhachHangFragment extends Fragment {
     }
 
     private void getKhachHangs() {
-        mKhachHangs = dbController.layDanhSachKhachHang();
+        mKhachHangs = DBController.getInstance(getActivity()).layDanhSachKhachHang();
         mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_DANG_XY_LY, true, mListener);
         mRecyclerView.setAdapter(mAdapter);
     }

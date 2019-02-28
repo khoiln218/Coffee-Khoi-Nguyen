@@ -23,12 +23,10 @@ import java.util.List;
 public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHolder> {
     private final List<SanPham> mValues;
     private Context mContext;
-    private DBController dbController;
 
     public SanPhamAdapter(Context context, List<SanPham> items) {
         this.mContext = context;
         this.mValues = items;
-        dbController = DBController.getInstance(context);
     }
 
     @NonNull
@@ -98,7 +96,7 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
             public void onClick(DialogInterface dialog, int which) {
                 sanPham.setTenSP(etTenSanPham.getText().toString());
                 sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
-                dbController.capNhatSanPham(sanPham);
+                DBController.getInstance(mContext).capNhatSanPham(sanPham);
                 mValues.set(mValues.indexOf(sp), sanPham);
                 notifyDataSetChanged();
             }
