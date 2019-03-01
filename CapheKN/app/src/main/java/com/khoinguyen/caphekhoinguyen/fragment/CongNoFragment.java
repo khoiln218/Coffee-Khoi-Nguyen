@@ -1,6 +1,7 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -30,7 +30,6 @@ import java.util.List;
 public class CongNoFragment extends Fragment {
     private KhachHangFragment.OnKhachHangInteractionListener mListener;
 
-    private List<KhachHang> mKhachHangs;
     private RecyclerView mRecyclerView;
     private KhachHangAdapter mAdapter;
 
@@ -42,7 +41,7 @@ public class CongNoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cong_no, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvKhachHang);
+        mRecyclerView = view.findViewById(R.id.rvKhachHang);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         return view;
@@ -97,23 +96,19 @@ public class CongNoFragment extends Fragment {
         mListener = null;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
             List<KhachHang> khachHangs = DBController.getInstance(getActivity()).layDanhSachKhachHang();
-            mKhachHangs = new ArrayList<>();
+            List<KhachHang> khachHangsFilter = new ArrayList<>();
             for (KhachHang khachHang : khachHangs) {
                 if (getTongTien(khachHang.getId()) > 0)
-                    mKhachHangs.add(khachHang);
+                    khachHangsFilter.add(khachHang);
             }
-            Collections.sort(mKhachHangs, new Comparator<KhachHang>() {
-                @Override
-                public int compare(KhachHang left, KhachHang right) {
-                    return (int) (getTongTien(right.getId()) - getTongTien(left.getId()));
-                }
-            });
-            mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_DANG_XY_LY, false, mListener);
+            Collections.sort(khachHangsFilter, (left, right) -> (int) (getTongTien(right.getId()) - getTongTien(left.getId())));
+            mAdapter = new KhachHangAdapter(getActivity(), khachHangsFilter, Constants.TRANG_THAI_DANG_XY_LY, false, mListener);
             return null;
         }
 

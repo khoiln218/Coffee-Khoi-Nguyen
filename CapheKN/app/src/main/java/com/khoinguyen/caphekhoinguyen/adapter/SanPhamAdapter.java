@@ -1,12 +1,11 @@
 package com.khoinguyen.caphekhoinguyen.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -44,27 +43,19 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
         String formattedPrice = new DecimalFormat("##,##0VNĐ").format(holder.mItem.getDonGia());
         holder.mTvDonGia.setText(formattedPrice);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openMenu(holder.mItem, holder.mView);
-            }
-        });
+        holder.mView.setOnClickListener(v -> openMenu(holder.mItem, holder.mView));
     }
 
     private void openMenu(final SanPham sanPham, View view) {
         PopupMenu popup = new PopupMenu(mContext, view);
         popup.inflate(R.menu.menu_san_pham);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.option_chinh_sua:
-                        chinhSua(sanPham);
-                        break;
-                }
-                return false;
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.option_chinh_sua:
+                    chinhSua(sanPham);
+                    break;
             }
+            return false;
         });
         popup.show();
     }
@@ -80,10 +71,11 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
         builder.setCancelable(false);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
+        @SuppressLint("InflateParams")
         View view = inflater.inflate(R.layout.dialog_them_san_pham, null);
 
-        final EditText etTenSanPham = (EditText) view.findViewById(R.id.etTenSanPham);
-        final EditText etDonGia = (EditText) view.findViewById(R.id.etDonGia);
+        final EditText etTenSanPham = view.findViewById(R.id.etTenSanPham);
+        final EditText etDonGia = view.findViewById(R.id.etDonGia);
 
         etTenSanPham.setText(sanPham.getTenSP());
         etTenSanPham.requestFocus();
@@ -91,23 +83,15 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
 
         builder.setView(view);
 
-        builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sanPham.setTenSP(etTenSanPham.getText().toString());
-                sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
-                DBController.getInstance(mContext).capNhatSanPham(sanPham);
-                mValues.set(mValues.indexOf(sp), sanPham);
-                notifyDataSetChanged();
-            }
+        builder.setPositiveButton("Sửa", (dialog, which) -> {
+            sanPham.setTenSP(etTenSanPham.getText().toString());
+            sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
+            DBController.getInstance(mContext).capNhatSanPham(sanPham);
+            mValues.set(mValues.indexOf(sp), sanPham);
+            notifyDataSetChanged();
         });
 
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -118,17 +102,17 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         final TextView mTvTen;
         final TextView mTvDonGia;
         SanPham mItem;
 
-        public ViewHolder(@NonNull View view) {
+        ViewHolder(@NonNull View view) {
             super(view);
             mView = view;
-            mTvTen = (TextView) view.findViewById(R.id.tvTen);
-            mTvDonGia = (TextView) view.findViewById(R.id.tvDonGia);
+            mTvTen = view.findViewById(R.id.tvTen);
+            mTvDonGia = view.findViewById(R.id.tvDonGia);
         }
     }
 }

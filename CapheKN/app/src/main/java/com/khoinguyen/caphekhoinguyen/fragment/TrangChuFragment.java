@@ -27,52 +27,22 @@ public class TrangChuFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trang_chu, container, false);
         RelativeLayout layoutBanHang = view.findViewById(R.id.layout_ban_hang);
-        layoutBanHang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                banHang();
-            }
-        });
+        layoutBanHang.setOnClickListener(v -> banHang());
 
         RelativeLayout layoutSanPham = view.findViewById(R.id.layout_san_pham);
-        layoutSanPham.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sanPham();
-            }
-        });
+        layoutSanPham.setOnClickListener(v -> sanPham());
 
         RelativeLayout layoutCongNo = view.findViewById(R.id.layout_cong_no);
-        layoutCongNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                congNo();
-            }
-        });
+        layoutCongNo.setOnClickListener(v -> congNo());
 
         RelativeLayout layoutPhuHo = view.findViewById(R.id.layout_phu_ho);
-        layoutPhuHo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                phuHo();
-            }
-        });
+        layoutPhuHo.setOnClickListener(v -> phuHo());
 
         RelativeLayout layoutKhachHang = view.findViewById(R.id.layout_khach_hang);
-        layoutKhachHang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                khachHang();
-            }
-        });
+        layoutKhachHang.setOnClickListener(v -> khachHang());
 
         RelativeLayout layoutBaoCao = view.findViewById(R.id.layout_bao_cao);
-        layoutBaoCao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                baoCao();
-            }
-        });
+        layoutBaoCao.setOnClickListener(v -> baoCao());
         return view;
     }
 

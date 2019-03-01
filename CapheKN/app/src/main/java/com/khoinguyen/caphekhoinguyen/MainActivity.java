@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.event.LoadCompleteEvent;
 import com.khoinguyen.caphekhoinguyen.event.NetStatusEvent;
 import com.khoinguyen.caphekhoinguyen.fragment.BanHangFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.BaoCaoFragment;
@@ -30,10 +30,13 @@ import com.khoinguyen.caphekhoinguyen.fragment.SanPhamFragment;
 import com.khoinguyen.caphekhoinguyen.fragment.TrangChuFragment;
 import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         TrangChuFragment.OnTrangChuInteractionListener, KhachHangFragment.OnKhachHangInteractionListener, BanHangFragment.OnBanHangInteractionListener {
@@ -50,12 +53,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer = findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(
                 this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
@@ -63,37 +66,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawer.addDrawerListener(mToggle);
         mToggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!mToggle.isDrawerIndicatorEnabled()) {
-                    onBackPressed();
-                } else {
-                    mDrawer.openDrawer(GravityCompat.START);
-                }
+        toolbar.setNavigationOnClickListener(v -> {
+            if (!mToggle.isDrawerIndicatorEnabled()) {
+                onBackPressed();
+            } else {
+                mDrawer.openDrawer(GravityCompat.START);
             }
         });
 
         mLayoutMang = findViewById(R.id.layoutMang);
 
-        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                if (fr != null) {
-                    int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
-                    LogUtils.d(TAG, "backStackEntryCount: " + backStackEntryCount);
-                    toolbarTitle.setText(fr.getTag());
-                    setNavIcon();
-                }
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Fragment fr = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (fr != null) {
+                int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
+                LogUtils.d(TAG, "backStackEntryCount: " + backStackEntryCount);
+                toolbarTitle.setText(fr.getTag());
+                setNavIcon();
             }
         });
 
-        RealtimeDatabaseController.getInstance(this).startListerner();
         EventBus.getDefault().register(this);
 
         openHome();
@@ -139,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void dongBo() {
         RealtimeDatabaseController.getInstance(this).dongBo();
+        Utils.showProgressDialog(this);
     }
 
     private void logOut() {
@@ -270,6 +267,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onMessageEvent(NetStatusEvent event) {
         LogUtils.d(TAG, "onMessageEvent: " + event.isConnect());
         mLayoutMang.setVisibility(event.isConnect() ? View.GONE : View.VISIBLE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(LoadCompleteEvent event) {
+        LogUtils.d(TAG, "onMessageEvent: LoadCompleteEvent");
+        Utils.hideProgressDialog();
     }
 
     @Override

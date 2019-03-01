@@ -2,6 +2,7 @@ package com.khoinguyen.caphekhoinguyen.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,15 +41,16 @@ public class SanPhamArrayAdapter extends ArrayAdapter<SanPham> {
         return position;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(int position, View view, @NonNull ViewGroup parent) {
         try {
             if (view == null) {
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 view = inflater.inflate(mLayoutResourceId, parent, false);
             }
             SanPham sanPham = getItem(position);
-            TextView name = (TextView) view.findViewById(android.R.id.text1);
+            TextView name = view.findViewById(android.R.id.text1);
             name.setText(sanPham.getTenSP());
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,6 +58,7 @@ public class SanPhamArrayAdapter extends ArrayAdapter<SanPham> {
         return view;
     }
 
+    @NonNull
     @Override
     public Filter getFilter() {
         return new Filter() {

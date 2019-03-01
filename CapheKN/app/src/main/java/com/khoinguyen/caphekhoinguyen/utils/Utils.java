@@ -1,5 +1,6 @@
 package com.khoinguyen.caphekhoinguyen.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,7 +20,6 @@ import java.util.TimeZone;
 public final class Utils {
     private static ProgressDialog mProgressDialog = null;
     private static Toast mToast;
-    private static final String TIME24HOURS_PATTERN = "((0|1)?[0-9]|2[0-3]):[0-5][0-9]";
 
     public static void showProgressDialog(Context context) {
         if (mProgressDialog == null)
@@ -38,7 +38,7 @@ public final class Utils {
         mProgressDialog = null;
     }
 
-    public static ProgressDialog createProgressDialog(Context context) {
+    private static ProgressDialog createProgressDialog(Context context) {
         ProgressDialog progressDialog = new ProgressDialog(context, R.style.ProgressTheme);
         progressDialog.setMessage("Đang tải dữ liệu");
         progressDialog.setIndeterminate(true);
@@ -79,18 +79,18 @@ public final class Utils {
     public static String convTimestamp(long timestamp, String pattern) {
 
         if (TextUtils.isEmpty(pattern)) {
-            pattern = "dd/MM/yyyy hh:mm:ss";
+            pattern = "dd/MM/yyyy HH:mm:ss";
         }
         Calendar cal = Calendar.getInstance();
         TimeZone tz = cal.getTimeZone();
 
         /* date formatter in local timezone */
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         sdf.setTimeZone(tz);
 
         /* print your timestamp and double check it's the date you expect */
-        String localTime = sdf.format(new Date(timestamp));
-        return localTime;
+        return sdf.format(new Date(timestamp));
     }
 
     public static boolean isValidEmail(CharSequence target) {

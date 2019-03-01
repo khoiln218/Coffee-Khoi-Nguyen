@@ -1,7 +1,7 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -47,15 +47,10 @@ public class SanPhamFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_san_pham, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvSanPham);
+        mRecyclerView = view.findViewById(R.id.rvSanPham);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                themSanPham();
-            }
-        });
+        fab.setOnClickListener(v -> themSanPham());
         fab.attachToRecyclerView(mRecyclerView);
 
         return view;
@@ -69,35 +64,28 @@ public class SanPhamFragment extends Fragment {
         builder.setCancelable(false);
 
         LayoutInflater inflater = LayoutInflater.from(getActivity());
+        @SuppressLint("InflateParams")
         View view = inflater.inflate(R.layout.dialog_them_san_pham, null);
 
-        final EditText etTenSanPham = (EditText) view.findViewById(R.id.etTenSanPham);
-        final EditText etDonGia = (EditText) view.findViewById(R.id.etDonGia);
+        final EditText etTenSanPham = view.findViewById(R.id.etTenSanPham);
+        final EditText etDonGia = view.findViewById(R.id.etDonGia);
 
         builder.setView(view);
 
-        builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) && !TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
-                    sanPham.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeySanPham());
-                    sanPham.setTenSP(etTenSanPham.getText().toString().trim());
-                    sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
-                    DBController.getInstance(getActivity()).themSanPham(sanPham);
-                    mSanPhams.add(sanPham);
-                    mAdapter.notifyDataSetChanged();
-                } else {
-                    Utils.showToast(getActivity(), "Vui lòng nhập tên và giá sản phẩm");
-                }
+        builder.setPositiveButton("Thêm", (dialog, which) -> {
+            if (!TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) && !TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
+                sanPham.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeySanPham());
+                sanPham.setTenSP(etTenSanPham.getText().toString().trim());
+                sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
+                DBController.getInstance(getActivity()).themSanPham(sanPham);
+                mSanPhams.add(sanPham);
+                mAdapter.notifyDataSetChanged();
+            } else {
+                Utils.showToast(getActivity(), "Vui lòng nhập tên và giá sản phẩm");
             }
         });
 
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

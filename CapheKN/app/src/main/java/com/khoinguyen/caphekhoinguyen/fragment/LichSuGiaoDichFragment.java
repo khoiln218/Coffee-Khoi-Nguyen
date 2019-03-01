@@ -1,5 +1,6 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -61,23 +62,20 @@ public class LichSuGiaoDichFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lich_su_giao_dich, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvLichSuGiaoDich);
+        mRecyclerView = view.findViewById(R.id.rvLichSuGiaoDich);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         layoutTotal = view.findViewById(R.id.layoutTotal);
-        btnGoUpDown = (ImageButton) view.findViewById(R.id.btnGoUpDown);
+        btnGoUpDown = view.findViewById(R.id.btnGoUpDown);
         layoutMoney = view.findViewById(R.id.layoutMoney);
-        tvTotalCost = (TextView) view.findViewById(R.id.tvTotalCost);
+        tvTotalCost = view.findViewById(R.id.tvTotalCost);
         btnGoUpDown.setImageResource(layoutMoney.getVisibility() == View.VISIBLE ? R.drawable.orderlist_02 : R.drawable.orderlist_01);
-        btnGoUpDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (layoutMoney.getVisibility() == View.GONE) {
-                    btnGoUpDown.setImageResource(R.drawable.orderlist_02);
-                    layoutTotal.startAnimation(animGoUp);
-                } else {
-                    btnGoUpDown.setImageResource(R.drawable.orderlist_01);
-                    layoutTotal.startAnimation(animGoDown);
-                }
+        btnGoUpDown.setOnClickListener(v -> {
+            if (layoutMoney.getVisibility() == View.GONE) {
+                btnGoUpDown.setImageResource(R.drawable.orderlist_02);
+                layoutTotal.startAnimation(animGoUp);
+            } else {
+                btnGoUpDown.setImageResource(R.drawable.orderlist_01);
+                layoutTotal.startAnimation(animGoDown);
             }
         });
 
@@ -215,6 +213,7 @@ public class LichSuGiaoDichFragment extends Fragment {
         mListener = null;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
         @Override

@@ -1,8 +1,8 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -51,15 +51,10 @@ public class KhachHangFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_khach_hang, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvKhachHang);
+        mRecyclerView = view.findViewById(R.id.rvKhachHang);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                themKhachHang();
-            }
-        });
+        fab.setOnClickListener(v -> themKhachHang());
         fab.attachToRecyclerView(mRecyclerView);
 
         return view;
@@ -73,35 +68,28 @@ public class KhachHangFragment extends Fragment {
         builder.setCancelable(false);
 
         LayoutInflater inflater = LayoutInflater.from(getActivity());
+        @SuppressLint("InflateParams")
         View view = inflater.inflate(R.layout.dialog_them_khach_hang, null);
 
-        final EditText etTenKhachHang = (EditText) view.findViewById(R.id.etTenKhachHang);
-        final EditText etSoDienThoai = (EditText) view.findViewById(R.id.etSoDienThoai);
+        final EditText etTenKhachHang = view.findViewById(R.id.etTenKhachHang);
+        final EditText etSoDienThoai = view.findViewById(R.id.etSoDienThoai);
 
         builder.setView(view);
 
-        builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
-                    khachHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyKhachHang());
-                    khachHang.setTenKH(etTenKhachHang.getText().toString().trim());
-                    khachHang.setSDT(etSoDienThoai.getText().toString().trim());
-                    DBController.getInstance(getActivity()).themKhachHang(khachHang);
-                    mKhachHangs.add(khachHang);
-                    mAdapter.notifyDataSetChanged();
-                } else {
-                    Utils.showToast(getActivity(), "Vui lòng nhập tên khách hàng");
-                }
+        builder.setPositiveButton("Thêm", (dialog, which) -> {
+            if (!TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
+                khachHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyKhachHang());
+                khachHang.setTenKH(etTenKhachHang.getText().toString().trim());
+                khachHang.setSDT(etSoDienThoai.getText().toString().trim());
+                DBController.getInstance(getActivity()).themKhachHang(khachHang);
+                mKhachHangs.add(khachHang);
+                mAdapter.notifyDataSetChanged();
+            } else {
+                Utils.showToast(getActivity(), "Vui lòng nhập tên khách hàng");
             }
         });
 
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

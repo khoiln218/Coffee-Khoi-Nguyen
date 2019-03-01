@@ -1,6 +1,7 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -67,18 +68,18 @@ public class BaoCaoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bao_cao, container, false);
-        tvBanHangNgay = (TextView) view.findViewById(R.id.tvBanHangNgay);
-        tvBanHangTuan = (TextView) view.findViewById(R.id.tvBanHangTuan);
-        tvBanHangThang = (TextView) view.findViewById(R.id.tvBanHangThang);
-        tvDoanhThuNgay = (TextView) view.findViewById(R.id.tvDoanhThuNgay);
-        tvDoanhThuTuan = (TextView) view.findViewById(R.id.tvDoanhThuTuan);
-        tvDoanhThuThang = (TextView) view.findViewById(R.id.tvDoanhThuThang);
-        tvThuNoNgay = (TextView) view.findViewById(R.id.tvThuNoNgay);
-        tvThuNoTuan = (TextView) view.findViewById(R.id.tvThuNoTuan);
-        tvThuNoThang = (TextView) view.findViewById(R.id.tvThuNoThang);
-        chartNgay = (PieChartView) view.findViewById(R.id.chartNgay);
-        chartTuan = (PieChartView) view.findViewById(R.id.chartTuan);
-        chartThang = (PieChartView) view.findViewById(R.id.chartThang);
+        tvBanHangNgay = view.findViewById(R.id.tvBanHangNgay);
+        tvBanHangTuan = view.findViewById(R.id.tvBanHangTuan);
+        tvBanHangThang = view.findViewById(R.id.tvBanHangThang);
+        tvDoanhThuNgay = view.findViewById(R.id.tvDoanhThuNgay);
+        tvDoanhThuTuan = view.findViewById(R.id.tvDoanhThuTuan);
+        tvDoanhThuThang = view.findViewById(R.id.tvDoanhThuThang);
+        tvThuNoNgay = view.findViewById(R.id.tvThuNoNgay);
+        tvThuNoTuan = view.findViewById(R.id.tvThuNoTuan);
+        tvThuNoThang = view.findViewById(R.id.tvThuNoThang);
+        chartNgay = view.findViewById(R.id.chartNgay);
+        chartTuan = view.findViewById(R.id.chartTuan);
+        chartThang = view.findViewById(R.id.chartThang);
 
         baoCao();
         return view;
@@ -104,12 +105,12 @@ public class BaoCaoFragment extends Fragment {
             for (String id : idSanPhams) {
                 SanPham sanPham = DBController.getInstance(getActivity()).laySanPhamTheoId(id);
                 Integer tong = sanPhamData.get(sanPham.getTenSP());
-                sanPhamData.put(sanPham.getTenSP(), tong != null ? tong.intValue() + 1 : 1);
+                sanPhamData.put(sanPham.getTenSP(), tong != null ? tong + 1 : 1);
             }
         }
         List<SliceValue> pieData = new ArrayList<>();
         for (String key : sanPhamData.keySet()) {
-            int tong = sanPhamData.get(key).intValue();
+            int tong = sanPhamData.get(key);
             pieData.add(new SliceValue(tong, ColorGenerator.MATERIAL.getColor(key)).setLabel(key + ":" + tong));
         }
 
@@ -127,6 +128,7 @@ public class BaoCaoFragment extends Fragment {
         return tongTien;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class MyTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {

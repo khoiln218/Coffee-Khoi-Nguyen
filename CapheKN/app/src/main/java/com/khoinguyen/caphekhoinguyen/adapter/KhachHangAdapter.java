@@ -1,12 +1,11 @@
 package com.khoinguyen.caphekhoinguyen.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -65,30 +64,22 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
             holder.mTvTongTien.setVisibility(View.GONE);
         }
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openMenu(holder.mItem, holder.mView);
-            }
-        });
+        holder.mView.setOnClickListener(v -> openMenu(holder.mItem, holder.mView));
     }
 
     private void openMenu(final KhachHang khachHang, View view) {
         PopupMenu popup = new PopupMenu(mContext, view);
         popup.inflate(mIsChinhSua ? R.menu.menu_khach_hang : R.menu.menu_khach_hang_2);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.option_chinh_sua:
-                        chinhSua(khachHang);
-                        break;
-                    case R.id.option_lich_su:
-                        lichSuGiaoDich(khachHang);
-                        break;
-                }
-                return false;
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.option_chinh_sua:
+                    chinhSua(khachHang);
+                    break;
+                case R.id.option_lich_su:
+                    lichSuGiaoDich(khachHang);
+                    break;
             }
+            return false;
         });
         popup.show();
     }
@@ -104,10 +95,11 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         builder.setCancelable(false);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
+        @SuppressLint("InflateParams")
         View view = inflater.inflate(R.layout.dialog_them_khach_hang, null);
 
-        final EditText etTenKhachHang = (EditText) view.findViewById(R.id.etTenKhachHang);
-        final EditText etSoDienThoai = (EditText) view.findViewById(R.id.etSoDienThoai);
+        final EditText etTenKhachHang = view.findViewById(R.id.etTenKhachHang);
+        final EditText etSoDienThoai = view.findViewById(R.id.etSoDienThoai);
 
         etTenKhachHang.setText(khachHang.getTenKH());
         etTenKhachHang.requestFocus();
@@ -115,23 +107,15 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
 
         builder.setView(view);
 
-        builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                khachHang.setTenKH(etTenKhachHang.getText().toString());
-                khachHang.setSDT(etSoDienThoai.getText().toString());
-                DBController.getInstance(mContext).capNhatKhachHang(khachHang);
-                mValues.set(mValues.indexOf(kh), khachHang);
-                notifyDataSetChanged();
-            }
+        builder.setPositiveButton("Sửa", (dialog, which) -> {
+            khachHang.setTenKH(etTenKhachHang.getText().toString());
+            khachHang.setSDT(etSoDienThoai.getText().toString());
+            DBController.getInstance(mContext).capNhatKhachHang(khachHang);
+            mValues.set(mValues.indexOf(kh), khachHang);
+            notifyDataSetChanged();
         });
 
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -155,19 +139,19 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         final ImageView ivIcon;
         final TextView mTvTen;
         final TextView mTvTongTien;
         KhachHang mItem;
 
-        public ViewHolder(@NonNull View view) {
+        ViewHolder(@NonNull View view) {
             super(view);
             mView = view;
-            ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
-            mTvTen = (TextView) view.findViewById(R.id.tvTen);
-            mTvTongTien = (TextView) view.findViewById(R.id.tvTongTien);
+            ivIcon = view.findViewById(R.id.ivIcon);
+            mTvTen = view.findViewById(R.id.tvTen);
+            mTvTongTien = view.findViewById(R.id.tvTongTien);
         }
     }
 }

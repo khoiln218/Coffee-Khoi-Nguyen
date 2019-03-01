@@ -13,7 +13,6 @@ import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -84,12 +83,7 @@ public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private void setSections(List<Section> sections) {
         mSections.clear();
 
-        Collections.sort(sections, new Comparator<Section>() {
-            @Override
-            public int compare(Section o, Section o1) {
-                return (o.firstPosition == o1.firstPosition) ? 0 : ((o.firstPosition < o1.firstPosition) ? -1 : 1);
-            }
-        });
+        Collections.sort(sections, (left, right) -> Integer.compare(left.firstPosition, right.firstPosition));
 
         int offset = 0; // offset positions for the headers we're adding
         for (Section section : sections) {
@@ -101,7 +95,7 @@ public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         notifyDataSetChanged();
     }
 
-    public int sectionedPositionToPosition(int sectionedPosition) {
+    private int sectionedPositionToPosition(int sectionedPosition) {
         if (isSectionHeaderPosition(sectionedPosition)) {
             return RecyclerView.NO_POSITION;
         }
@@ -116,7 +110,7 @@ public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return sectionedPosition + offset;
     }
 
-    public boolean isSectionHeaderPosition(int position) {
+    private boolean isSectionHeaderPosition(int position) {
         return mSections.get(position) != null;
     }
 
@@ -156,12 +150,12 @@ public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView title;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        TextView title;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.tvDate);
+            title = view.findViewById(R.id.tvDate);
         }
     }
 }

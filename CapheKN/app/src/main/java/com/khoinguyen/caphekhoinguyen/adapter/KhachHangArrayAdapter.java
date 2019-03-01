@@ -2,6 +2,7 @@ package com.khoinguyen.caphekhoinguyen.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class KhachHangArrayAdapter extends ArrayAdapter<KhachHang> {
     private final Context mContext;
@@ -40,22 +42,24 @@ public class KhachHangArrayAdapter extends ArrayAdapter<KhachHang> {
         return position;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(int position, View view, @NonNull ViewGroup parent) {
         try {
             if (view == null) {
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 view = inflater.inflate(mLayoutResourceId, parent, false);
             }
             KhachHang khachHang = getItem(position);
-            TextView name = (TextView) view.findViewById(android.R.id.text1);
-            name.setText(khachHang.getTenKH());
+            TextView name = view.findViewById(android.R.id.text1);
+            name.setText(Objects.requireNonNull(khachHang).getTenKH());
         } catch (Exception e) {
             e.printStackTrace();
         }
         return view;
     }
 
+    @NonNull
     @Override
     public Filter getFilter() {
         return new Filter() {

@@ -1,17 +1,15 @@
 package com.khoinguyen.caphekhoinguyen.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -84,7 +82,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
                     .round().build(String.valueOf(khachHang.getTenKH().charAt(0)), ColorGenerator.MATERIAL.getColor(khachHang.getTenKH()));
             holder.ivIcon.setImageDrawable(drawable);
         } else {
-            holder.mTvKhachHang.setText("Khách vãng lai");
+            holder.mTvKhachHang.setText(R.string.name_khach_vang_lai);
             TextDrawable drawable = TextDrawable.builder()
                     .round().build("K", ColorGenerator.MATERIAL.getColor("Khách vãng lai"));
             holder.ivIcon.setImageDrawable(drawable);
@@ -92,7 +90,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         List<SanPham> sanPhams = new ArrayList<>();
         for (String id : holder.mItem.getIdSanPhams())
             sanPhams.add(DBController.getInstance(mContext).laySanPhamTheoId(id));
-        if (sanPhams != null) {
+        if (sanPhams.size() > 0) {
             holder.tcvSanPham.setTags(getTagSanPhams(sanPhams));
             String formattedPrice = new DecimalFormat("##,##0VNĐ").format(holder.mItem.getTongTien(mContext));
             holder.mTvTongTien.setText(formattedPrice);
@@ -100,55 +98,39 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
 
         holder.mView.setBackgroundColor(itemStateArray.contains(holder.mItem.getId()) ? ContextCompat.getColor(mContext, R.color.colorDonHangSelect) : Color.WHITE);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTrangThai == Constants.TRANG_THAI_DANG_XY_LY) {
-                    if (itemStateArray.contains(holder.mItem.getId())) {
-                        itemStateArray.remove(holder.mItem.getId());
-                        holder.mView.setBackgroundColor(Color.WHITE);
-                        if (itemStateArray.size() == 0)
-                            mDonHangListerner.onHide();
-                        else mDonHangListerner.onShow();
-                        selectChange();
-                    } else {
-                        itemStateArray.add(holder.mItem.getId());
-                        holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorDonHangSelect));
-                        mDonHangListerner.onShow();
-                        selectChange();
-                    }
-                } else if (mTrangThai == Constants.TRANG_THAI_HOAN_THANH) {
-                    PopupMenu popup = new PopupMenu(mContext, holder.mView);
-                    popup.inflate(R.menu.menu_don_hang_hoan_thanh);
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.option_huy:
-                                    huy(holder.mItem);
-                                    break;
-                            }
-                            return false;
-                        }
-                    });
-                    popup.show();
+        holder.mView.setOnClickListener(v -> {
+            if (mTrangThai == Constants.TRANG_THAI_DANG_XY_LY) {
+                if (itemStateArray.contains(holder.mItem.getId())) {
+                    itemStateArray.remove(holder.mItem.getId());
+                    holder.mView.setBackgroundColor(Color.WHITE);
+                    if (itemStateArray.size() == 0)
+                        mDonHangListerner.onHide();
+                    else mDonHangListerner.onShow();
+                    selectChange();
+                } else {
+                    itemStateArray.add(holder.mItem.getId());
+                    holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorDonHangSelect));
+                    mDonHangListerner.onShow();
+                    selectChange();
                 }
+            } else if (mTrangThai == Constants.TRANG_THAI_HOAN_THANH) {
+                PopupMenu popup = new PopupMenu(mContext, holder.mView);
+                popup.inflate(R.menu.menu_don_hang_hoan_thanh);
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.option_huy:
+                            huy(holder.mItem);
+                            break;
+                    }
+                    return false;
+                });
+                popup.show();
             }
         });
 
-        holder.btnThanhToan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                thanhToan(holder.mItem);
-            }
-        });
+        holder.btnThanhToan.setOnClickListener(v -> thanhToan(holder.mItem));
 
-        holder.btnChinhSua.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chinhSua(holder.mItem, holder.btnChinhSua);
-            }
-        });
+        holder.btnChinhSua.setOnClickListener(v -> chinhSua(holder.mItem, holder.btnChinhSua));
 
         if (!TextUtils.equals(holder.mItem.getTrangThai(), mContext.getString(R.string.status_dang_xu_ly))) {
             holder.mSeparateLine.setVisibility(View.GONE);
@@ -170,19 +152,16 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private void chinhSua(final DonHang donHang, View view) {
         PopupMenu popup = new PopupMenu(mContext, view);
         popup.inflate(R.menu.menu_don_hang);
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.option_chinh_sua:
-                        capNhat(donHang);
-                        break;
-                    case R.id.option_huy:
-                        huy(donHang);
-                        break;
-                }
-                return false;
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.option_chinh_sua:
+                    capNhat(donHang);
+                    break;
+                case R.id.option_huy:
+                    huy(donHang);
+                    break;
             }
+            return false;
         });
         popup.show();
     }
@@ -190,21 +169,15 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
     private void huy(final DonHang donHang) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setMessage("Hủy đơn hàng?")
-                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        DonHang dh = donHang;
-                        donHang.setTrangThai(mContext.getString(R.string.status_da_huy));
-                        mValues.remove(dh);
-                        DBController.getInstance(mContext).capNhatDonHang(dh);
-                        clearSelect();
-                        mDonHangListerner.onRefresh();
-                    }
+                .setPositiveButton("Đồng ý", (dialog, id) -> {
+                    donHang.setTrangThai(mContext.getString(R.string.status_da_huy));
+                    DBController.getInstance(mContext).capNhatDonHang(donHang);
+                    clearSelect();
+                    mDonHangListerner.onRefresh();
                 })
-                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        clearSelect();
-                        dialog.cancel();
-                    }
+                .setNegativeButton("Hủy", (dialog, id) -> {
+                    clearSelect();
+                    dialog.cancel();
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -222,117 +195,94 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         builder.setCancelable(false);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
+        @SuppressLint("InflateParams")
         View view = inflater.inflate(R.layout.dialog_them_don_hang, null);
 
         final List<KhachHang> khachHangs = DBController.getInstance(mContext).layDanhSachKhachHang();
         KhachHangArrayAdapter adapterKH = new KhachHangArrayAdapter(mContext, android.R.layout.simple_dropdown_item_1line, khachHangs);
-        AutoCompleteTextView etKhachHang = (AutoCompleteTextView) view.findViewById(R.id.etKhachHang);
+        AutoCompleteTextView etKhachHang = view.findViewById(R.id.etKhachHang);
         etKhachHang.setThreshold(1);
         etKhachHang.setAdapter(adapterKH);
         if (!TextUtils.isEmpty(donHang.getIdKhachHang()))
             etKhachHang.setText(DBController.getInstance(mContext).layKhachHangTheoId(donHang.getIdKhachHang()).getTenKH());
-        etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                KhachHang khachHang = (KhachHang) parent.getItemAtPosition(position);
-                donHang.setIdKhachHang(khachHang.getId());
-            }
+        etKhachHang.setOnItemClickListener((parent, v, position, id) -> {
+            KhachHang khachHang = (KhachHang) parent.getItemAtPosition(position);
+            donHang.setIdKhachHang(khachHang.getId());
         });
 
         final List<SanPham> sanPhams = DBController.getInstance(mContext).layDanhSachSanPham();
         SanPhamArrayAdapter adapterSP = new SanPhamArrayAdapter(mContext, android.R.layout.simple_dropdown_item_1line, sanPhams);
-        final MultiAutoCompleteTextView etSanPham = (MultiAutoCompleteTextView) view.findViewById(R.id.etSanPham);
+        final MultiAutoCompleteTextView etSanPham = view.findViewById(R.id.etSanPham);
         etSanPham.setThreshold(1);
         etSanPham.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         etSanPham.setAdapter(adapterSP);
-        String sanPhamString = "";
+        StringBuilder sanPhamString = new StringBuilder();
         for (String id : dh.getIdSanPhams()) {
-            sanPhamString += DBController.getInstance(mContext).laySanPhamTheoId(id).getTenSP() + ",";
+            sanPhamString.append(DBController.getInstance(mContext).laySanPhamTheoId(id).getTenSP()).append(",");
         }
-        etSanPham.setText(sanPhamString);
+        etSanPham.setText(sanPhamString.toString());
         etSanPham.requestFocus();
 
-        final Button btnThemKhachHang = (Button) view.findViewById(R.id.btnThemKhachHang);
-        btnThemKhachHang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mBanHangListerner != null)
-                    mBanHangListerner.onThemKhachHangClick();
-                alertDialog.cancel();
-            }
+        final Button btnThemKhachHang = view.findViewById(R.id.btnThemKhachHang);
+        btnThemKhachHang.setOnClickListener(v -> {
+            if (mBanHangListerner != null)
+                mBanHangListerner.onThemKhachHangClick();
+            alertDialog.cancel();
         });
 
-        final Button btnThemSanPham = (Button) view.findViewById(R.id.btnThemSanPham);
-        btnThemSanPham.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mBanHangListerner != null)
-                    mBanHangListerner.onThemSanPhamClick();
-                alertDialog.cancel();
-            }
+        final Button btnThemSanPham = view.findViewById(R.id.btnThemSanPham);
+        btnThemSanPham.setOnClickListener(v -> {
+            if (mBanHangListerner != null)
+                mBanHangListerner.onThemSanPhamClick();
+            alertDialog.cancel();
         });
 
         builder.setView(view);
 
-        builder.setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String[] tenSPs = etSanPham.getText().toString().split(",");
-                for (String tenSP : tenSPs) {
-                    for (SanPham sanPham : sanPhams) {
-                        if (TextUtils.equals(tenSP.trim(), sanPham.getTenSP())) {
-                            donHang.addSanPham(sanPham);
-                            break;
-                        }
+        builder.setPositiveButton("Sửa", (dialog, which) -> {
+            String[] tenSPs = etSanPham.getText().toString().split(",");
+            for (String tenSP : tenSPs) {
+                for (SanPham sanPham : sanPhams) {
+                    if (TextUtils.equals(tenSP.trim(), sanPham.getTenSP())) {
+                        donHang.addSanPham(sanPham);
+                        break;
                     }
                 }
-                clearSelect();
-                if (donHang.getIdSanPhams() != null) {
-                    DBController.getInstance(mContext).capNhatDonHang(donHang);
-                    if (mIsLichSuGiaoDich && !TextUtils.equals(donHang.getIdKhachHang(), dh.getIdKhachHang())) {
-                        mDonHangListerner.onRefresh();
-                    } else {
-                        mValues.set(mValues.indexOf(dh), donHang);
-                    }
+            }
+            clearSelect();
+            if (donHang.getIdSanPhams() != null) {
+                DBController.getInstance(mContext).capNhatDonHang(donHang);
+                if (mIsLichSuGiaoDich && !TextUtils.equals(donHang.getIdKhachHang(), dh.getIdKhachHang())) {
+                    mDonHangListerner.onRefresh();
                 } else {
-                    Utils.showToast(mContext, "Chỉnh sửa đơn hàng thất bại");
+                    mValues.set(mValues.indexOf(dh), donHang);
                 }
+            } else {
+                Utils.showToast(mContext, "Chỉnh sửa đơn hàng thất bại");
             }
         });
 
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                clearSelect();
-                dialog.cancel();
-            }
+        builder.setNegativeButton("Hủy", (dialog, which) -> {
+            clearSelect();
+            dialog.cancel();
         });
 
         alertDialog = builder.create();
         alertDialog.show();
     }
 
-    private void thanhToan(final DonHang dh) {
+    private void thanhToan(final DonHang donHang) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setMessage("Thanh toán đơn hàng?")
-                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        DonHang donHang = new DonHang();
-                        donHang.setId(dh.getId());
-                        donHang.setThoiGianTao(dh.getThoiGianTao());
-                        donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
-                        donHang.setIdKhachHang(dh.getIdKhachHang());
-                        donHang.setIdSanPhams(dh.getIdSanPhams());
-                        DBController.getInstance(mContext).capNhatDonHang(donHang);
-                        clearSelect();
-                        mDonHangListerner.onRefresh();
-                    }
+                .setPositiveButton("Đồng ý", (dialog, id) -> {
+                    donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
+                    DBController.getInstance(mContext).capNhatDonHang(donHang);
+                    clearSelect();
+                    mDonHangListerner.onRefresh();
                 })
-                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        clearSelect();
-                        dialog.cancel();
-                    }
+                .setNegativeButton("Hủy", (dialog, id) -> {
+                    clearSelect();
+                    dialog.cancel();
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -357,22 +307,18 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
             String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien());
             builder.setTitle("Thanh toán đơn hàng?")
                     .setMessage("Thành tiền " + formattedPrice)
-                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            for (String idDonHang : itemStateArray) {
-                                DonHang donHang = DBController.getInstance(mContext).layDonHangTheoId(idDonHang);
-                                donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
-                                DBController.getInstance(mContext).capNhatDonHang(donHang);
-                            }
-                            clearSelect();
-                            mDonHangListerner.onRefresh();
+                    .setPositiveButton("Đồng ý", (dialog, id) -> {
+                        for (String idDonHang : itemStateArray) {
+                            DonHang donHang = DBController.getInstance(mContext).layDonHangTheoId(idDonHang);
+                            donHang.setTrangThai(mContext.getString(R.string.status_hoan_thanh));
+                            DBController.getInstance(mContext).capNhatDonHang(donHang);
                         }
+                        clearSelect();
+                        mDonHangListerner.onRefresh();
                     })
-                    .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            clearSelect();
-                            dialog.cancel();
-                        }
+                    .setNegativeButton("Hủy", (dialog, id) -> {
+                        clearSelect();
+                        dialog.cancel();
                     });
             AlertDialog dialog = builder.create();
             dialog.show();
@@ -390,7 +336,7 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         return tong;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         final TextView mTvThoiGianTao;
         final ImageView ivIcon;
@@ -403,18 +349,18 @@ public class DonHangAdapter extends RecyclerView.Adapter<DonHangAdapter.ViewHold
         final ImageButton btnChinhSua;
         DonHang mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
-            mTvThoiGianTao = (TextView) view.findViewById(R.id.tvThoiGianTao);
-            ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
-            mTvKhachHang = (TextView) view.findViewById(R.id.tvKhachHang);
-            tcvSanPham = (TagCloudView) view.findViewById(R.id.tcvSanPham);
-            mTvTongTien = (TextView) view.findViewById(R.id.tvTongTien);
-            mSeparateLine = (LinearLayout) view.findViewById(R.id.separateLine);
-            mLayoutChinhSua = (LinearLayout) view.findViewById(R.id.layoutChinhSua);
-            btnThanhToan = (ImageButton) view.findViewById(R.id.btnThanhToan);
-            btnChinhSua = (ImageButton) view.findViewById(R.id.btnChinhSua);
+            mTvThoiGianTao = view.findViewById(R.id.tvThoiGianTao);
+            ivIcon = view.findViewById(R.id.ivIcon);
+            mTvKhachHang = view.findViewById(R.id.tvKhachHang);
+            tcvSanPham = view.findViewById(R.id.tcvSanPham);
+            mTvTongTien = view.findViewById(R.id.tvTongTien);
+            mSeparateLine = view.findViewById(R.id.separateLine);
+            mLayoutChinhSua = view.findViewById(R.id.layoutChinhSua);
+            btnThanhToan = view.findViewById(R.id.btnThanhToan);
+            btnChinhSua = view.findViewById(R.id.btnChinhSua);
         }
     }
 }

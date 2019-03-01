@@ -27,4 +27,6 @@
     <string name="status_hoan_thanh">Hoàn thành</string>
     <string name="status_da_huy">Đã hủy</string>
 
+    <string name="name_khach_vang_lai">Khách vãng lai</string>
+
 </resources>

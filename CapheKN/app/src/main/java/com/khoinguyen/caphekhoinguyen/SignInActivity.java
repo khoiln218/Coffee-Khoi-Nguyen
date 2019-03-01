@@ -3,87 +3,114 @@ package com.khoinguyen.caphekhoinguyen;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.khoinguyen.caphekhoinguyen.event.LoadCompleteEvent;
 import com.khoinguyen.caphekhoinguyen.model.User;
+import com.khoinguyen.caphekhoinguyen.realtimedatabase.RealtimeDatabaseController;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Objects;
 
 public class SignInActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "SignInActivity";
 
-    private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
+    private RelativeLayout mLayoutLoading;
+    private RelativeLayout mLayoutSignIn;
     private EditText mEmailField;
     private EditText mPasswordField;
-    private Button mSignInButton;
-    private Button mSignUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
         // Views
+        mLayoutLoading = findViewById(R.id.layoutLoading);
+        mLayoutSignIn = findViewById(R.id.layoutSignIn);
         mEmailField = findViewById(R.id.fieldEmail);
         mPasswordField = findViewById(R.id.fieldPassword);
-        mSignInButton = findViewById(R.id.buttonSignIn);
-        mSignUpButton = findViewById(R.id.buttonSignUp);
+        Button signInButton = findViewById(R.id.buttonSignIn);
+        Button signUpButton = findViewById(R.id.buttonSignUp);
 
         // Click listeners
-        mSignInButton.setOnClickListener(this);
-        mSignUpButton.setOnClickListener(this);
+        signInButton.setOnClickListener(this);
+        signUpButton.setOnClickListener(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
 
         // Check auth on Activity start
         if (mAuth.getCurrentUser() != null) {
             onAuthSuccess(mAuth.getCurrentUser());
+        } else {
+            showSignIn();
         }
+    }
+
+    private void showLoading() {
+        mLayoutLoading.setVisibility(View.VISIBLE);
+        mLayoutSignIn.setVisibility(View.GONE);
+    }
+
+    private void showSignIn() {
+        mLayoutLoading.setVisibility(View.GONE);
+        mLayoutSignIn.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(LoadCompleteEvent event) {
+        LogUtils.d(TAG, "onMessageEvent: LoadCompleteEvent");
+        // Go to MainActivity
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     private void signIn() {
         LogUtils.d(TAG, "signIn");
 
         Utils.hideKeyBoard(this);
-        if (!validateForm()) {
+        if (validateForm()) {
             return;
         }
 
-        Utils.showProgressDialog(this);
+        showLoading();
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
 
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        LogUtils.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-                        Utils.hideProgressDialog();
+                .addOnCompleteListener(this, task -> {
+                    LogUtils.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+                    showSignIn();
 
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Utils.showToast(SignInActivity.this, "Đăng nhập không thành công");
-                        }
+                    if (task.isSuccessful()) {
+                        onAuthSuccess(Objects.requireNonNull(task.getResult()).getUser());
+                    } else {
+                        Utils.showToast(SignInActivity.this, "Đăng nhập không thành công");
                     }
                 });
     }
@@ -92,39 +119,35 @@ public class SignInActivity extends Activity implements View.OnClickListener {
         LogUtils.d(TAG, "signUp");
 
         Utils.hideKeyBoard(this);
-        if (!validateForm()) {
+        if (validateForm()) {
             return;
         }
 
-        Utils.showProgressDialog(this);
+        showLoading();
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        LogUtils.d(TAG, "createUser:onComplete:" + task.isSuccessful());
-                        Utils.hideProgressDialog();
+                .addOnCompleteListener(this, task -> {
+                    LogUtils.d(TAG, "createUser:onComplete:" + task.isSuccessful());
+                    showSignIn();
 
-                        if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser());
-                        } else {
-                            Utils.showToast(SignInActivity.this, "Đăng ký không thành công");
-                        }
+                    if (task.isSuccessful()) {
+                        onAuthSuccess(Objects.requireNonNull(task.getResult()).getUser());
+                    } else {
+                        Utils.showToast(SignInActivity.this, "Đăng ký không thành công");
                     }
                 });
     }
 
-    private void onAuthSuccess(FirebaseUser user) {
-        String username = usernameFromEmail(user.getEmail());
+    private void onAuthSuccess(FirebaseUser firebaseUser) {
+        String username = usernameFromEmail(Objects.requireNonNull(firebaseUser.getEmail()));
 
         // Write new user
-        writeNewUser(user.getUid(), username, user.getEmail());
-
-        // Go to MainActivity
-        startActivity(new Intent(SignInActivity.this, MainActivity.class));
-        finish();
+        User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), username);
+        RealtimeDatabaseController.getInstance(this).themNguoiDung(user);
+        RealtimeDatabaseController.getInstance(this).startListerner();
+        showLoading();
     }
 
     private String usernameFromEmail(String email) {
@@ -142,26 +165,18 @@ public class SignInActivity extends Activity implements View.OnClickListener {
             mEmailField.setError("Email không hợp lệ");
             mEmailField.requestFocus();
             Utils.showSoftKeyboard(this);
-            return false;
+            return true;
         }
 
         if (TextUtils.isEmpty(mPasswordField.getText().toString())) {
             mPasswordField.setError("Mật khẩu không hợp lệ");
             mPasswordField.requestFocus();
             Utils.showSoftKeyboard(this);
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    // [START basic_write]
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
-
-        mDatabase.child("users").child(userId).setValue(user);
-    }
-    // [END basic_write]
 
     @Override
     public void onClick(View v) {

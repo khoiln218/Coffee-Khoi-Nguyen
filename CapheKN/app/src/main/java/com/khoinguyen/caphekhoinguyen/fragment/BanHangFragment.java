@@ -1,10 +1,10 @@
 package com.khoinguyen.caphekhoinguyen.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,14 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
@@ -84,31 +81,23 @@ public class BanHangFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ban_hang, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.rvBanHang);
+        mRecyclerView = view.findViewById(R.id.rvBanHang);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                banHang();
-            }
-        });
+        fab.setOnClickListener(v -> banHang());
         fab.attachToRecyclerView(mRecyclerView);
         layoutTotal = view.findViewById(R.id.layoutTotal);
-        btnGoUpDown = (ImageButton) view.findViewById(R.id.btnGoUpDown);
+        btnGoUpDown = view.findViewById(R.id.btnGoUpDown);
         layoutMoney = view.findViewById(R.id.layoutMoney);
-        tvTotalCost = (TextView) view.findViewById(R.id.tvTotalCost);
+        tvTotalCost = view.findViewById(R.id.tvTotalCost);
         btnGoUpDown.setImageResource(layoutMoney.getVisibility() == View.VISIBLE ? R.drawable.orderlist_02 : R.drawable.orderlist_01);
-        btnGoUpDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (layoutMoney.getVisibility() == View.GONE) {
-                    btnGoUpDown.setImageResource(R.drawable.orderlist_02);
-                    layoutTotal.startAnimation(animGoUp);
-                } else {
-                    btnGoUpDown.setImageResource(R.drawable.orderlist_01);
-                    layoutTotal.startAnimation(animGoDown);
-                }
+        btnGoUpDown.setOnClickListener(v -> {
+            if (layoutMoney.getVisibility() == View.GONE) {
+                btnGoUpDown.setImageResource(R.drawable.orderlist_02);
+                layoutTotal.startAnimation(animGoUp);
+            } else {
+                btnGoUpDown.setImageResource(R.drawable.orderlist_01);
+                layoutTotal.startAnimation(animGoDown);
             }
         });
 
@@ -185,6 +174,7 @@ public class BanHangFragment extends Fragment {
         mAdapter.thanhToanList();
     }
 
+    @SuppressLint("DefaultLocale")
     private void banHang() {
         mAdapter.clearSelect();
 
@@ -197,125 +187,94 @@ public class BanHangFragment extends Fragment {
         builder.setCancelable(false);
 
         LayoutInflater inflater = LayoutInflater.from(getActivity());
+        @SuppressLint("InflateParams")
         View view = inflater.inflate(R.layout.dialog_them_don_hang, null);
 
         final List<KhachHang> khachHangs = DBController.getInstance(getActivity()).layDanhSachKhachHang();
         KhachHangArrayAdapter adapterKH = new KhachHangArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, khachHangs);
-        AutoCompleteTextView etKhachHang = (AutoCompleteTextView) view.findViewById(R.id.etKhachHang);
+        AutoCompleteTextView etKhachHang = view.findViewById(R.id.etKhachHang);
         etKhachHang.setThreshold(1);
         etKhachHang.setAdapter(adapterKH);
-        etKhachHang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                KhachHang khachHang = (KhachHang) parent.getItemAtPosition(position);
-                donHang.setIdKhachHang(khachHang.getId());
-            }
+        etKhachHang.setOnItemClickListener((parent, v, position, id) -> {
+            KhachHang khachHang = (KhachHang) parent.getItemAtPosition(position);
+            donHang.setIdKhachHang(khachHang.getId());
         });
 
         final List<SanPham> sanPhams = DBController.getInstance(getActivity()).layDanhSachSanPham();
         SanPhamArrayAdapter adapterSP = new SanPhamArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, sanPhams);
-        final MultiAutoCompleteTextView etSanPham = (MultiAutoCompleteTextView) view.findViewById(R.id.etSanPham);
+        final MultiAutoCompleteTextView etSanPham = view.findViewById(R.id.etSanPham);
         etSanPham.setThreshold(1);
         etSanPham.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         etSanPham.setAdapter(adapterSP);
 
-        final Button btnThemKhachHang = (Button) view.findViewById(R.id.btnThemKhachHang);
-        btnThemKhachHang.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mListener != null)
-                    mListener.onThemKhachHangClick();
-                alertDialog.cancel();
-            }
+        final Button btnThemKhachHang = view.findViewById(R.id.btnThemKhachHang);
+        btnThemKhachHang.setOnClickListener(v -> {
+            if (mListener != null)
+                mListener.onThemKhachHangClick();
+            alertDialog.cancel();
         });
 
-        final Button btnThemSanPham = (Button) view.findViewById(R.id.btnThemSanPham);
-        btnThemSanPham.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mListener != null)
-                    mListener.onThemSanPhamClick();
-                alertDialog.cancel();
-            }
+        final Button btnThemSanPham = view.findViewById(R.id.btnThemSanPham);
+        btnThemSanPham.setOnClickListener(v -> {
+            if (mListener != null)
+                mListener.onThemSanPhamClick();
+            alertDialog.cancel();
         });
 
-        final TextView tvNgay = (TextView) view.findViewById(R.id.tvNgay);
-        final TextView tvThoiGian = (TextView) view.findViewById(R.id.tvThoiGian);
+        final TextView tvNgay = view.findViewById(R.id.tvNgay);
+        final TextView tvThoiGian = view.findViewById(R.id.tvThoiGian);
         tvThoiGian.setText(String.format("%1$tH:%1$tM", mCalendar));
         tvNgay.setText(String.format("%1$td/%1$tm/%1$ty", mCalendar));
 
-        tvNgay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog(tvNgay);
-            }
-        });
+        tvNgay.setOnClickListener(v -> showDatePickerDialog(tvNgay));
 
-        tvThoiGian.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTimePickerDialog(tvThoiGian);
-            }
-        });
+        tvThoiGian.setOnClickListener(v -> showTimePickerDialog(tvThoiGian));
 
         builder.setView(view);
 
-        builder.setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                donHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyDonHang());
-                donHang.setThoiGianTao(mCalendar.getTimeInMillis());
-                donHang.setTrangThai(getString(R.string.status_dang_xu_ly));
-                String[] tenSPs = etSanPham.getText().toString().split(",");
-                for (String tenSP : tenSPs) {
-                    for (SanPham sanPham : sanPhams) {
-                        if (TextUtils.equals(tenSP.trim(), sanPham.getTenSP())) {
-                            donHang.addSanPham(sanPham);
-                            break;
-                        }
+        builder.setPositiveButton("Thêm", (dialog, which) -> {
+            donHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyDonHang());
+            donHang.setThoiGianTao(mCalendar.getTimeInMillis());
+            donHang.setTrangThai(getString(R.string.status_dang_xu_ly));
+            String[] tenSPs = etSanPham.getText().toString().split(",");
+            for (String tenSP : tenSPs) {
+                for (SanPham sanPham : sanPhams) {
+                    if (TextUtils.equals(tenSP.trim(), sanPham.getTenSP())) {
+                        donHang.addSanPham(sanPham);
+                        break;
                     }
                 }
-                if (donHang.getIdSanPhams() != null) {
-                    DBController.getInstance(getActivity()).themDonHang(donHang);
-                    mDonHangs.add(0, donHang);
-                    mAdapter.notifyDataSetChanged();
-                } else {
-                    Utils.showToast(getActivity(), "Thêm đơn hàng thất bại");
-                }
+            }
+            if (donHang.getIdSanPhams() != null) {
+                DBController.getInstance(getActivity()).themDonHang(donHang);
+                mDonHangs.add(0, donHang);
+                mAdapter.notifyDataSetChanged();
+            } else {
+                Utils.showToast(getActivity(), "Thêm đơn hàng thất bại");
             }
         });
 
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
 
         alertDialog = builder.create();
         alertDialog.show();
     }
 
     private void showTimePickerDialog(final TextView tvThoiGian) {
-        new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                mCalendar.set(Calendar.HOUR, hour);
-                mCalendar.set(Calendar.MINUTE, minute);
-                mCalendar.clear(Calendar.SECOND);
-                mCalendar.clear(Calendar.MILLISECOND);
-                tvThoiGian.setText(String.format("%1$tH:%1$tM", mCalendar));
-            }
+        new TimePickerDialog(getActivity(), (timePicker, hour, minute) -> {
+            mCalendar.set(Calendar.HOUR, hour);
+            mCalendar.set(Calendar.MINUTE, minute);
+            mCalendar.clear(Calendar.SECOND);
+            mCalendar.clear(Calendar.MILLISECOND);
+            tvThoiGian.setText(String.format("%1$tH:%1$tM", mCalendar));
         }, mCalendar.get(Calendar.HOUR), mCalendar.get(Calendar.MINUTE), true).show();
     }
 
+    @SuppressLint("DefaultLocale")
     private void showDatePickerDialog(final TextView tvNgay) {
-        new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                mCalendar.set(year, month, dayOfMonth);
-                tvNgay.setText(String.format("%1$td/%1$tm/%1$ty", mCalendar));
-            }
+        new DatePickerDialog(getActivity(), (datePicker, year, month, dayOfMonth) -> {
+            mCalendar.set(year, month, dayOfMonth);
+            tvNgay.setText(String.format("%1$td/%1$tm/%1$ty", mCalendar));
         }, mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
@@ -406,6 +365,7 @@ public class BanHangFragment extends Fragment {
         void onUpdateTongTien(long tongTien);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
         @Override

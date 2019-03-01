@@ -1,5 +1,6 @@
 package com.khoinguyen.caphekhoinguyen.realtimedatabase;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -15,30 +16,33 @@ import com.google.firebase.database.annotations.Nullable;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.event.DonHangEvent;
 import com.khoinguyen.caphekhoinguyen.event.KhachHangEvent;
+import com.khoinguyen.caphekhoinguyen.event.LoadCompleteEvent;
 import com.khoinguyen.caphekhoinguyen.event.NetStatusEvent;
 import com.khoinguyen.caphekhoinguyen.event.SanPhamEvent;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.model.User;
 import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
-import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
+import java.util.Objects;
 
 public class RealtimeDatabaseController {
     private static final String TAG = "RealtimeDatabaseController";
     private static final int TIME_INTERVAL = 1000;
 
+    @SuppressLint("StaticFieldLeak")
     private static RealtimeDatabaseController INSTANCE = null;
 
     private Context mContext;
 
-    private DatabaseReference mDatabase;
     private DatabaseReference mDonHangDatabase;
     private DatabaseReference mKhachHangDatabase;
     private DatabaseReference mSanPhamDatabase;
+    private DatabaseReference mUserDatabase;
     private DatabaseReference mConnectedRef;
 
     private ChildEventListener mDonHangChildEventListener;
@@ -52,37 +56,29 @@ public class RealtimeDatabaseController {
     private boolean isLoadSanPhamComplete = false;
 
     private Handler handler = new Handler();
-    private Runnable rDonHang = new Runnable() {
-        @Override
-        public void run() {
-            isLoadDonHangComplete = true;
-            stopLoad();
-        }
+    private Runnable rDonHang = () -> {
+        isLoadDonHangComplete = true;
+        stopLoad();
     };
 
-    private Runnable rKhachHang = new Runnable() {
-        @Override
-        public void run() {
-            isLoadKhachHangComplete = true;
-            stopLoad();
-        }
+    private Runnable rKhachHang = () -> {
+        isLoadKhachHangComplete = true;
+        stopLoad();
     };
 
-    private Runnable rSanPham = new Runnable() {
-        @Override
-        public void run() {
-            isLoadSanPhamComplete = true;
-            stopLoad();
-        }
+    private Runnable rSanPham = () -> {
+        isLoadSanPhamComplete = true;
+        stopLoad();
     };
 
     private RealtimeDatabaseController(Context context) {
         mContext = context;
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         String uid = getUid();
-        mDonHangDatabase = mDatabase.child(uid).child("donhang");
-        mKhachHangDatabase = mDatabase.child(uid).child("khachhang");
-        mSanPhamDatabase = mDatabase.child(uid).child("sanpham");
+        mDonHangDatabase = database.child(uid).child("donhang");
+        mKhachHangDatabase = database.child(uid).child("khachhang");
+        mSanPhamDatabase = database.child(uid).child("sanpham");
+        mUserDatabase = database.child("users");
         mConnectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
     }
 
@@ -112,17 +108,14 @@ public class RealtimeDatabaseController {
 
         ValueEventListener donHangValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "DonHang - onDataChange");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handler.removeCallbacks(rDonHang);
-                        for (DataSnapshot ds : dataSnapshot.getChildren())
-                            DBController.getInstance(mContext).capNhatHoacThemDonHangDenCache(ds.getValue(DonHang.class));
-                        isLoadDonHangComplete = true;
-                        stopLoad();
-                    }
+                new Thread(() -> {
+                    handler.removeCallbacks(rDonHang);
+                    for (DataSnapshot ds : dataSnapshot.getChildren())
+                        DBController.getInstance(mContext).capNhatHoacThemDonHangDenCache(ds.getValue(DonHang.class));
+                    isLoadDonHangComplete = true;
+                    stopLoad();
                 }).start();
             }
 
@@ -133,17 +126,14 @@ public class RealtimeDatabaseController {
 
         ValueEventListener khachHangValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "KhachHang - onDataChange");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handler.removeCallbacks(rKhachHang);
-                        for (DataSnapshot ds : dataSnapshot.getChildren())
-                            DBController.getInstance(mContext).capNhatHoacThemKhachHangDenCache(ds.getValue(KhachHang.class));
-                        isLoadKhachHangComplete = true;
-                        stopLoad();
-                    }
+                new Thread(() -> {
+                    handler.removeCallbacks(rKhachHang);
+                    for (DataSnapshot ds : dataSnapshot.getChildren())
+                        DBController.getInstance(mContext).capNhatHoacThemKhachHangDenCache(ds.getValue(KhachHang.class));
+                    isLoadKhachHangComplete = true;
+                    stopLoad();
                 }).start();
             }
 
@@ -154,17 +144,14 @@ public class RealtimeDatabaseController {
 
         ValueEventListener sanPhamValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 LogUtils.d(TAG, "SanPham - onDataChange");
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handler.removeCallbacks(rSanPham);
-                        for (DataSnapshot ds : dataSnapshot.getChildren())
-                            DBController.getInstance(mContext).capNhatHoacThemSanPhamDenCache(ds.getValue(SanPham.class));
-                        isLoadSanPhamComplete = true;
-                        stopLoad();
-                    }
+                new Thread(() -> {
+                    handler.removeCallbacks(rSanPham);
+                    for (DataSnapshot ds : dataSnapshot.getChildren())
+                        DBController.getInstance(mContext).capNhatHoacThemSanPhamDenCache(ds.getValue(SanPham.class));
+                    isLoadSanPhamComplete = true;
+                    stopLoad();
                 }).start();
             }
 
@@ -312,9 +299,9 @@ public class RealtimeDatabaseController {
         mConnectValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean connected = snapshot.getValue(Boolean.class);
+                Boolean connected = snapshot.getValue(Boolean.class);
                 NetStatusEvent event = new NetStatusEvent();
-                event.setConnect(connected);
+                event.setConnect(connected != null && connected);
                 EventBus.getDefault().post(event);
             }
 
@@ -335,7 +322,6 @@ public class RealtimeDatabaseController {
         isLoadDonHangComplete = false;
         isLoadKhachHangComplete = false;
         isLoadSanPhamComplete = false;
-        Utils.showProgressDialog(mContext);
         handler.postDelayed(rDonHang, TIME_INTERVAL);
         handler.postDelayed(rKhachHang, TIME_INTERVAL);
         handler.postDelayed(rSanPham, TIME_INTERVAL);
@@ -344,7 +330,8 @@ public class RealtimeDatabaseController {
     private void stopLoad() {
         if (isLoadDonHangComplete && isLoadKhachHangComplete && isLoadSanPhamComplete) {
             LogUtils.d(TAG, "stopLoad");
-            Utils.hideProgressDialog();
+            LoadCompleteEvent event = new LoadCompleteEvent();
+            EventBus.getDefault().post(event);
         }
     }
 
@@ -360,8 +347,8 @@ public class RealtimeDatabaseController {
             mConnectedRef.removeEventListener(mConnectValueEventListener);
     }
 
-    public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private String getUid() {
+        return Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
     }
 
     public void taiDonHangLenServer(List<DonHang> donHangs) {
@@ -404,5 +391,9 @@ public class RealtimeDatabaseController {
 
     public void capNhatSanPham(SanPham sanPham) {
         mSanPhamDatabase.child(sanPham.getId()).setValue(sanPham);
+    }
+
+    public void themNguoiDung(User user) {
+        mUserDatabase.child(user.getId()).setValue(user);
     }
 }

@@ -38,7 +38,7 @@ public class DBController {
     }
 
     // Don hang
-    public List<DonHang> layDanhSachDonHang() {
+    private List<DonHang> layDanhSachDonHang() {
         return donHangCache.layDanhSachDonHang();
     }
 
@@ -102,7 +102,7 @@ public class DBController {
         donHangCache.capNhatHoacThemDonHang(donHang);
     }
 
-    public void themDonHangDenServer(DonHang donHang) {
+    private void themDonHangDenServer(DonHang donHang) {
         RealtimeDatabaseController.getInstance(mContext).themDonHang(donHang);
     }
 
@@ -114,7 +114,7 @@ public class DBController {
         donHangCache.capNhatDonHang(donHang);
     }
 
-    public void capNhatDonHangDenServer(DonHang donHang) {
+    private void capNhatDonHangDenServer(DonHang donHang) {
         RealtimeDatabaseController.getInstance(mContext).capNhatDonHang(donHang);
     }
 
@@ -135,7 +135,7 @@ public class DBController {
         khachHangCache.capNhatHoacThemKhachHang(khachHang);
     }
 
-    public void themKhachHangDenServer(KhachHang khachHang) {
+    private void themKhachHangDenServer(KhachHang khachHang) {
         RealtimeDatabaseController.getInstance(mContext).themKhachHang(khachHang);
     }
 
@@ -147,7 +147,7 @@ public class DBController {
         khachHangCache.capNhatKhachHang(khachHang);
     }
 
-    public void capNhatKhachHangDenServer(KhachHang khachHang) {
+    private void capNhatKhachHangDenServer(KhachHang khachHang) {
         RealtimeDatabaseController.getInstance(mContext).capNhatKhachHang(khachHang);
     }
 
@@ -168,7 +168,7 @@ public class DBController {
         sanPhamCache.capNhatHoacThemSanPham(sanPham);
     }
 
-    public void themSanPhamDenServer(SanPham sanPham) {
+    private void themSanPhamDenServer(SanPham sanPham) {
         RealtimeDatabaseController.getInstance(mContext).themSanPham(sanPham);
     }
 
@@ -180,7 +180,7 @@ public class DBController {
         sanPhamCache.capNhatSanPham(sanPham);
     }
 
-    public void capNhatSanPhamDenServer(SanPham sanPham) {
+    private void capNhatSanPhamDenServer(SanPham sanPham) {
         RealtimeDatabaseController.getInstance(mContext).capNhatSanPham(sanPham);
     }
 

@@ -1,78 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="50dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:text="Cà phê Khôi Nguyên"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/layoutEmail"
+    <RelativeLayout
+        android:id="@+id/layoutLoading"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvLogo"
-        android:layout_centerHorizontal="true">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/fieldEmail"
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:maxLines="1" />
+            android:layout_below="@+id/progressBar"
+            android:gravity="center"
+            android:text="Đang tải dữ liệu"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/layoutPassword"
+    <RelativeLayout
+        android:id="@+id/layoutSignIn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutEmail"
-        android:layout_centerHorizontal="true">
+        android:layout_height="match_parent"
+        android:layout_margin="50dp"
+        android:visibility="gone">
 
-        <EditText
-            android:id="@+id/fieldPassword"
+        <TextView
+            android:id="@+id/tvLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:text="Cà phê Khôi Nguyên"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/layoutEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:hint="Mật khẩu"
-            android:inputType="textPassword"
-            android:maxLines="1" />
+            android:layout_below="@+id/tvLogo"
+            android:layout_centerHorizontal="true">
 
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/fieldEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:maxLines="1" />
 
-    <LinearLayout
-        android:id="@+id/layoutButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutPassword"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
+        </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:id="@+id/buttonSignIn"
-            android:layout_width="120dp"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/layoutPassword"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Đăng nhập"
-            android:textColor="@color/colorPrimaryDark" />
+            android:layout_below="@+id/layoutEmail"
+            android:layout_centerHorizontal="true">
 
-        <Button
-            android:id="@+id/buttonSignUp"
-            android:layout_width="120dp"
+            <EditText
+                android:id="@+id/fieldPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:hint="Mật khẩu"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutButtons"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đăng ký"
-            android:textColor="@color/colorPrimaryDark" />
+            android:layout_below="@+id/layoutPassword"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/buttonSignIn"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Đăng nhập"
+                android:textColor="@color/colorPrimaryDark" />
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/buttonSignUp"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Đăng ký"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>
