@@ -422,4 +422,8 @@ public class DonHangCache {
                 return;
             }
     }
+
+    public void clear() {
+        donHangs.clear();
+    }
 }

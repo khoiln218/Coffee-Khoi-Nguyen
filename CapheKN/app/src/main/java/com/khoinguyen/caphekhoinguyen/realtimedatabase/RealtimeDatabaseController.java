@@ -322,6 +322,7 @@ public class RealtimeDatabaseController {
         isLoadDonHangComplete = false;
         isLoadKhachHangComplete = false;
         isLoadSanPhamComplete = false;
+        DBController.getInstance(mContext).clearCache();
         handler.postDelayed(rDonHang, TIME_INTERVAL);
         handler.postDelayed(rKhachHang, TIME_INTERVAL);
         handler.postDelayed(rSanPham, TIME_INTERVAL);

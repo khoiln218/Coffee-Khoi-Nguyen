@@ -37,6 +37,12 @@ public class DBController {
         return (INSTANCE);
     }
 
+    public void clearCache() {
+        donHangCache.clear();
+        khachHangCache.clear();
+        sanPhamCache.clear();
+    }
+
     // Don hang
     private List<DonHang> layDanhSachDonHang() {
         return donHangCache.layDanhSachDonHang();

@@ -55,4 +55,8 @@ public class KhachHangCache {
             }
         }
     }
+
+    public void clear() {
+        khachHangs.clear();
+    }
 }

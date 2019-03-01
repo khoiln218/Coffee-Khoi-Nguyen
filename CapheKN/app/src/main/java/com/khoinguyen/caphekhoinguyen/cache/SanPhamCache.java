@@ -55,4 +55,8 @@ public class SanPhamCache {
             }
         }
     }
+
+    public void clear() {
+        sanPhams.clear();
+    }
 }
