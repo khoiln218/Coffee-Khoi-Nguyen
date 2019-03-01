@@ -136,15 +136,12 @@ public class SimpleSectionedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         private String getTitle(long timeTamp) {
             Calendar now = Calendar.getInstance();
+            now.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            now.clear(Calendar.MILLISECOND);
 
-            Calendar target = Calendar.getInstance();
-            target.setTimeInMillis(timeTamp);
-
-            if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR) && now.get(Calendar.MONTH) == target.get(Calendar.MONTH)
-                    && now.get(Calendar.DAY_OF_MONTH) == target.get(Calendar.DAY_OF_MONTH))
+            if (now.getTimeInMillis() < timeTamp)
                 return "Hôm nay";
-            if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR) && now.get(Calendar.MONTH) == target.get(Calendar.MONTH)
-                    && now.get(Calendar.DAY_OF_MONTH) == target.get(Calendar.DAY_OF_MONTH) + 1)
+            if (now.getTimeInMillis() - timeTamp < 24 * 59 * 59 * 1000)
                 return "Hôm qua";
             return Utils.convTimestamp(timeTamp, "EEE, dd/MM/yyyy");
         }
