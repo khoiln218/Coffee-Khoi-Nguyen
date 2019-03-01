@@ -346,6 +346,8 @@ public class RealtimeDatabaseController {
             mSanPhamDatabase.removeEventListener(mSanPhamChildEventListener);
         if (mConnectValueEventListener != null)
             mConnectedRef.removeEventListener(mConnectValueEventListener);
+
+        INSTANCE = null;
     }
 
     private String getUid() {
