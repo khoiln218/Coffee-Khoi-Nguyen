@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.khoinguyen.caphekhoinguyen.fragment.KhachHangFragment;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.model.KhachHang;
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -108,11 +110,13 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
         builder.setView(view);
 
         builder.setPositiveButton("Sửa", (dialog, which) -> {
-            khachHang.setTenKH(etTenKhachHang.getText().toString());
-            khachHang.setSDT(etSoDienThoai.getText().toString());
-            DBController.getInstance(mContext).capNhatKhachHang(khachHang);
-            mValues.set(mValues.indexOf(kh), khachHang);
-            notifyDataSetChanged();
+            if (TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
+                Utils.showToast(mContext, "Cập nhật thất bại. Vui lòng nhập tên khách hàng");
+            } else {
+                khachHang.setTenKH(etTenKhachHang.getText().toString());
+                khachHang.setSDT(etSoDienThoai.getText().toString());
+                DBController.getInstance(mContext).capNhatKhachHang(khachHang);
+            }
         });
 
         builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());

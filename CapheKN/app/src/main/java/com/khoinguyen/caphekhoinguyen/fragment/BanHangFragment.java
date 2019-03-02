@@ -245,12 +245,10 @@ public class BanHangFragment extends Fragment {
                     }
                 }
             }
-            if (donHang.getIdSanPhams() != null) {
-                DBController.getInstance(getActivity()).themDonHang(donHang);
-                mDonHangs.add(0, donHang);
-                mAdapter.notifyDataSetChanged();
-            } else {
+            if (donHang.getIdSanPhams() == null) {
                 Utils.showToast(getActivity(), "Thêm đơn hàng thất bại");
+            } else {
+                DBController.getInstance(getActivity()).themDonHang(donHang);
             }
         });
 
@@ -304,7 +302,7 @@ public class BanHangFragment extends Fragment {
     }
 
     private List<SimpleSectionedAdapter.Section> getSections() {
-        if (mDonHangs.size() == 0) return new ArrayList<>();
+        if (mDonHangs.isEmpty()) return new ArrayList<>();
         List<SimpleSectionedAdapter.Section> sections = new ArrayList<>();
         sections.add(new SimpleSectionedAdapter.Section(0, mDonHangs.get(0).getThoiGianTao()));
         for (int i = 1; i < mDonHangs.size(); i++) {
@@ -360,8 +358,6 @@ public class BanHangFragment extends Fragment {
 
         void onHide();
 
-        void onRefresh();
-
         void onUpdateTongTien(long tongTien);
     }
 
@@ -380,11 +376,6 @@ public class BanHangFragment extends Fragment {
                 @Override
                 public void onHide() {
                     actionThanhToan.setVisible(false);
-                }
-
-                @Override
-                public void onRefresh() {
-                    getDonHangs();
                 }
 
                 @Override

@@ -39,7 +39,6 @@ public class KhachHangFragment extends Fragment {
 
     private OnKhachHangInteractionListener mListener;
 
-    private List<KhachHang> mKhachHangs;
     private RecyclerView mRecyclerView;
     private KhachHangAdapter mAdapter;
 
@@ -77,15 +76,13 @@ public class KhachHangFragment extends Fragment {
         builder.setView(view);
 
         builder.setPositiveButton("Thêm", (dialog, which) -> {
-            if (!TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
+            if (TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
+                Utils.showToast(getActivity(), "Vui lòng nhập tên khách hàng");
+            } else {
                 khachHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyKhachHang());
                 khachHang.setTenKH(etTenKhachHang.getText().toString().trim());
                 khachHang.setSDT(etSoDienThoai.getText().toString().trim());
                 DBController.getInstance(getActivity()).themKhachHang(khachHang);
-                mKhachHangs.add(khachHang);
-                mAdapter.notifyDataSetChanged();
-            } else {
-                Utils.showToast(getActivity(), "Vui lòng nhập tên khách hàng");
             }
         });
 
@@ -106,8 +103,8 @@ public class KhachHangFragment extends Fragment {
     }
 
     private void getKhachHangs() {
-        mKhachHangs = DBController.getInstance(getActivity()).layDanhSachKhachHang();
-        mAdapter = new KhachHangAdapter(getActivity(), mKhachHangs, Constants.TRANG_THAI_DANG_XY_LY, true, mListener);
+        List<KhachHang> khachHangs = DBController.getInstance(getActivity()).layDanhSachKhachHang();
+        mAdapter = new KhachHangAdapter(getActivity(), khachHangs, Constants.TRANG_THAI_DANG_XY_LY, true, mListener);
         mRecyclerView.setAdapter(mAdapter);
     }
 

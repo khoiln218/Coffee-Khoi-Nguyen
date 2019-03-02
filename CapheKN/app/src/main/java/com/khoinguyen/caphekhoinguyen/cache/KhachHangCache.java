@@ -48,11 +48,25 @@ public class KhachHangCache {
     }
 
     public void capNhatKhachHang(KhachHang khachHang) {
+        boolean isRemove = false;
+        int index = -1;
         for (int i = 0; i < khachHangs.size(); i++) {
-            if (TextUtils.equals(khachHang.getId(), khachHangs.get(i).getId())) {
-                khachHangs.set(i, khachHang);
-                return;
+            if (!isRemove && TextUtils.equals(khachHang.getId(), khachHangs.get(i).getId())) {
+                khachHangs.remove(i);
+                isRemove = true;
             }
+            if (index < 0 && khachHang.getTenKH().compareTo(khachHangs.get(i).getTenKH()) <= 0) {
+                index = i;
+            }
+            if (isRemove && index > 0) {
+                break;
+            }
+        }
+        if (isRemove) {
+            if (index < 0) {
+                index = khachHangs.size();
+            }
+            khachHangs.add(index, khachHang);
         }
     }
 

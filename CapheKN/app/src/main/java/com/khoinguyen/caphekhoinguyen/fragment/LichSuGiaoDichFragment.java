@@ -24,9 +24,15 @@ import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.adapter.DonHangAdapter;
 import com.khoinguyen.caphekhoinguyen.adapter.SimpleSectionedAdapter;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
+import com.khoinguyen.caphekhoinguyen.event.DonHangEvent;
 import com.khoinguyen.caphekhoinguyen.model.DonHang;
 import com.khoinguyen.caphekhoinguyen.utils.Constants;
+import com.khoinguyen.caphekhoinguyen.utils.LogUtils;
 import com.khoinguyen.caphekhoinguyen.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -36,6 +42,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class LichSuGiaoDichFragment extends Fragment {
+    private static final String TAG = "LichSuGiaoDichFragment";
     private BanHangFragment.OnBanHangInteractionListener mListener;
 
     private List<DonHang> mDonHangs;
@@ -213,6 +220,24 @@ public class LichSuGiaoDichFragment extends Fragment {
         mListener = null;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(DonHangEvent event) {
+        LogUtils.d(TAG, "onMessageEvent: " + event.getDonHang().getId());
+        getDonHangs();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
     @SuppressLint("StaticFieldLeak")
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
@@ -231,16 +256,11 @@ public class LichSuGiaoDichFragment extends Fragment {
                 }
 
                 @Override
-                public void onRefresh() {
-                    getDonHangs();
-                }
-
-                @Override
                 public void onUpdateTongTien(long tongTien) {
                     String formattedPrice = new DecimalFormat("##,##0VNĐ").format(tongTien);
                     tvTotalCost.setText(formattedPrice);
                 }
-            }, mListener, true, trangThai);
+            }, mListener, trangThai);
             mSectionedAdapter = new SimpleSectionedAdapter(getActivity(), getSections(), mAdapter);
             return null;
         }

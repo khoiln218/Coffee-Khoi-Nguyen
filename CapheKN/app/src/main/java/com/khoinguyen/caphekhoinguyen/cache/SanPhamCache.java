@@ -48,11 +48,25 @@ public class SanPhamCache {
     }
 
     public void capNhatSanPham(SanPham sanPham) {
+        boolean isRemove = false;
+        int index = -1;
         for (int i = 0; i < sanPhams.size(); i++) {
-            if (TextUtils.equals(sanPham.getId(), sanPhams.get(i).getId())) {
-                sanPhams.set(i, sanPham);
-                return;
+            if (!isRemove && TextUtils.equals(sanPham.getId(), sanPhams.get(i).getId())) {
+                sanPhams.remove(i);
+                isRemove = true;
             }
+            if (index < 0 && sanPham.getTenSP().compareTo(sanPhams.get(i).getTenSP()) <= 0) {
+                index = i;
+            }
+            if (isRemove && index > 0) {
+                break;
+            }
+        }
+        if (isRemove) {
+            if (index < 0) {
+                index = sanPhams.size();
+            }
+            sanPhams.add(index, sanPham);
         }
     }
 

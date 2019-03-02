@@ -35,7 +35,6 @@ import java.util.List;
 public class SanPhamFragment extends Fragment {
     private static final String TAG = "SanPhamFragment";
 
-    private List<SanPham> mSanPhams;
     private RecyclerView mRecyclerView;
     private SanPhamAdapter mAdapter;
 
@@ -73,15 +72,13 @@ public class SanPhamFragment extends Fragment {
         builder.setView(view);
 
         builder.setPositiveButton("Thêm", (dialog, which) -> {
-            if (!TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) && !TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
+            if (TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) || TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
+                Utils.showToast(getActivity(), "Vui lòng nhập tên và giá sản phẩm");
+            } else {
                 sanPham.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeySanPham());
                 sanPham.setTenSP(etTenSanPham.getText().toString().trim());
                 sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
                 DBController.getInstance(getActivity()).themSanPham(sanPham);
-                mSanPhams.add(sanPham);
-                mAdapter.notifyDataSetChanged();
-            } else {
-                Utils.showToast(getActivity(), "Vui lòng nhập tên và giá sản phẩm");
             }
         });
 
@@ -102,8 +99,8 @@ public class SanPhamFragment extends Fragment {
     }
 
     private void getSanPhams() {
-        mSanPhams = DBController.getInstance(getActivity()).layDanhSachSanPham();
-        mAdapter = new SanPhamAdapter(getActivity(), mSanPhams);
+        List<SanPham> sanPhams = DBController.getInstance(getActivity()).layDanhSachSanPham();
+        mAdapter = new SanPhamAdapter(getActivity(), sanPhams);
         mRecyclerView.setAdapter(mAdapter);
     }
 

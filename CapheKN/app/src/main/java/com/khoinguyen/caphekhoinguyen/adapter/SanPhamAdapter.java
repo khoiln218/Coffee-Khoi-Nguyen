@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.khoinguyen.caphekhoinguyen.R;
 import com.khoinguyen.caphekhoinguyen.controller.DBController;
 import com.khoinguyen.caphekhoinguyen.model.SanPham;
+import com.khoinguyen.caphekhoinguyen.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -84,11 +86,13 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
         builder.setView(view);
 
         builder.setPositiveButton("Sửa", (dialog, which) -> {
-            sanPham.setTenSP(etTenSanPham.getText().toString());
-            sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
-            DBController.getInstance(mContext).capNhatSanPham(sanPham);
-            mValues.set(mValues.indexOf(sp), sanPham);
-            notifyDataSetChanged();
+            if (TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) || TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
+                Utils.showToast(mContext, "Cập nhật thất bại. Vui lòng nhập tên và giá sản phẩm");
+            } else {
+                sanPham.setTenSP(etTenSanPham.getText().toString());
+                sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));
+                DBController.getInstance(mContext).capNhatSanPham(sanPham);
+            }
         });
 
         builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
