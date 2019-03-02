@@ -33,6 +33,13 @@ public class SanPhamCache {
         return null;
     }
 
+    public SanPham laySanPhamTheoTen(String tenSanPham) {
+        for (SanPham sanPham : sanPhams)
+            if (TextUtils.equals(sanPham.getTenSP(), tenSanPham))
+                return sanPham;
+        return null;
+    }
+
     public void capNhatHoacThemSanPham(SanPham sanPham) {
         if (laySanPhamTheoId(sanPham.getId()) != null)
             capNhatSanPham(sanPham);

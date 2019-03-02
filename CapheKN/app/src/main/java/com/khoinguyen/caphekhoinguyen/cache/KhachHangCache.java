@@ -33,6 +33,13 @@ public class KhachHangCache {
         return null;
     }
 
+    public KhachHang layKhachHangTheoTen(String tenKhachHang) {
+        for (KhachHang khachHang : khachHangs)
+            if (TextUtils.equals(khachHang.getTenKH(), tenKhachHang))
+                return khachHang;
+        return null;
+    }
+
     public void capNhatHoacThemKhachHang(KhachHang khachHang) {
         if (layKhachHangTheoId(khachHang.getId()) != null)
             capNhatKhachHang(khachHang);

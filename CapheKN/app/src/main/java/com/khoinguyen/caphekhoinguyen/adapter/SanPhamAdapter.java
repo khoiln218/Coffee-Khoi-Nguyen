@@ -87,7 +87,9 @@ public class SanPhamAdapter extends RecyclerView.Adapter<SanPhamAdapter.ViewHold
 
         builder.setPositiveButton("Sửa", (dialog, which) -> {
             if (TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) || TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
-                Utils.showToast(mContext, "Cập nhật thất bại. Vui lòng nhập tên và giá sản phẩm");
+                Utils.showToast(mContext, "Sửa thất bại. Vui lòng nhập tên và giá sản phẩm");
+            } else if (DBController.getInstance(mContext).laySanPhamTheoTen(etTenSanPham.getText().toString().trim()) != null) {
+                Utils.showToast(mContext, "Sửa thất bại. Bị trùng tên sản phẩm");
             } else {
                 sanPham.setTenSP(etTenSanPham.getText().toString());
                 sanPham.setDonGia(Long.valueOf(etDonGia.getText().toString().trim()));

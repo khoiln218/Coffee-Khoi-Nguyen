@@ -133,6 +133,10 @@ public class DBController {
         return khachHangCache.layKhachHangTheoId(idKhachHang);
     }
 
+    public KhachHang layKhachHangTheoTen(String tenKhachHang) {
+        return khachHangCache.layKhachHangTheoTen(tenKhachHang);
+    }
+
     public void themKhachHang(KhachHang khachHang) {
         themKhachHangDenServer(khachHang);
     }
@@ -164,6 +168,10 @@ public class DBController {
 
     public SanPham laySanPhamTheoId(String idSanPham) {
         return sanPhamCache.laySanPhamTheoId(idSanPham);
+    }
+
+    public SanPham laySanPhamTheoTen(String tenSanPham) {
+        return sanPhamCache.laySanPhamTheoTen(tenSanPham);
     }
 
     public void themSanPham(SanPham sanPham) {

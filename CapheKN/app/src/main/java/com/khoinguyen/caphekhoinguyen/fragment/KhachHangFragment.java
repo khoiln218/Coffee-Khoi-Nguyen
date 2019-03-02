@@ -78,6 +78,8 @@ public class KhachHangFragment extends Fragment {
         builder.setPositiveButton("Thêm", (dialog, which) -> {
             if (TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
                 Utils.showToast(getActivity(), "Vui lòng nhập tên khách hàng");
+            } else if (DBController.getInstance(getActivity()).layKhachHangTheoTen(etTenKhachHang.getText().toString().trim()) != null) {
+                Utils.showToast(getActivity(), "Thêm thất bại. Bị trùng tên khách hàng");
             } else {
                 khachHang.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeyKhachHang());
                 khachHang.setTenKH(etTenKhachHang.getText().toString().trim());

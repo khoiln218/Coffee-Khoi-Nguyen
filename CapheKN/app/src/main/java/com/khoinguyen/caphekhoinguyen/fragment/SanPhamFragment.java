@@ -74,6 +74,8 @@ public class SanPhamFragment extends Fragment {
         builder.setPositiveButton("Thêm", (dialog, which) -> {
             if (TextUtils.isEmpty(etTenSanPham.getText().toString().trim()) || TextUtils.isEmpty(etDonGia.getText().toString().trim())) {
                 Utils.showToast(getActivity(), "Vui lòng nhập tên và giá sản phẩm");
+            } else if (DBController.getInstance(getActivity()).laySanPhamTheoTen(etTenSanPham.getText().toString().trim()) != null) {
+                Utils.showToast(getActivity(), "Thêm thất bại. Bị trùng tên sản phẩm");
             } else {
                 sanPham.setId(RealtimeDatabaseController.getInstance(getActivity()).genKeySanPham());
                 sanPham.setTenSP(etTenSanPham.getText().toString().trim());

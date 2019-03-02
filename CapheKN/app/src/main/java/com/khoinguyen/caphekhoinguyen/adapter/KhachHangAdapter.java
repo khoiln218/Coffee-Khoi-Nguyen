@@ -111,7 +111,9 @@ public class KhachHangAdapter extends RecyclerView.Adapter<KhachHangAdapter.View
 
         builder.setPositiveButton("Sửa", (dialog, which) -> {
             if (TextUtils.isEmpty(etTenKhachHang.getText().toString().trim())) {
-                Utils.showToast(mContext, "Cập nhật thất bại. Vui lòng nhập tên khách hàng");
+                Utils.showToast(mContext, "Sửa thất bại. Vui lòng nhập tên khách hàng");
+            } else if (DBController.getInstance(mContext).layKhachHangTheoTen(etTenKhachHang.getText().toString().trim()) != null) {
+                Utils.showToast(mContext, "Sửa thất bại. Bị trùng tên khách hàng");
             } else {
                 khachHang.setTenKH(etTenKhachHang.getText().toString());
                 khachHang.setSDT(etSoDienThoai.getText().toString());
